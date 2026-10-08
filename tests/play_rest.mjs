@@ -73,7 +73,7 @@ try {
     let won = false;
     for (let k = 0; k < 3 && !won; k++) {
       if (k > 0) { await note(retry); await ui.clickText(retry); await sleep(8000); }   // 第一場在門前亮起人影後自動開打；打輸才走回門前（走到就觸發）
-      if (name === '大肥魚' && k === 0) { await until(/靠近了才看清楚/, 60000); await sleep(1500); await shot('5-大肥魚-map'); }   // 鏡頭移到門前，看得到地圖上的大肥魚
+      if (name === '大肥魚' && k === 0) { const t0 = await until(/靠近了才看清楚|ENCOUNTER 大肥魚/, 60000); if (/靠近了才看清楚/.test(t0)) { await sleep(1500); await shot('5-大肥魚-map'); } }   // 鏡頭移到門前，看得到地圖上的大肥魚
       won = await battle(name, /班/.test(name) ? '刪除程式' : '拆開規則', /班/.test(name) ? 6 : 4);
       await shot(`5-${name}-${k}`);
       if (!won) console.log('  打輸', name, '重打');

@@ -33,6 +33,11 @@ def interface(p):
                                                 'width': 44, 'align': 'left', 'hidden': True, 'text': TITLE_SUB}]}
     if (ROOT / 'assets/cover/title.webp').exists(): p['settings']['titleCoverImage'] = '/files/assets/cover/title.webp'
     if (ROOT / 'assets/cover/thumb.webp').exists(): p['settings']['projectThumbnail'] = '/files/assets/cover/thumb.webp'   # 市集縮圖（art/thumb.py）
+    # CG 收藏（10-09 作者：直接做）：霓虹訊號把它做成監視器牆，鎖住的顯示 NO SIGNAL。結局圖要打到那個結局才解鎖
+    gallery = [('cover/title.webp', '十一分鐘', False), ('scenes/interrogation.webp', '審訊室', True),
+               ('scenes/e1.webp', '送出', True), ('scenes/e2.webp', '交給 PRISM', True), ('scenes/e3.webp', '修回去', True)]
+    p['settings'].update(cgGalleryEnabled=True, cgGallerySource='picked',
+                         cgGalleryItems=[{'url': f'/files/assets/{f}', 'title': t, 'locked': lk} for f, t, lk in gallery if (ROOT / f'assets/{f}').exists()])
 
 
 TITLE_STATUS = 'GFW · 23:47'
