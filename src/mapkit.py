@@ -48,3 +48,70 @@ def map_node(id, title, m, var_names, pos=(0, 0)):
             'pluginSkippable': False, 'pluginReadVars': var_names, 'pluginWriteVars': var_names, 'pluginAssets': [], 'platforms': ['web'],
             'pluginValues': {'map': json.dumps(m, ensure_ascii=False)}, 'start': True}
     return {'id': id, 'type': 'story', 'position': {'x': pos[0], 'y': pos[1]}, 'data': data}
+
+
+def say(t, speaker='narrator'):
+    """地圖上的一句話。speaker：narrator（旁白）、player（江凌）、''（這個事件）、event:<id>"""
+    return A('dialogue', text=t, presentation='text', speaker=speaker)
+
+
+def card(card_id):
+    """把一張對話卡演在地圖上（不離開地圖）"""
+    return A('dialogue', cardId=card_id, presentation='text')
+
+
+def setv(name, value):
+    return A('variable', variable=name, value=str(value))
+
+
+def cond(name, value, op='eq'):
+    return {'kind': 'variable', 'variable': name, 'op': op, 'value': str(value), 'itemId': '', 'count': 1}
+
+
+def has(item_id):
+    return {'kind': 'item', 'variable': '', 'op': 'gte', 'value': '', 'itemId': item_id, 'count': 1}
+
+
+def item(item_id, name):
+    return A('item', itemId=item_id, itemName=name, amount=1)
+
+
+def remove(item_id, name):
+    return A('removeItem', itemId=item_id, itemName=name, amount=1)
+
+
+def move(route, who='self', face=None):
+    """route：[(方向, 步數)]，一段超過 20 步自動拆開（引擎每段 1–20 步、最多 8 段）"""
+    segs = [(d, min(20, n - k)) for d, n in route for k in range(0, n, 20)]
+    assert len(segs) <= 8, segs
+    m = {'who': who, 'route': [{'dir': d, 'steps': n} for d, n in segs], 'wait': True}
+    if face: m['face'] = face
+    return A('move', move=m)
+
+
+def page(id, conditions, actions, **kw):
+    p = {'id': id, 'conditions': conditions, 'actor': 'none', 'sprite': INVISIBLE, 'movement': 'still', 'solid': False,
+         'trigger': 'action', 'once': False, 'actions': actions}
+    p.update(kw)
+    return p
+
+
+def fresh(actions):
+    """複製一串動作並換新 id（同一張地圖裡動作 id 要唯一）"""
+    out = []
+    for a in actions:
+        b = dict(a, id=f'a{next(_ids)}')
+        out.append(b)
+    return out
+
+
+def spread(e, cells):
+    """一個事件鋪到好幾格（從哪一格按都按得到）：第一格保留原 id，其餘複製並換新的事件 id 與動作 id"""
+    out = []
+    for i, (x, y) in enumerate(cells):
+        c = dict(e, x=x, y=y)
+        if i:
+            c.update(id=f"{e['id']}-{i}", name=f"{e['id']}-{i}", actions=fresh(e.get('actions', [])))
+            if e.get('pages'): c['pages'] = [dict(p, id=f"{p['id']}-{i}", actions=fresh(p['actions'])) for p in e['pages']]
+        out.append(c)
+    return out
