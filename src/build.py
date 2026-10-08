@@ -24,10 +24,11 @@ def database():
 def office_map():
     d = layout.load('office'); errs = layout.check(d)
     if errs: sys.exit('設計檔有問題：\n' + '\n'.join(errs))
-    urls = {o['name']: f"/files/assets/blocks/office/{o['name']}.png" for o in layout.objects(d)}
+    kind = 'blocks' if os.environ.get('BLOCKS') else 'objects'   # BLOCKS=1：單色塊驗證版
+    urls = {o['name']: f"/files/assets/{kind}/office/{o['name']}.png" for o in layout.objects(d)}
     hx, hy = d['points']['hero_start']
     hero = mapkit.ev('hero', hx, hy, actor='player', direction='up', sprite=mapkit.walker('/files/assets/walk/walk-placeholder.png'))
-    m = mapkit.map_dict('十九樓　網管中心', d['map']['w'], d['map']['h'], '/files/assets/maps/office_blocks.png', layout.walls(d),
+    m = mapkit.map_dict('十九樓　網管中心', d['map']['w'], d['map']['h'], f'/files/assets/maps/office_{"blocks" if kind == "blocks" else "ground"}.png', layout.walls(d),
                         [hero] + layout.events(d, urls))
     names = [n for _, n, _, _ in mapkit.RPG_VARS]
     return mapkit.map_node('m-office', '十九樓　網管中心', m, names)

@@ -3,3 +3,5 @@ dist/
 art/anchor/old/
 art/anchor/*.log
 art/check/*.png
+art/objgen_raw/
+art/objgen_raw_gen.log
