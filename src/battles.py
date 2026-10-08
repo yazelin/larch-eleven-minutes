@@ -45,12 +45,12 @@ def nodes():
             (800, 900), skills=SKILLS, attack=18, mp=40, bg=BG),
         cards.battle('b-whale', '大肥魚', [
             E('dafeiyu', '大肥魚', 170, 9, 4, sp('strike', '權限不足', power=2), sp('guard', '內容不當', every=4), sp('double', '未經授權', every=5),
-              image=img('dafeiyu'))],
+              image=img('dafeiyu'), scale=0.55)],
             (800, 1000), skills=SKILLS, attack=20, mp=40, bg=BG,
             triggers=[{'id': 'w-start', 'when': 'start', 'lines': [say(f[17])]},
                       {'id': 'w-he', 'when': 'enemyHp', 'percent': 45, 'enemy': 'dafeiyu', 'lines': [say(f[18]), say(f[19])]}]),
         cards.battle('b-prism', 'PRISM', [
             E('prism', 'PRISM', 160, 10, 4, sp('strike', '為了安全', power=2), sp('drain', '為了真相', every=4), sp('double', '為了你好', every=5),
-              image=img('prism'))],
+              image=img('prism'), scale=0.55)],
             (800, 1100), skills=SKILLS, attack=20, mp=40, bg=BG),
     ]
