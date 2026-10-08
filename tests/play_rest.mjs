@@ -7,7 +7,7 @@ import { execSync } from 'node:child_process';
 const END = Number(process.argv[2] || 1);
 const LABEL = { 1: '送出', 2: '交給 PRISM', 3: '修回去' }[END];
 const EXPECT = { 1: /這是他四年來第一次說這句話/, 2: /他們會再需要彼此/, 3: /是他自己扣上的/ }[END];
-execSync('python3 src/build.py', { env: { ...process.env, START: 'm-server' } });
+execSync('python3 src/build.py', { env: { ...process.env, START: 'm-server', PRESET: 'phase=card' } });   // 帶著十九樓結束時的進度（card）進場，跟真實流程一樣
 const s = await serve('dist/project.json');
 const ui = await open(s.base, { width: 1600, height: 900 });
 const { page, text } = ui;
@@ -62,14 +62,18 @@ try {
   assert(true, '捧起江禾那一則');
   // 審查兵追過來：原地一直砍
   const end = Date.now() + 180000;
-  while (Date.now() < end && !(await visible('走到牆中段的門前'))) { await page.keyboard.press('j'); await sleep(350); await ui.advance(); }
+  let lastWalk = Date.now();
+  while (Date.now() < end && !/ENCOUNTER/.test(await text())) {   // 砍倒第四隻以後第一班自動開打
+    await page.keyboard.press('j'); await sleep(350); await ui.advance();
+    if (Date.now() - lastWalk > 25000) { lastWalk = Date.now(); await ui.clickText('砍倒追來的審查兵', 3000).catch(() => {}); }   // 站著等不到就往門走，路上遇到再砍
+  }
   await shot('4-hunt');
-  await note('走到牆中段的門前');
   assert(true, '砍倒四個以上的審查兵，門前亮起人影');
   for (const [name, retry] of [['第一班', '走到牆中段的門前'], ['第二班', '回到門前，再打一次'], ['大肥魚', '回到門前，再打一次'], ['PRISM', '回到門前，再打一次']]) {
     let won = false;
     for (let k = 0; k < 3 && !won; k++) {
-      if (name === '第一班' || k > 0) { await note(retry); await ui.clickText(retry); await sleep(8000); await page.keyboard.press('Space'); }
+      if (k > 0) { await note(retry); await ui.clickText(retry); await sleep(8000); }   // 第一場在門前亮起人影後自動開打；打輸才走回門前（走到就觸發）
+      if (name === '大肥魚' && k === 0) { await until(/靠近了才看清楚/, 60000); await sleep(1500); await shot('5-大肥魚-map'); }   // 鏡頭移到門前，看得到地圖上的大肥魚
       won = await battle(name, /班/.test(name) ? '刪除程式' : '拆開規則', /班/.test(name) ? 6 : 4);
       await shot(`5-${name}-${k}`);
       if (!won) console.log('  打輸', name, '重打');

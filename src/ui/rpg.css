@@ -423,3 +423,16 @@ button.pm-party-member[aria-current="true"] { box-shadow: inset 0 0 0 1px var(--
 
 /* 《十一分鐘》補充（2026-10-09 作者：跳出提示跟任務提示疊在一起）：引擎把 #notice 固定在左上 90px，正好壓在任務提示上，移到畫面下方中間 */
 #notice { top: auto !important; bottom: 128px; left: 50% !important; translate: -50% 0; max-width: min(560px, calc(100% - 32px)); text-align: center; }
+
+/* 《十一分鐘》補充（2026-10-09 作者：RPG 對話框擋住畫面，要有質感的半透明）：上淡下濃的毛玻璃，上緣一條霓虹細線，文字加陰影保持可讀 */
+#dialogue .dlg-box { background: linear-gradient(180deg, rgba(6, 12, 24, .16) 0%, rgba(5, 10, 20, .5) 38%, rgba(3, 6, 12, .74) 100%) !important;
+  backdrop-filter: blur(10px) saturate(1.35) !important; -webkit-backdrop-filter: blur(10px) saturate(1.35) !important;
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--skin-neon) 60%, transparent), inset 3px 0 0 var(--skin-neon), inset 0 18px 30px -24px color-mix(in srgb, var(--skin-neon) 40%, transparent) !important; }
+#dialogue .dlg-box::after { position: absolute; inset: 0; background: repeating-linear-gradient(180deg, rgba(255, 255, 255, .025) 0 1px, transparent 1px 3px); content: ""; pointer-events: none; }
+#dialogue #text { text-shadow: 0 1px 2px rgba(0, 0, 0, .9), 0 0 14px rgba(0, 0, 0, .65); }
+#dialogue .dlg-nameplate { background: rgba(6, 11, 22, .82) !important; backdrop-filter: blur(6px); }
+
+/* 《十一分鐘》補充（2026-10-09 作者：打王時大肥魚顯得很小）：霓虹訊號在戰鬥畫面上方保留 280px 給指令終端機，引擎把敵人縮進剩下的高度。
+   指令終端機在左上、隊伍資料在右上，中間是空的 → 保留帶降低，戰場變高，敵人就能畫大；指令終端機照舊可以往下長（自己的 max-height） */
+.rpg-battle { --ns-top: 96px !important; }
+.battle-actions.battle-ring:not([data-menu="result"]), .rpg-battle[data-layout] .battle-actions.battle-ring:not([data-menu="result"]) { max-height: 300px !important; z-index: 6; }
