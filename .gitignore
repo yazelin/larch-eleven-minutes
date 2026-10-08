@@ -1,1 +1,5 @@
 ref/
+dist/
+art/anchor/old/
+art/anchor/*.log
+art/check/*.png
