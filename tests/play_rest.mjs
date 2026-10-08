@@ -13,9 +13,10 @@ const ui = await open(s.base, { width: 1600, height: 900 });
 const { page, text } = ui;
 const shot = n => page.screenshot({ path: `art/check/play-rest-${n}.png` });
 const visible = async t => { for (const f of page.frames()) if (await f.getByText(t, { exact: false }).first().isVisible().catch(() => false)) return true; return false; };
+let seen = '';   // 途中出現過的畫面文字（結局後會自動回到標題，最後幾句可能一閃而過）
 async function until(re, ms = 90000) {
   const end = Date.now() + ms;
-  while (Date.now() < end) { const t = await text(); if (re.test(t)) return t; await ui.advance(); await sleep(500); }
+  while (Date.now() < end) { const t = await text(); seen += t; if (re.test(t) || re.test(seen)) return t; await ui.advance(); await sleep(500); }
   throw new Error('等不到 ' + re + '\n畫面：' + (await text()).slice(-500));
 }
 async function note(t, ms = 60000) {   // 對話一路按掉，直到任務提示 t 可以點
@@ -48,7 +49,7 @@ try {
   await ui.clickText('開始遊戲'); await sleep(2000);
   await note('走到最裡面的終端機'); await shot('1-server');
   await ui.clickText('走到最裡面的終端機'); await sleep(8000); await page.keyboard.press('Space');
-  await until(/輸入：ping/, 30000); await shot('2-terminal');
+  await ui.waitText(/GFW CORE TERMINAL/, 30000); await sleep(1500); await shot('2-terminal');   // 只等、不按鍵（按鈕有焦點，Enter 會直接打指令）
   for (let i = 0; i < 40 && !(await visible('戴上頭盔')); i++) { if (!(await btn('輸入：'))) await sleep(500); await sleep(1500); }
   assert(await btn('戴上頭盔'), '終端機打完三個指令，出現「戴上頭盔」');
   await note('在灰色的山裡找江禾那一則'); await shot('3-cloud');
@@ -77,11 +78,11 @@ try {
     for (const f of page.frames()) { const b = f.locator('button', { hasText: LABEL }); if (await b.first().isVisible().catch(() => false)) { await shot('6-choice'); await b.first().click(); picked = true; break; } }
     if (!picked) { await ui.advance(); await sleep(600); }
   }
-  assert(picked, '審訊室（二）之後出現結局選項'); await sleep(1500);
+  assert(picked, '審訊室（二）之後出現結局選項'); await sleep(1500); seen = '';
   await until(EXPECT, 120000); await shot('7-ending');
   assert(true, '結局 ' + LABEL);
-  await until(/溟月/, 60000); await shot('8-credits');
-  assert(true, '片尾署名');
+  await until(/溟月|開始遊戲/, 60000); await shot('8-credits');
+  assert(/溟月/.test(seen), '片尾署名出現過');
   console.log(ui.errors.length ? ui.errors : '沒有頁面錯誤');
 } catch (e) { await shot('fail'); console.error(e.message); process.exitCode = 1; }
 finally { await ui.close(); s.kill(); execSync('python3 src/build.py'); }

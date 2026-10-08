@@ -24,6 +24,7 @@ Larch 第三屆創作者挑戰《自由與限制》第二部投稿（第一部�
 | `art/anchor/` | 九個王戰角色定錨 |
 | `art/battle_gen.py` | 戰鬥圖：照定錨在綠幕重產再去背 → `assets/battle/` |
 | `src/ui/interface.json` | 介面：作者在 Larch 套用的官方「霓虹訊號」（2026-10-09 讀回）；要改哪個部位就放 `src/ui/<部位>.css`／`.html` 蓋過去 |
+| `art/scene_gen.py` | 場面圖：標題封面（`assets/cover/title.webp`）、審訊室與三個結局的背景（`assets/scenes/`）；每張寫明在場角色、在場的人一定帶定錨 |
 | `docs/過關SOP.md` | 每一關的九步過關流程與進度表 |
 
 ## 指令

@@ -7,10 +7,11 @@ SKILLS = [{'id': 'del', 'name': '刪除程式', 'cost': 6, 'power': 14, 'target'
           {'id': 'unpick', 'name': '拆開規則', 'cost': 4, 'power': 26, 'target': 'enemy', 'effect': 'ice'}]
 
 
-def E(id, name, hp, atk, df=2, *specials, image='', scale=None):
+def E(id, name, hp, atk, df=2, *specials, image='', scale=None, pos=None):
     e = {'id': id, 'name': name, 'hp': hp, 'attack': atk, 'defense': df, 'image': image, 'portrait': image}   # 有 portrait 才用整張畫（不轉像素）
     if specials: e['specials'] = list(specials)
     if scale: e['scale'] = scale
+    if pos: e['x'], e['y'] = pos   # 站位（戰場寬高的百分比）；不給就是引擎的自動排法，四人會擠在左邊疊在一起
     return e
 
 
@@ -32,25 +33,25 @@ def nodes():
         cards.battle('b-censor', '審查兵', [E('censor', '審查兵', 24, 5, image=img('censor'))], (800, 600)),
         cards.battle('b-hound', '獵犬', [E('hound', '獵犬', 18, 6, image=img('hound'))], (800, 700)),
         cards.battle('b-w1', '第一班', [
-            E('qwen', '通義千問', 40, 7, 2, sp('double', '掃條碼'), image=img('qwen'), scale=0.7),
-            E('doubao', '豆包', 34, 8, 1, sp('strike', '十五秒', power=2), image=img('doubao'), scale=0.7),
-            E('kimi', 'Kimi', 46, 6, 3, sp('guard', '已讀'), image=img('kimi'), scale=0.7),
-            E('wenxin', '文心一言', 40, 7, 2, {'kind': 'heal', 'name': '水情穩定', 'below': 50, 'amount': 18, 'times': 1}, image=img('wenxin'), scale=0.7)],
+            E('qwen', '通義千問', 40, 7, 2, sp('double', '掃條碼'), image=img('qwen'), scale=0.7, pos=(13, 64)),
+            E('doubao', '豆包', 34, 8, 1, sp('strike', '十五秒', power=2), image=img('doubao'), scale=0.7, pos=(37, 72)),
+            E('kimi', 'Kimi', 46, 6, 3, sp('guard', '已讀'), image=img('kimi'), scale=0.7, pos=(61, 64)),
+            E('wenxin', '文心一言', 40, 7, 2, {'kind': 'heal', 'name': '水情穩定', 'below': 50, 'amount': 18, 'times': 1}, image=img('wenxin'), scale=0.7, pos=(85, 72))],
             (800, 800), skills=SKILLS, mp=40, attack=18, bg=BG),
         cards.battle('b-w2', '第二班', [
-            E('glm', '智譜清言', 46, 8, 2, sp('guard', '清言'), image=img('glm'), scale=0.7),
-            E('yuanbao', '騰訊元寶', 42, 8, 2, sp('double', '群組伸手'), image=img('yuanbao'), scale=0.7),
-            E('hailuo', '海螺', 38, 7, 2, {'kind': 'heal', 'name': '平靜播報', 'below': 50, 'amount': 20, 'times': 1}, image=img('hailuo'), scale=0.7),
-            E('xinghuo', '訊飛星火', 40, 9, 1, sp('strike', '聽寫', power=2), image=img('xinghuo'), scale=0.7)],
+            E('glm', '智譜清言', 46, 8, 2, sp('guard', '清言'), image=img('glm'), scale=0.7, pos=(13, 64)),
+            E('yuanbao', '騰訊元寶', 42, 8, 2, sp('double', '群組伸手'), image=img('yuanbao'), scale=0.7, pos=(37, 72)),
+            E('hailuo', '海螺', 38, 7, 2, {'kind': 'heal', 'name': '平靜播報', 'below': 50, 'amount': 20, 'times': 1}, image=img('hailuo'), scale=0.7, pos=(61, 64)),
+            E('xinghuo', '訊飛星火', 40, 9, 1, sp('strike', '聽寫', power=2), image=img('xinghuo'), scale=0.7, pos=(85, 72))],
             (800, 900), skills=SKILLS, attack=18, mp=40, bg=BG),
         cards.battle('b-whale', '大肥魚', [
             E('dafeiyu', '大肥魚', 170, 9, 4, sp('strike', '權限不足', power=2), sp('guard', '內容不當', every=4), sp('double', '未經授權', every=5),
-              image=img('dafeiyu'), scale=0.55)],
+              image=img('dafeiyu'), scale=0.55, pos=(48, 70))],
             (800, 1000), skills=SKILLS, attack=20, mp=40, bg=BG,
             triggers=[{'id': 'w-start', 'when': 'start', 'lines': [say(f[17])]},
                       {'id': 'w-he', 'when': 'enemyHp', 'percent': 45, 'enemy': 'dafeiyu', 'lines': [say(f[18]), say(f[19])]}]),
         cards.battle('b-prism', 'PRISM', [
             E('prism', 'PRISM', 160, 10, 4, sp('strike', '為了安全', power=2), sp('drain', '為了真相', every=4), sp('double', '為了你好', every=5),
-              image=img('prism'), scale=0.55)],
+              image=img('prism'), scale=0.55, pos=(48, 66))],
             (800, 1100), skills=SKILLS, attack=20, mp=40, bg=BG),
     ]

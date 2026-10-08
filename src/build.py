@@ -26,6 +26,20 @@ def interface(p):
             if f.exists(): v['html'] = f.read_text(encoding='utf-8')
     keep = ('resolution', 'textSpeed', 'autoAdvanceDelay', 'typingEffect')   # 這幾個以本機為準
     p['settings'].update({k: v for k, v in ui.items() if k not in keep})
+    # 2026-10-09 作者「依建議做齊」：標題狀態列換成故事的時間、副標用介紹文第一句（不然會顯示整段專案介紹）、封面
+    p['settings']['customInterfaces']['title']['params'] = {'status': TITLE_STATUS}
+    p['settings']['titleScreen'] = {'layers': [{'id': 'skin-description', 'kind': 'text', 'role': 'description', 'x': 8, 'y': 44, 'size': 1.6,
+                                                'width': 44, 'align': 'left', 'hidden': True, 'text': TITLE_SUB}]}
+    if (ROOT / 'assets/cover/title.webp').exists(): p['settings']['titleCoverImage'] = '/files/assets/cover/title.webp'
+
+
+TITLE_STATUS = 'GFW · 23:47'
+TITLE_SUB = next(l for l in (ROOT / 'canon/介紹文.md').read_text(encoding='utf-8').splitlines() if l.strip() and not l.startswith('#')).strip()   # 介紹文第一句
+
+
+def scene(k):
+    """對話卡背景（art/scene_gen.py 產的，還沒產就空著）"""
+    return f'/files/assets/scenes/{k}.webp' if (ROOT / f'assets/scenes/{k}.webp').exists() else ''
 
 
 VARS = {'phase': ('string', ''), 'kills': ('number', 0), 'wall': ('string', '')}   # 全部故事變數只在這裡定義
@@ -70,15 +84,15 @@ def build():
     p['settings']['plugins']['larch-rpg-system']['settings']['database'] = json.dumps(database(), ensure_ascii=False)
     p['settings']['plugins'][plugin.PLUGIN_ID] = plugin.settings_entry()
     N = board['nodes'].append
-    N(cards.dialogue('c0', '序　審訊室', section('序　審訊室'), (0, 0), start=True))
+    N(cards.dialogue('c0', '序　審訊室', section('序　審訊室'), (0, 0), bg=scene('interrogation'), start=True))
     for m in MAPS: N(map_card(*m))
-    N(cards.dialogue('ci1', '審訊室（一）', section('審訊室（一）'), (400, 300)))
+    N(cards.dialogue('ci1', '審訊室（一）', section('審訊室（一）'), (400, 300), bg=scene('interrogation')))
     N(plugin.card_node((1200, 0)))
-    N(cards.dialogue('ci2', '審訊室（二）', section('審訊室（二）'), (1600, 300)))
+    N(cards.dialogue('ci2', '審訊室（二）', section('審訊室（二）'), (1600, 300), bg=scene('interrogation')))
     for i, (k, t) in enumerate(ENDINGS):
-        N(cards.dialogue(k, t, [t] + section(t), (2000, i * 200)))
+        N(cards.dialogue(k, t, [t] + section(t), (2000, i * 200), bg=scene(k)))
         cards.link(board, k, 'credits')
-    N(cards.dialogue('credits', '片尾', new('片尾'), (2400, 200)))
+    N(cards.dialogue('credits', '片尾', new('片尾'), (2400, 200), bg='/files/assets/cover/title.webp' if (ROOT / 'assets/cover/title.webp').exists() else ''))
     for n in battles.nodes(): N(n)
     cards.link(board, 'c0', 'm-office'); cards.link(board, plugin.NODE, 'm-cloud')
     test_start(p)

@@ -1,41 +1,64 @@
 <!doctype html>
 <html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
-:root{color-scheme:dark;--cy:#3df2ff;--mg:#ff3d9a;--ok:#5dff8f;--bad:#ff5a5a}
-html,body{margin:0;height:100%;overflow:hidden;background:#05070d;color:#cfe9ee;font-family:"Noto Sans Mono CJK TC","Noto Sans TC",ui-monospace,monospace}
-#crt{position:absolute;inset:4vh 4vw;border:1px solid rgba(61,242,255,.45);clip-path:polygon(18px 0,100% 0,100% calc(100% - 18px),calc(100% - 18px) 100%,0 100%,0 18px);
-  background:radial-gradient(ellipse at center,rgba(20,40,55,.85),rgba(4,8,14,.96));box-shadow:inset 0 0 60px rgba(61,242,255,.12);padding:3vh 3vw;box-sizing:border-box;overflow:auto;pointer-events:none}
-#crt::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.22) 0 2px,transparent 2px 4px)}
-#bar{font-size:13px;letter-spacing:.2em;color:var(--mg);margin-bottom:2vh}
-#out{font-size:clamp(15px,2.4vh,22px);line-height:1.75;white-space:pre-wrap}
-.cmd{color:var(--ok)} .cmd::before{content:"root@gfw-core:~# ";color:var(--cy)}
-.bad{color:var(--bad)} .nar{color:#e7f4f6;opacity:.92;margin:1.2vh 0}
-.cur{display:inline-block;width:.6em;background:var(--ok);animation:b 1s steps(1) infinite}
-@keyframes b{50%{opacity:0}}
-#go{position:absolute;left:50%;bottom:7vh;translate:-50% 0;min-height:52px;padding:0 28px;font:600 18px "Noto Sans TC",sans-serif;color:#05070d;background:var(--cy);
-  border:0;clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);cursor:pointer;box-shadow:0 0 18px rgba(61,242,255,.6)}
-#go:active{scale:.96}
+/* 配色、面板、字型照作者套用的官方介面「霓虹訊號」：主色 #39f3ff、第二色 #ff3fb4、面板 #060b16、切角 14px、等寬字、掃描線與格線 */
+:root{color-scheme:dark;--neon:#39f3ff;--pulse:#ff3fb4;--panel:#060b16;--ink:#e6fbff;--muted:#a9d6de;--bad:#ff8fd0;
+  --mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;--sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --cut:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px)}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:radial-gradient(ellipse 70% 60% at 50% 45%,#0b1c2e,#03050b 75%);color:var(--ink);font-family:var(--sans)}
 #tap{position:absolute;inset:0}
+.hud{position:absolute;inset:18px;pointer-events:none}
+.hud i{position:absolute;width:34px;height:34px;border:2px solid var(--neon);filter:drop-shadow(0 0 6px var(--neon))}
+.hud i:nth-child(1){top:0;left:0;border-right:0;border-bottom:0}.hud i:nth-child(2){top:0;right:0;border-left:0;border-bottom:0}
+.hud i:nth-child(3){bottom:0;left:0;border-right:0;border-top:0}.hud i:nth-child(4){bottom:0;right:0;border-left:0;border-top:0}
+.frame{position:absolute;inset:7vh 6vw 17vh;padding:1.5px;background:linear-gradient(110deg,var(--neon),color-mix(in srgb,var(--neon) 30%,transparent) 35%,color-mix(in srgb,var(--pulse) 40%,transparent) 70%,var(--pulse));
+  clip-path:var(--cut);filter:drop-shadow(0 0 10px color-mix(in srgb,var(--neon) 35%,transparent));pointer-events:none}
+#crt{position:relative;height:100%;padding:2.6vh 2.8vw;overflow:auto;background:color-mix(in srgb,var(--panel) 92%,transparent);clip-path:var(--cut)}
+#crt::before{position:absolute;inset:0;background-image:linear-gradient(color-mix(in srgb,var(--neon) 7%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--neon) 7%,transparent) 1px,transparent 1px);background-size:26px 26px;content:"";pointer-events:none}
+#crt::after{position:fixed;inset:0;background:repeating-linear-gradient(180deg,rgba(255,255,255,.035) 0 1px,transparent 1px 3px);content:"";pointer-events:none}
+#bar{position:relative;display:flex;justify-content:space-between;gap:12px;margin-bottom:2vh;padding-bottom:1.2vh;border-bottom:1px solid color-mix(in srgb,var(--neon) 35%,transparent);
+  font:700 12px/1.3 var(--mono);letter-spacing:.3em;color:var(--pulse)}
+#bar b{color:var(--neon);font-weight:700;text-shadow:0 0 8px color-mix(in srgb,var(--neon) 70%,transparent)}
+#bar b::before{content:"[ ";color:var(--pulse)}#bar b::after{content:" ]";color:var(--pulse)}
+#out{position:relative;font:500 clamp(15px,2.3vh,22px)/1.75 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere}
+.cmd{color:#f2feff;text-shadow:0 0 6px color-mix(in srgb,var(--neon) 50%,transparent)}.cmd::before{content:"root@gfw-core:~# ";color:var(--neon)}
+.hop{color:var(--muted)}.hop:last-child{color:var(--pulse)}
+.bad{color:var(--bad);text-shadow:0 0 8px color-mix(in srgb,var(--pulse) 60%,transparent)}.bad::before{content:"! ";color:var(--pulse)}
+.nar{margin:1.2vh 0;color:#cdeff5;font-family:var(--sans);font-style:italic}.nar::before{content:"// ";color:var(--pulse);font-family:var(--mono);font-style:normal}
+.cur{display:inline-block;width:.6em;background:var(--neon);box-shadow:0 0 8px var(--neon);animation:b 1s steps(2,end) infinite}
+@keyframes b{50%{opacity:0}}
+#go{position:absolute;left:50%;bottom:6vh;translate:-50% 0;display:flex;align-items:center;gap:12px;min-height:50px;padding:0 26px 0 20px;border:0;
+  background:linear-gradient(90deg,rgba(8,14,26,.92),rgba(8,14,26,.6));color:#dff9ff;font:600 clamp(14px,1.2vw,17px)/1 var(--mono);letter-spacing:.14em;cursor:pointer;
+  clip-path:var(--cut);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--neon) 55%,transparent),inset 3px 0 0 var(--neon);transition:background .18s,color .18s,box-shadow .18s}
+#go[hidden]{display:none}
+#go::before{content:">";color:var(--neon)}
+#go:hover,#go:focus-visible{outline:none;background:var(--neon);color:#060b16;box-shadow:0 0 14px color-mix(in srgb,var(--neon) 40%,transparent)}
+#go:hover::before,#go:focus-visible::before{color:#060b16}
+#go:active{background:var(--pulse);color:#060b16}
+#go.done{background:var(--neon);color:#060b16}#go.done::before{color:#060b16}
+@media (max-width:640px){.frame{inset:5vh 4vw 18vh}#crt{padding:18px 14px}#bar{letter-spacing:.14em;font-size:11px}#go{max-width:calc(100vw - 32px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
 @media (prefers-reduced-motion:reduce){.cur{animation:none}}
 </style></head>
 <body>
 <div id="tap"></div>
-<div id="crt"><div id="bar">GFW CORE TERMINAL ／ 20F</div><div id="out"></div></div>
+<div class="hud" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+<div class="frame"><div id="crt"><div id="bar"><span>GFW CORE TERMINAL // 20F</span><b>23:31</b></div><div id="out"></div></div></div>
 <button id="go" hidden></button>
 <script src="common.js"></script>
 <script>
 /* 終端機：江凌一個一個打指令。點畫面、空白鍵、Enter 或按鈕＝打下一個指令（手機不用真的打字）。
    script：{intro, steps:[{cmd, out, hops?, bad?}], after, done}；最後一個按鈕送 larch:complete。 */
 var S, i = -1, busy = false, out = document.getElementById('out'), go = document.getElementById('go');
-function line(cls, t) { var d = document.createElement('div'); d.className = cls; d.textContent = t; out.appendChild(d); out.parentNode.scrollTop = 1e9; return d; }
+function line(cls, t) { var d = document.createElement('div'); d.className = cls; d.textContent = t; out.appendChild(d); document.getElementById('crt').scrollTop = 1e9; return d; }
 function type(d, t, ms, cb) {
   var k = 0, cur = document.createElement('span'); cur.className = 'cur'; cur.innerHTML = '&nbsp;';
   (function step() { d.textContent = t.slice(0, k); d.appendChild(cur); if (k++ < t.length) setTimeout(step, ms); else { cur.remove(); cb(); } })();
 }
 function label() {
   if (i + 1 < S.steps.length) { go.textContent = '輸入：' + S.steps[i + 1].cmd; }
-  else { go.textContent = S.done; }
-  go.hidden = false;
+  else { go.textContent = S.done; go.classList.add('done'); }
+  go.hidden = false; go.focus();   // 按 Enter／空白鍵就是按這顆（卡片一開焦點就在這裡）
 }
 function next() {
   if (busy || !S) return;
@@ -44,7 +67,7 @@ function next() {
   var s = S.steps[i];
   type(line('cmd', ''), s.cmd, 45, function () {
     setTimeout(function () {
-      (s.hops || []).forEach(function (h, n) { setTimeout(function () { line('', h); }, n * 380); });
+      (s.hops || []).forEach(function (h, n) { setTimeout(function () { line('hop', h); }, n * 380); });
       setTimeout(function () {
         type(line(s.bad ? 'bad' : 'nar', ''), s.out, 28, function () {
           if (i + 1 < S.steps.length || !S.after) { busy = false; label(); return; }
