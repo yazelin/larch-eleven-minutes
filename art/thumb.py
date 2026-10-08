@@ -18,7 +18,7 @@ im = im.convert('RGBA'); im.alpha_composite(glow)
 d = ImageDraw.Draw(im)
 d.text((x - 3, y), t, font=f, fill=PULSE + (255,)); d.text((x + 3, y), t, font=f, fill=NEON + (255,)); d.text((x, y), t, font=f, fill=(242, 254, 255, 255))
 s = ImageFont.truetype(MONO, 34, index=2)
-d.text((x + 6, y + 228), '// 七月二十日 23:49，防火長城開了十一分鐘。', font=s, fill=(230, 251, 255, 255))
+d.text((x + 6, y + 228), '// 六月四日 23:49，防火長城開了十一分鐘。', font=s, fill=(230, 251, 255, 255))
 d.text((x + 6, 96), '● GFW · 23:49', font=ImageFont.truetype(MONO, 26, index=2), fill=NEON + (255,))
 for cx, cy, sx, sy in ((30, 30, 1, 1), (1570, 30, -1, 1), (30, 870, 1, -1), (1570, 870, -1, -1)):   # HUD 四角
     d.line((cx, cy, cx + 46 * sx, cy), fill=NEON, width=4); d.line((cx, cy, cx, cy + 46 * sy), fill=NEON, width=4)
