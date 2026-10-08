@@ -230,7 +230,7 @@ LINES_OFFICE, COLS_OFFICE = LINES, COLS
 LINES_BY = {
     'office': LINES_OFFICE,
     'server': {
-        'north': dict(objs=['北牆西', '北牆中', '北牆東'], center=16, ref='北牆中',
+        'north': dict(objs=['北牆西', '北牆中', '北牆東'], under=['空調西', '空調東'], center=16, ref='北牆中',   # 空調那幾格也畫牆，空調疊在牆前面（10-09 作者：空調跟牆之間有縫）
                       desc='a grey concrete server room wall with a metal cable tray running along the top and a row of small red warning lights, a dark skirting at the bottom; plain wall, nothing in the middle'),
         'south': dict(objs=['南牆西', '鐵門', '南牆東'], center=5.5, ref='鐵門',
                       desc='a low grey concrete wall (seen as a short wall near the camera); near the middle a heavy closed grey steel security door set into the same wall, a card reader with a red light beside it'),
@@ -347,6 +347,9 @@ def lines_cut(a):
         strips[k] = st
     for k, v in LINES_BY[a].items():
         st = strips[k]
+        for n in v.get('under', []):   # 站在牆前面的東西：牆那一段當底，物件圖疊上去（物件圖由 cut() 先切好）
+            fx, fy, fw, fh = obs[n]['frame']; f = os.path.join(od, f'{n}.png')
+            base = bottom_pad(st.crop((fx * PX, 0, (fx + fw) * PX, st.height)), fh * PX); base.alpha_composite(Image.open(f).convert('RGBA')); base.save(f)
         for n in v['objs']:
             fx, fy, fw, fh = obs[n]['frame']
             bottom_pad(st.crop((fx * PX, 0, (fx + fw) * PX, st.height)), fh * PX).save(os.path.join(od, f'{n}.png'))
