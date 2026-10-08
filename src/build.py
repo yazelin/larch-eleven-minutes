@@ -16,7 +16,7 @@ def skeleton():
 
 
 def database():
-    hero = {'id': 'jiangling', 'name': '江凌', 'title': '', 'profile': '', 'role': 'party', 'walk': mapkit.walker('/files/assets/walk/walk-placeholder.png'),
+    hero = {'id': 'jiangling', 'name': '江凌', 'title': '', 'profile': '', 'role': 'party', 'walk': mapkit.walker('/files/assets/walk/walk-jiangling.png'),
             'portrait': '', 'join': 'later', 'kit': 'none', 'rig': '', 'joinVariable': '', 'speed': 2}   # 細格一步半格，速度加倍
     return {'version': 1, 'heroId': 'jiangling', 'actors': [hero]}
 
@@ -27,9 +27,11 @@ def office_map():
     kind = 'blocks' if os.environ.get('BLOCKS') else 'objects'   # BLOCKS=1：單色塊驗證版
     urls = {o['name']: f"/files/assets/{kind}/office/{o['name']}.png" for o in layout.objects(d)}
     hx, hy = d['points']['hero_start']
-    hero = mapkit.ev('hero', hx, hy, actor='player', direction='up', sprite=mapkit.walker('/files/assets/walk/walk-placeholder.png'))
+    hero = mapkit.ev('hero', hx, hy, actor='player', direction='up', sprite=mapkit.walker('/files/assets/walk/walk-jiangling.png'))
+    npcs = [mapkit.ev('zhou', 37, 8, name='周主任', actor='npc', solid=True, direction='right', sprite=mapkit.walker('/files/assets/walk/walk-zhou.png')),
+            mapkit.ev('guard', *d['points']['guard_a'], name='警衛', actor='npc', solid=True, direction='left', sprite=mapkit.walker('/files/assets/walk/walk-guard.png'))]
     m = mapkit.map_dict('十九樓　網管中心', d['map']['w'], d['map']['h'], f'/files/assets/maps/office_{"blocks" if kind == "blocks" else "ground"}.png', layout.walls(d),
-                        [hero] + layout.events(d, urls))
+                        [hero] + npcs + layout.events(d, urls))
     names = [n for _, n, _, _ in mapkit.RPG_VARS]
     return mapkit.map_node('m-office', '十九樓　網管中心', m, names)
 
