@@ -22,13 +22,16 @@ def events(walk):
     zx, zy = 37, 8
     go = [('right', 1), ('down', 6), ('left', 31), ('up', 2)]          # (37,8) → (7,12)，江凌正後方
     back = [('down', 2), ('right', 31), ('up', 6), ('left', 1)]
+    # 下令前後：在辦公桌前（走出來下令再走回去）
     ev_.append(ev('zhou', zx, zy, name='周主任', actor='npc', solid=True, direction='up', sprite=walk('zhou'),
-                  pages=[page('zhou-phone', [cond('phase', '', 'neq'), cond('phase', 'order', 'neq'), cond('phase', 'cut', 'neq')],
-                              [say(two[3])], actor='npc', sprite=walk('zhou'), solid=True, direction='up'),
-                         page('zhou-order', [P('order')],
+                  conditions=[cond('phase', 'sneak', 'neq'), cond('phase', 'bowl', 'neq'), cond('phase', 'alibi', 'neq'), cond('phase', 'card', 'neq')],
+                  pages=[page('zhou-order', [P('order')],
                               [say(one[4]), move(go, face='up'), say(one[5], ''), say(one[6]), say(one[7], 'player'), say(one[8], ''),
                                move(back, face='up'), setv('phase', 'cut')],
                               actor='npc', sprite=walk('zhou'), solid=True, direction='up', trigger='condition')]))
+    # 之後：站到北邊落地窗前背對門講電話（10-09 作者：讓江凌從他背後偷走管理員卡的感覺更明顯）
+    ev_.append(ev('zhou-phone', *PT['zhou_phone'], name='周主任', actor='npc', solid=True, direction='up', sprite=walk('zhou'),
+                  conditions=[cond('phase', p_, 'neq') for p_ in ('', 'order', 'cut')], actions=[say(two[3])]))
     # 監控台：斷河城、抽查、看到江禾的訊息、審訊室（一）；之後拿泡麵碗
     ev_.append(ev('monitor', 7, 9, name='監控台', marker={'label': '監控台', 'kind': 'quest'},
                   pages=[page('mon-cut', [P('cut')], [say(t) for t in one[9:14]] + [card('ci1'), setv('phase', 'sneak')]),
