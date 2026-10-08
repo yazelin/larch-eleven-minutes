@@ -38,7 +38,7 @@ def events(walk):
     for k, xy in PT.items():
         if not k.startswith(('censor', 'hound')): continue
         dog = k.startswith('hound')
-        ev_.append(ev(k, *xy, name='獵犬' if dog else '審查兵', actor='npc', kind='monster', sprite=walk('placeholder'),
+        ev_.append(ev(k, *xy, name='獵犬' if dog else '審查兵', actor='npc', kind='monster', sprite=walk('hound' if dog else 'censor'),
                       movement='approach', approach=20, trigger='touch', once=True, after='vanish',
                       badge={'icon': 'swords', 'color': '#8f564a'}, conditions=[P('hunt')],
                       actions=[A('battle', cardId='b-hound' if dog else 'b-censor'), add('kills')]))

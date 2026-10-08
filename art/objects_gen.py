@@ -17,6 +17,16 @@ sys.path[:0] = [os.path.join(G, 'src'), H]
 import layout, blocks, codex11   # 產圖走 .11（作者 2026-10-08）；本機 codex 只用過第一批十九樓
 
 PX = 48
+LOOK = {   # 每張地圖的畫風描述（定錨圖、物件、地面、整排的牆共用）
+    'office': 'cyberpunk night office with cyan and magenta accents',
+    'server': 'cold server room at night, rows of black server racks with blinking green lights, cyan and magenta neon accents',
+    'cloud': 'a sea of grey-blue clouds under a black sky inside a digital world, a colossal wall of dark-red neon chain links, cyan grid lines, magenta accents',
+}
+FLOOR = {
+    'office': 'night office, half of the ceiling lights on so the floor has alternating lit and dark bands, cool cyan accents',
+    'server': 'cold server room, grey anti-static raised floor tiles, some perforated vent tiles glowing faint blue, cyan accents',
+    'cloud': 'a soft sea of grey-blue clouds seen from above with faint cyan grid lines floating in it; the strip at the top is brighter blue-white sky clouds beyond the wall',
+}
 RAW = os.path.join(H, 'objgen_raw')
 CUTOUT = os.path.expanduser('~/.claude/skills/cutout/cutout.py')
 SEG = ("This is one section cut out of a long continuous row of the same thing: both left and right ends are cut straight off "
@@ -45,11 +55,25 @@ TYPES = {
     'greywall': (10, 4, 1, 'a grey office corridor wall with a small recessed ceiling light glow at the top and a dark skirting at the bottom', True, 'green'),
     'elevator': (12, 5, 2, 'an elevator lobby wall with two silver stainless steel elevator doors, call buttons between them, a small floor indicator above each door (no readable text), beige stone wall panels', False, 'green'),
     'firedoor': (2, 4, 1, 'a dark grey steel fire exit door frame with the door open into darkness (the doorway is empty so the background shows through), a glowing green running-man exit sign above it (no text)', False, 'magenta'),
+    # 二十樓（m-server）
+    'crac': (3, 4, 1, 'a white precision air conditioning unit for a server room standing against the wall, front grille vents, a small status display glowing cyan', False, 'green'),
+    'rack': (8, 5, 1, 'a long row of tall black server racks side by side, mesh front doors, rows of tiny blinking green and cyan status lights, cable bundles', True, 'magenta'),
+    'terminal': (3, 3, 1, 'a plain steel desk with one black computer monitor showing only a single green text cursor, a keyboard, and a sleek black VR helmet resting beside it', False, 'magenta'),
+    # 雲端長城（m-cloud）
+    'mound1': (6, 4, 2, 'a small hill made of thousands of dim grey glowing dots piled up (each dot is a captured message), soft and loose like sand, faint grey glow', False, 'magenta'),
+    'mound2': (7, 4, 2, 'a hill made of thousands of dim grey glowing dots piled up (each dot is a captured message), soft and loose like sand, faint grey glow', False, 'magenta'),
+    'mound3': (7, 5, 2, 'the biggest hill made of thousands of dim grey glowing dots piled up (captured messages), and halfway up one single dot glowing faintly white and flickering', False, 'magenta'),
+    'cloudpillar': (2, 5, 1, 'a pillar made of condensed grey-blue cloud with streams of cyan data light flowing up inside it', False, 'magenta'),
 }
 
 
 def type_of(o):
     n, k = o['name'], o['kind']
+    if n.startswith('空調'): return 'crac'
+    if n.startswith('機櫃'): return 'rack'
+    if n == '終端機': return 'terminal'
+    if n.startswith('光點山'): return 'mound' + str('一二三'.index(n[-1]) + 1)
+    if n.startswith('雲柱'): return 'cloudpillar'
     if n.startswith('北窗'): return 'window'
     if n == '主任室北牆': return 'bosswall'
     if n.startswith('主任室西牆'): return 'glasscol'
@@ -71,15 +95,15 @@ def crop_ref(a, d, o):
     im = Image.open(anchor(a)).convert('RGB'); W, Hh = d['map']['w'], d['map']['h']; sx, sy = im.width / W, im.height / Hh
     fx, fy, fw, fh = o['frame']; m = 2
     box = (max(0, (fx - m) * sx), max(0, (fy - m) * sy), min(im.width, (fx + fw + m) * sx), min(im.height, (fy + fh + m) * sy))
-    os.makedirs(RAW, exist_ok=True); out = os.path.join(RAW, f'ref-{a}-{type_of(o)}.png')
+    os.makedirs(RAW, exist_ok=True); out = os.path.join(RAW, f"ref-{a}-{o['name']}.png")   # 用物件名（整排的牆沒有種類）
     im.crop(tuple(map(int, box))).save(out); return out
 
 
-def prompt(t):
+def prompt(t, a='office'):
     w, h, dd, desc, seg, key = TYPES[t]
     bg = '#00FF00 pure green' if key == 'green' else '#FF00FF pure magenta'
     p = (f"Game map object sprite, one single object only. Match the art style of image 1 exactly: image 1 is a crop of the same pixel-art game map "
-         f"(16-bit style pixel art, crisp pixels, cyberpunk night office with cyan and magenta accents), the same 3/4 top-down camera from the south "
+         f"(16-bit style pixel art, crisp pixels, {LOOK[a]}), the same 3/4 top-down camera from the south "
          f"(about 50 degrees, showing the top and the south-facing front), the same lighting from the top left. Redraw the object cleanly and completely as a standalone sprite.\n"
          f"Draw: {desc}.\n"
          f"Proportions: the object's bounding box is {w} cells wide and {h} cells tall (width:height = {w}:{h}); the bottom {dd} cells are its footprint on the floor, "
@@ -95,15 +119,28 @@ def raw_path(a, t): return os.path.join(RAW, f'obj-{a}-{t}.png')
 
 def gen(a, only=(), redo=False):
     d = layout.load(a); jobs = {}
+    skip = {n for v in LINES_BY[a].values() for n in v['objs']}
     for o in layout.objects(d):
+        if o['name'] in skip or any(o['name'].startswith(v['prefix']) for v in COLS_BY[a].values()): continue   # 整排的牆另外產（lines_gen）
         t = type_of(o)
         if (only and t not in only) or t in jobs or (not redo and os.path.exists(raw_path(a, t))): continue
         jobs[t] = crop_ref(a, d, o)
     def run(t):
-        try: codex11.gen(prompt(t), raw_path(a, t), [jobs[t]], size='1024x1536' if TYPES[t][1] > TYPES[t][0] else '1536x1024'); print(t, 'ok', flush=True)
+        try: codex11.gen(prompt(t, a), raw_path(a, t), [jobs[t]], size='1024x1536' if TYPES[t][1] > TYPES[t][0] else '1536x1024'); print(t, 'ok', flush=True)
         except Exception as e: print(t, 'FAIL', e, flush=True)
     print(len(jobs), '張')
     with ThreadPoolExecutor(4) as ex: list(ex.map(run, jobs))
+
+
+def style(a):
+    """整張地圖的畫風定錨：色塊構圖（art/compose.py）＋十九樓的定錨當畫風 → art/style/<a>_style_v1.png；之後物件與地面都裁這張當參考"""
+    subprocess.run([sys.executable, os.path.join(H, 'compose.py'), a], check=True, capture_output=True)
+    d = layout.load(a); objs = '; '.join(f"{o['name']}: {o.get('desc', '')}" for o in d['objects'])
+    p = (f"A complete top-down pixel-art game map. Follow EXACTLY the layout of image 1: each flat colour block is one thing, the darker block is its footprint on the floor and "
+         f"the lighter block above it is the part rising up (seen from the south at about 50 degrees, so tall things show their south-facing front). "
+         f"Match the art style of image 2 exactly (the same game, 16-bit pixel art, crisp pixels, the same camera angle and lighting). This map: {LOOK[a]}. "
+         f"Floor: {FLOOR[a]}. Things on the map: {objs}. No people, no text, no letters, no UI.")
+    out = anchor(a); codex11.gen(p, out, [os.path.join(G, f'art/check/compose-{a}.png'), anchor('office')], size='1536x1024'); print('style ok', out)
 
 
 def ground(a):
@@ -115,7 +152,7 @@ def ground(a):
     os.makedirs(RAW, exist_ok=True); lay = os.path.join(RAW, f'ground-layout-{a}.png'); im.save(lay)
     desc = '; '.join(f"{g['name']}: {g.get('desc', '')}" for g in d['ground'] if g['kind'] != 'border')
     p = ("Top-down pixel-art game map floor texture only, following exactly the color-region layout of image 1 (each flat color is one floor material). "
-         "Match the art style, palette and lighting of image 2 exactly (16-bit pixel art, night office, half of the ceiling lights on so the floor has alternating lit and dark bands, cool cyan accents). "
+         f"Match the art style, palette and lighting of image 2 exactly (16-bit pixel art, {FLOOR[a]}). "
          f"Floor materials: {desc}. The dark outer frame is the building's outer wall top, draw it as a dark wall edge. "
          "Draw ONLY the floor surfaces: no furniture, no walls rising up, no desks, no doors, no people, no objects at all. No text.")
     out = os.path.join(RAW, f'ground-{a}.png')
@@ -153,7 +190,7 @@ def cut(a):
     for f in glob.glob(os.path.join(od, '*.png')): os.remove(f)
     cache, alt = {}, {}
     for o in layout.objects(d):
-        if o['name'] in LINE_OBJS or any(o['name'].startswith(v['prefix']) for v in COLS.values()): continue   # 整排的牆另外切（lines_cut）
+        if o['name'] in {n for v in LINES_BY[a].values() for n in v['objs']} or any(o['name'].startswith(v['prefix']) for v in COLS_BY[a].values()): continue   # 整排的牆另外切（lines_cut）
         t = type_of(o); fx, fy, fw, fh = o['frame']; tw, th, *_ = TYPES[t]
         if not TYPES[t][4] and (fw, fh) != (tw, th): raise SystemExit(f"{o['name']} 圖框 {fw}×{fh} 跟種類 {t} 的 {tw}×{th} 不一致")
         if t not in cache:
@@ -162,7 +199,7 @@ def cut(a):
         fig = cache[t]; alt[t] = alt.get(t, 0) + 1
         if TYPES[t][4]: fig = seg_slice(fig, fw, fh, alt[t] - 1)
         fit(fig, fw, fh, fill_w=TYPES[t][4]).save(os.path.join(od, f"{o['name']}.png"))
-    if all(os.path.exists(os.path.join(RAW, f'line-{a}-{k}.png')) for k in list(LINES) + list(COLS)): lines_cut(a)
+    if all(os.path.exists(os.path.join(RAW, f'line-{a}-{k}.png')) for k in list(LINES_BY[a]) + list(COLS_BY[a])): lines_cut(a)
     print(od, len(layout.objects(d)), '個物件')
 
 
@@ -189,12 +226,28 @@ COLS = {   # 直的牆：整條一張，一格一格切（最下面那格帶著�
     'glasscol': dict(prefix='主任室西牆', desc='a frosted pale-blue glass office partition with slim aluminium frames'),
     'whitecol': dict(prefix='茶水間東牆', desc='a white interior office partition wall with a thin grey skirting'),
 }
-LINE_OBJS = {n for v in LINES.values() for n in v['objs']}
+LINES_OFFICE, COLS_OFFICE = LINES, COLS
+LINES_BY = {
+    'office': LINES_OFFICE,
+    'server': {
+        'north': dict(objs=['北牆西', '北牆中', '北牆東'], center=16, ref='北牆中',
+                      desc='a grey concrete server room wall with a metal cable tray running along the top and a row of small red warning lights, a dark skirting at the bottom; plain wall, nothing in the middle'),
+        'south': dict(objs=['南牆西', '鐵門', '南牆東'], center=5.5, ref='鐵門',
+                      desc='a low grey concrete wall (seen as a short wall near the camera); near the middle a heavy closed grey steel security door set into the same wall, a card reader with a red light beside it'),
+    },
+    'cloud': {
+        'wall': dict(objs=['長城一', '長城二', '長城三', '長城門', '長城四', '長城五', '長城六'], center=28, ref='長城門',
+                     desc='the Great Firewall: a colossal wall built from giant dark iron chain links lying stacked on top of each other, each link glowing dark-red neon along its edges, '
+                          'as tall as a building; in the middle a tall closed iron gate set into the chain wall with a large padlock symbol glowing on it'),
+    },
+}
+COLS_BY = {'office': COLS_OFFICE, 'server': {}, 'cloud': {}}
+LINE_OBJS = {n for L in LINES_BY.values() for v in L.values() for n in v['objs']}
 
 
-def line_prompt(desc, n_cells, up):
+def line_prompt(desc, n_cells, up, a='office'):
     return (f"Game map object sprite. Match the art style of image 1 exactly: image 1 is a crop of the same pixel-art game map "
-            f"(16-bit style pixel art, crisp pixels, cyberpunk night office with cyan and magenta accents), the same 3/4 top-down camera from the south "
+            f"(16-bit style pixel art, crisp pixels, {LOOK[a]}), the same 3/4 top-down camera from the south "
             f"(about 50 degrees, showing the top edge and the south-facing front), the same lighting from the top left.\n"
             f"Draw one long straight horizontal wall: {desc}.\n"
             f"The wall runs across the WHOLE width of the image and is cut off straight at the left and right image edges (more of the same wall continues beyond): "
@@ -203,8 +256,8 @@ def line_prompt(desc, n_cells, up):
             f"Draw only the wall: no floor, no cast shadow on the floor, no people. Clean edges.\n")
 
 
-def col_prompt(desc, n, up):
-    return (f"Game map object sprite. Match the art style of image 1 exactly (16-bit style pixel art, crisp pixels, cyberpunk night office), "
+def col_prompt(desc, n, up, a='office'):
+    return (f"Game map object sprite. Match the art style of image 1 exactly (16-bit style pixel art, crisp pixels, {LOOK[a]}), "
             f"the same 3/4 top-down camera from the south (about 50 degrees).\n"
             f"Draw {desc}, running straight north-south, away from the viewer, so on screen it is one long narrow vertical strip: "
             f"its long thin top edge runs from the very top of the image downward, and at the bottom end you see the wall's south-facing end face. "
@@ -224,17 +277,17 @@ def lines_gen(a, only=()):
         try: codex11.gen(p, os.path.join(RAW, f'line-{a}-{name}.png'), refs, size=size); print(name, 'ok', flush=True)
         except Exception as e: print(name, 'FAIL', e, flush=True)
     first, later = [], []
-    for k, v in LINES.items():
+    for k, v in LINES_BY[a].items():
         if only and k not in only: continue
         o = obs[v['ref']]; up = o['up']; n = sum(obs[x]['foot'][2] for x in v['objs'])
         refs = [crop_ref(a, d, o)]
         if v.get('base'): refs.append(os.path.join(RAW, f"line-{a}-{v['base']}.png"))
-        job = (k, line_prompt(v['desc'], min(n, 12), up) + screen(v.get('key', 'green')), refs, '1536x1024')
+        job = (k, line_prompt(v['desc'], min(n, 12), up, a) + screen(v.get('key', 'green')), refs, '1536x1024')
         (later if v.get('base') else first).append(job)
-    for k, v in COLS.items():
+    for k, v in COLS_BY[a].items():
         if only and k not in only: continue
         cs = [o for o in layout.objects(d) if o['name'].startswith(v['prefix'])]
-        first.append((k, col_prompt(v['desc'], len(cs), cs[0]['up']) + screen('green'), [crop_ref(a, d, cs[0])], '1024x1536'))
+        first.append((k, col_prompt(v['desc'], len(cs), cs[0]['up'], a) + screen('green'), [crop_ref(a, d, cs[0])], '1024x1536'))
     with ThreadPoolExecutor(4) as ex: list(ex.map(run, first))
     with ThreadPoolExecutor(4) as ex: list(ex.map(run, later))   # 要拿 south 那張當牆的參考
 
@@ -248,7 +301,7 @@ def premul_resize(im, size):
 
 def line_strip(a, d, k, MW):
     """一排牆 → 整張地圖寬的長條（下緣＝牆腳那一列的下緣）"""
-    v = LINES[k]; obs = {o['name']: o for o in layout.objects(d)}; rows = obs[v['objs'][0]]['frame'][3]
+    v = LINES_BY[a][k]; obs = {o['name']: o for o in layout.objects(d)}; rows = obs[v['objs'][0]]['frame'][3]
     fig = key_out(os.path.join(RAW, f'line-{a}-{k}.png'), v.get('key', 'green'))
     al = np.asarray(fig)[..., 3] > 128; wall_px = al[:, :max(2, fig.width // 20)].any(1).sum()   # 最左一小條（只有牆）的高度
     s = rows * PX / wall_px; im = premul_resize(fig, (round(fig.width * s), round(fig.height * s)))
@@ -283,7 +336,7 @@ def bottom_pad(im, h):
 def lines_cut(a):
     d = layout.load(a); obs = {o['name']: o for o in layout.objects(d)}; od = os.path.join(G, f'assets/objects/{a}'); MW = d['map']['w'] * PX
     strips = {}
-    for k, v in LINES.items():
+    for k, v in LINES_BY[a].items():
         st = line_strip(a, d, k, MW)
         if v.get('base'):
             base = strips[v['base']]; h = max(base.height, st.height); base, st = bottom_pad(base, h), bottom_pad(st, h)
@@ -292,16 +345,16 @@ def lines_cut(a):
             w = np.clip((np.arange(MW) - b0) / (b1 - b0), 0, 1)[None, :, None]    # 0＝base、1＝這排
             st = Image.fromarray((B * (1 - w) + S * w).round().astype(np.uint8), 'RGBA'); strips[v['base']] = st
         strips[k] = st
-    for k, v in LINES.items():
+    for k, v in LINES_BY[a].items():
         st = strips[k]
         for n in v['objs']:
             fx, fy, fw, fh = obs[n]['frame']
             bottom_pad(st.crop((fx * PX, 0, (fx + fw) * PX, st.height)), fh * PX).save(os.path.join(od, f'{n}.png'))
-    for k, v in COLS.items():
+    for k, v in COLS_BY[a].items():
         cs = sorted([o for o in layout.objects(d) if o['name'].startswith(v['prefix'])], key=lambda o: o['foot'][1]); up = cs[0]['up']
         fig = key_out(os.path.join(RAW, f'line-{a}-{k}.png'), 'green'); fig = premul_resize(fig, (PX, (len(cs) + up) * PX))
         for i, o in enumerate(cs): fig.crop((0, i * PX, PX, (i + up + 1) * PX)).save(os.path.join(od, f"{o['name']}.png"))
-    print('整排的牆切好', list(LINES), list(COLS))
+    print('整排的牆切好', list(LINES_BY[a]), list(COLS_BY[a]))
 
 
 def ground_patch(a):
@@ -324,4 +377,9 @@ if __name__ == '__main__':
     cmd, a, *rest = sys.argv[1:]
     if cmd == 'gen': gen(a, [r for r in rest if not r.startswith('--')], '--redo' in rest)
     elif cmd == 'lines': lines_gen(a, rest)
+    elif cmd == 'all':   # 定錨 → 地面、物件、整排的牆 → 去背切段
+        if not os.path.exists(anchor(a)): style(a)
+        from concurrent.futures import ThreadPoolExecutor as T
+        with T(3) as ex: list(ex.map(lambda f: f(), [lambda: ground(a), lambda: gen(a), lambda: lines_gen(a)]))
+        cut(a)
     else: globals()[cmd](a)

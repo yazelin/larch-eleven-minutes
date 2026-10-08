@@ -30,11 +30,11 @@ def events(walk):
                                move(back, face='up'), setv('phase', 'cut')],
                               actor='npc', sprite=walk('zhou'), solid=True, direction='up', trigger='condition')]))
     # 監控台：斷河城、抽查、看到江禾的訊息、審訊室（一）；之後拿泡麵碗
-    ev_.append(ev('monitor', 7, 9, name='監控台',
+    ev_.append(ev('monitor', 7, 9, name='監控台', marker={'label': '監控台', 'kind': 'quest'},
                   pages=[page('mon-cut', [P('cut')], [say(t) for t in one[9:14]] + [card('ci1'), setv('phase', 'sneak')]),
                          page('mon-bowl', [P('sneak')], [say(two[0]), say(two[1]), item('bowl', '泡麵碗'), setv('phase', 'bowl')])]))
     # 茶水間流理台：倒掉泡麵
-    sink = ev('sink', 5, 26, name='流理台',
+    sink = ev('sink', 5, 26, name='流理台', marker={'label': '流理台', 'kind': 'quest'},
               pages=[page('sink-bowl', [P('bowl'), has('bowl')], [say(two[2]), remove('bowl', '泡麵碗'), setv('phase', 'alibi')])])
     ev_ += spread(sink, [(5, 26), (3, 26), (4, 26), (6, 26)])   # 流理台南面（貼北牆，從前面用）
     # 主任辦公室門口：還沒繞過茶水間就被警衛叫住，退回兩步
@@ -43,7 +43,7 @@ def events(walk):
               actions=[say(t, 'event:guard') for t in new('警衛擋人')] + [move([('down', 2)], who='player')])
     ev_ += spread(stop, [(38, 14), (39, 14)])
     # 抽屜：管理員卡
-    ev_.append(ev('drawer', 41, 8, name='抽屜',
+    ev_.append(ev('drawer', 41, 8, name='抽屜', marker={'label': '抽屜', 'kind': 'quest'},
                   pages=[page('drawer-card', [P('alibi')], [say(two[3]), say(two[4]), item('admincard', '管理員卡'), setv('phase', 'card')])]))
     # 樓梯門：拿到卡以後往二十樓核心機房
     stairs = ev('stairs', 40, 31, trigger='touch', marker={'label': '樓梯', 'kind': 'exit'},

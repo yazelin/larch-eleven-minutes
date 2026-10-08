@@ -41,12 +41,13 @@ def map_dict(name, width, height, picture, walls, events, guidance=None, environ
     return m
 
 
-def map_node(id, title, m, var_names, pos=(0, 0)):
+def map_node(id, title, m, var_names, pos=(0, 0), bgm=''):
     data = {'type': 'plugin', 'title': title, 'text': '', 'pluginId': 'larch-rpg-system', 'pluginCardId': 'map',
             'pluginVersion': '0.4.0', 'pluginName': 'RPG 系統', 'pluginCardName': 'RPG 地圖', 'pluginIcon': 'map',
             'pluginColor': '#4a7358', 'pluginPresentation': 'fullscreen', 'pluginFrame': {'showTitle': False, 'showButton': False},
             'pluginSkippable': False, 'pluginReadVars': var_names, 'pluginWriteVars': var_names, 'pluginAssets': [], 'platforms': ['web'],
             'pluginValues': {'map': json.dumps(m, ensure_ascii=False)}, 'start': True}
+    if bgm: data.update(bgm=bgm, bgmVolume=0.35, bgmLoop=True)
     return {'id': id, 'type': 'story', 'position': {'x': pos[0], 'y': pos[1]}, 'data': data}
 
 

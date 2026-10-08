@@ -4,7 +4,7 @@ Larch 第三屆創作者挑戰《自由與限制》第二部投稿（第一部�
 
 - 原文：`canon/原文.md`（遊戲裡的句子一律從這裡讀）；新寫句子：`canon/新寫.md`（`##` 標題是程式取用的鍵）；介紹文：`canon/介紹文.md`
 - 規格：`docs/specs/2026-10-08-design.md`
-- Larch 專案：`project-fc97ad09-681c-47f9-80b9-e12753877b9c`（還沒推內容，先在本機 larch-preview 驗）
+- Larch 專案：`project-fc97ad09-681c-47f9-80b9-e12753877b9c`（`python3 src/push.py "改了什麼"` 推上去；推之前把 Larch 編輯器分頁關掉，發佈由作者在網頁按）
 
 ## 結構
 
@@ -25,6 +25,9 @@ Larch 第三屆創作者挑戰《自由與限制》第二部投稿（第一部�
 | `art/battle_gen.py` | 戰鬥圖：照定錨在綠幕重產再去背 → `assets/battle/` |
 | `src/ui/interface.json` | 介面：作者在 Larch 套用的官方「霓虹訊號」（2026-10-09 讀回）；要改哪個部位就放 `src/ui/<部位>.css`／`.html` 蓋過去 |
 | `art/scene_gen.py` | 場面圖：標題封面（`assets/cover/title.webp`）、審訊室與三個結局的背景（`assets/scenes/`）；每張寫明在場角色、在場的人一定帶定錨 |
+| `art/music.py` | 配樂：.11 gemini-web 作曲 → 60 秒循環、-16 LUFS（`assets/bgm/`）；標題、十九樓、二十樓、雲端、王戰、結局 |
+| `art/thumb.py` | 市集縮圖（封面＋霓虹片名字） |
+| `src/push.py` | 推上 Larch：快照 → 上傳圖與音樂 → 換網址 → 整包寫入 → 讀回比對（介面、介紹文以網頁上的為準） |
 | `docs/過關SOP.md` | 每一關的九步過關流程與進度表 |
 
 ## 指令

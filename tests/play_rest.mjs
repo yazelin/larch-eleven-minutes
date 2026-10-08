@@ -21,7 +21,10 @@ async function until(re, ms = 90000) {
 }
 async function note(t, ms = 60000) {   // 對話一路按掉，直到任務提示 t 可以點
   const end = Date.now() + ms;
-  while (Date.now() < end) { if (await visible(t)) return; await ui.advance(); await sleep(600); }
+  while (Date.now() < end) {   // 隔 1.5 秒連續兩次看得到才算（地圖載入慢時，開場對話會在任務提示出現之後才跳出來）
+    if (await visible(t)) { await sleep(1500); if (await visible(t) && !/繼續探索/.test(await text())) return; }
+    await ui.advance(); await sleep(600);
+  }
   throw new Error('等不到任務提示「' + t + '」');
 }
 async function btn(t) {   // 點畫面上文字含 t 的可見按鈕

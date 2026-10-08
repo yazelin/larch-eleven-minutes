@@ -37,7 +37,7 @@ for n in p['nodes']:
             for c in pg.get('conditions', []):
                 if c.get('op', 'eq') not in OPS: errs.append(f"{e['id']} 條件運算子 {c['op']}")
             if len(pg.get('conditions', [])) > 16: errs.append(f"{e['id']} 條件超過 16")
-        if not e.get('free') and e['trigger'] not in ('auto', 'condition') and (e['x'], e['y']) in wl and e['id'] not in ON_OBJECT: errs.append(f"{e['id']} 在牆上 {(e['x'], e['y'])}")
+        if not e.get('free') and not e['id'].startswith('label-') and e['trigger'] not in ('auto', 'condition') and (e['x'], e['y']) in wl and e['id'] not in ON_OBJECT: errs.append(f"{e['id']} 在牆上 {(e['x'], e['y'])}")
     if len(aids) != len(set(aids)): errs.append(f'{n["id"]} 動作 id 重複')
     nodes = {x['id'] for x in p['nodes']}
     for a_ in aids_kinds:

@@ -26,6 +26,11 @@ def img(k):
 BG = '/files/assets/battle/bg.jpg'
 
 
+def music(k):
+    import pathlib
+    return f'/files/assets/bgm/{k}.mp3' if (pathlib.Path(__file__).resolve().parent.parent / f'assets/bgm/{k}.mp3').exists() else ''
+
+
 def nodes():
     f = section('四　23:35')
     say = lambda t: {'speaker': '', 'text': t}
@@ -37,21 +42,21 @@ def nodes():
             E('doubao', '豆包', 34, 8, 1, sp('strike', '十五秒', power=2), image=img('doubao'), scale=0.7, pos=(37, 72)),
             E('kimi', 'Kimi', 46, 6, 3, sp('guard', '已讀'), image=img('kimi'), scale=0.7, pos=(61, 64)),
             E('wenxin', '文心一言', 40, 7, 2, {'kind': 'heal', 'name': '水情穩定', 'below': 50, 'amount': 18, 'times': 1}, image=img('wenxin'), scale=0.7, pos=(85, 72))],
-            (800, 800), skills=SKILLS, mp=40, attack=18, bg=BG),
+            (800, 800), skills=SKILLS, mp=40, attack=18, bg=BG, bgm=music('boss')),
         cards.battle('b-w2', '第二班', [
             E('glm', '智譜清言', 46, 8, 2, sp('guard', '清言'), image=img('glm'), scale=0.7, pos=(13, 64)),
             E('yuanbao', '騰訊元寶', 42, 8, 2, sp('double', '群組伸手'), image=img('yuanbao'), scale=0.7, pos=(37, 72)),
             E('hailuo', '海螺', 38, 7, 2, {'kind': 'heal', 'name': '平靜播報', 'below': 50, 'amount': 20, 'times': 1}, image=img('hailuo'), scale=0.7, pos=(61, 64)),
             E('xinghuo', '訊飛星火', 40, 9, 1, sp('strike', '聽寫', power=2), image=img('xinghuo'), scale=0.7, pos=(85, 72))],
-            (800, 900), skills=SKILLS, attack=18, mp=40, bg=BG),
+            (800, 900), skills=SKILLS, attack=18, mp=40, bg=BG, bgm=music('boss')),
         cards.battle('b-whale', '大肥魚', [
             E('dafeiyu', '大肥魚', 170, 9, 4, sp('strike', '權限不足', power=2), sp('guard', '內容不當', every=4), sp('double', '未經授權', every=5),
               image=img('dafeiyu'), scale=0.55, pos=(48, 70))],
-            (800, 1000), skills=SKILLS, attack=20, mp=40, bg=BG,
+            (800, 1000), skills=SKILLS, attack=20, mp=40, bg=BG, bgm=music('boss'),
             triggers=[{'id': 'w-start', 'when': 'start', 'lines': [say(f[17])]},
                       {'id': 'w-he', 'when': 'enemyHp', 'percent': 45, 'enemy': 'dafeiyu', 'lines': [say(f[18]), say(f[19])]}]),
         cards.battle('b-prism', 'PRISM', [
             E('prism', 'PRISM', 160, 10, 4, sp('strike', '為了安全', power=2), sp('drain', '為了真相', every=4), sp('double', '為了你好', every=5),
               image=img('prism'), scale=0.55, pos=(48, 66))],
-            (800, 1100), skills=SKILLS, attack=20, mp=40, bg=BG),
+            (800, 1100), skills=SKILLS, attack=20, mp=40, bg=BG, bgm=music('boss')),
     ]

@@ -11,3 +11,5 @@ __pycache__/
 art/battle_gen.log
 art/check/*.log
 art/scene_raw/
+art/music_raw/
+snapshots/
