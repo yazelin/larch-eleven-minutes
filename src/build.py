@@ -114,9 +114,10 @@ def build():
     N(cards.dialogue('credits', '片尾', new('片尾'), (2400, 200), bg='/files/assets/cover/title.webp' if (ROOT / 'assets/cover/title.webp').exists() else ''))
     for n in battles.nodes(): N(n)
     # CG 解鎖（10-09 作者問什麼時候解鎖）：看到序章解鎖審訊室，進哪個結局解鎖那張
-    for nid, f in (('c0', 'scenes/interrogation.webp'), ('e1', 'scenes/e1.webp'), ('e2', 'scenes/e2.webp'), ('e3', 'scenes/e3.webp')):
-        if (ROOT / f'assets/{f}').exists():
-            next(n for n in board['nodes'] if n['id'] == nid)['data']['cgOps'] = [{'id': f'cg-{nid}', 'mode': 'unlock', 'url': f'/files/assets/{f}'}]
+    # 審訊室掛在開場卡上實測不會解鎖（開始卡不跑 cgOps）→ 改成每個結局一起解鎖審訊室與那個結局
+    for nid in ('e1', 'e2', 'e3'):
+        fs = ['scenes/interrogation.webp', f'scenes/{nid}.webp']
+        next(n for n in board['nodes'] if n['id'] == nid)['data']['cgOps'] = [{'id': f'cg-{nid}-{i}', 'mode': 'unlock', 'url': f'/files/assets/{f}'} for i, f in enumerate(fs) if (ROOT / f'assets/{f}').exists()]
     cards.link(board, 'c0', 'm-office'); cards.link(board, plugin.NODE, 'm-cloud')
     layout_board(board)
     test_start(p)
