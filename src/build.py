@@ -118,8 +118,28 @@ def build():
         if (ROOT / f'assets/{f}').exists():
             next(n for n in board['nodes'] if n['id'] == nid)['data']['cgOps'] = [{'id': f'cg-{nid}', 'mode': 'unlock', 'url': f'/files/assets/{f}'}]
     cards.link(board, 'c0', 'm-office'); cards.link(board, plugin.NODE, 'm-cloud')
+    layout_board(board)
     test_start(p)
     return p
+
+
+# 白板排版（10-09 作者：好好排版）：上面一排是玩家走的主線（左到右），
+# 主線底下是演在那張地圖上的卡（審訊室一、二），王戰的戰鬥卡排在雲端長城底下，結局三張直排、片尾在最右。
+X, Y = 460, 300
+BOARD_POS = {
+    'c0': (0, 0), 'm-office': (1, 0), 'm-server': (2, 0), 'c-term': (3, 0), 'm-cloud': (4, 0),
+    'e1': (5.4, -1), 'e2': (5.4, 0), 'e3': (5.4, 1), 'credits': (6.6, 0),
+    'ci1': (1, 1.2), 'ci2': (4.6, 1.2),
+    'b-censor': (3, 2.4), 'b-hound': (3, 3.4), 'b-w1': (4, 2.4), 'b-w2': (4, 3.4), 'b-whale': (5, 2.4), 'b-prism': (5, 3.4),
+}
+
+
+def layout_board(board):
+    for n in board['nodes']:
+        if n['id'] in BOARD_POS:
+            gx, gy = BOARD_POS[n['id']]; n['position'] = {'x': round(gx * X), 'y': round(gy * Y)}
+    missing = [n['id'] for n in board['nodes'] if n['id'] not in BOARD_POS]
+    assert not missing, f'白板排版沒寫到：{missing}'
 
 
 def test_start(p):
