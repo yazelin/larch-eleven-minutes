@@ -34,9 +34,9 @@ def events(walk):
                   pages=[page('mon-cut', [P('cut')], [say(t) for t in one[9:14]] + [card('ci1'), setv('phase', 'sneak')]),
                          page('mon-bowl', [P('sneak')], [say(two[0]), say(two[1]), item('bowl', '泡麵碗'), setv('phase', 'bowl')])]))
     # 茶水間流理台：倒掉泡麵
-    sink = ev('sink', 5, 29, name='流理台',
+    sink = ev('sink', 5, 26, name='流理台',
               pages=[page('sink-bowl', [P('bowl'), has('bowl')], [say(two[2]), remove('bowl', '泡麵碗'), setv('phase', 'alibi')])])
-    ev_ += spread(sink, [(5, 29), (4, 29), (6, 29), (7, 29)])
+    ev_ += spread(sink, [(5, 26), (3, 26), (4, 26), (6, 26)])   # 流理台南面（貼北牆，從前面用）
     # 主任辦公室門口：還沒繞過茶水間就被警衛叫住，退回兩步
     stop = ev('guardstop', 38, 14, trigger='touch',
               conditions=[cond('phase', 'alibi', 'neq'), cond('phase', 'card', 'neq')],

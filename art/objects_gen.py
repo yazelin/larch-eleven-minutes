@@ -5,6 +5,7 @@
 - 地面：art/compose.py 的地面色塊當構圖，定錨圖當畫風，生成後縮放到 W×H 格 × 48px。
 用法：python3 art/objects_gen.py gen office [種類…] [--redo]
       python3 art/objects_gen.py ground office
+      python3 art/objects_gen.py lines office [tea boss south fire glasscol whitecol]   → 整排的牆（產原圖）
       python3 art/objects_gen.py cut office      → assets/objects/office/<物件名>.png
       python3 art/objects_gen.py sheet office    → art/check/objgen-office.jpg"""
 import glob, os, subprocess, sys
@@ -152,6 +153,7 @@ def cut(a):
     for f in glob.glob(os.path.join(od, '*.png')): os.remove(f)
     cache, alt = {}, {}
     for o in layout.objects(d):
+        if o['name'] in LINE_OBJS or any(o['name'].startswith(v['prefix']) for v in COLS.values()): continue   # 整排的牆另外切（lines_cut）
         t = type_of(o); fx, fy, fw, fh = o['frame']; tw, th, *_ = TYPES[t]
         if not TYPES[t][4] and (fw, fh) != (tw, th): raise SystemExit(f"{o['name']} 圖框 {fw}×{fh} 跟種類 {t} 的 {tw}×{th} 不一致")
         if t not in cache:
@@ -160,7 +162,153 @@ def cut(a):
         fig = cache[t]; alt[t] = alt.get(t, 0) + 1
         if TYPES[t][4]: fig = seg_slice(fig, fw, fh, alt[t] - 1)
         fit(fig, fw, fh, fill_w=TYPES[t][4]).save(os.path.join(od, f"{o['name']}.png"))
+    if all(os.path.exists(os.path.join(RAW, f'line-{a}-{k}.png')) for k in list(LINES) + list(COLS)): lines_cut(a)
     print(od, len(layout.objects(d)), '個物件')
+
+
+# ── 整排的牆（2026-10-09 作者：牆和門接不起來 → 照《續》嚴家 LINES）──
+# 同一排的牆連門洞／電梯／門整排一張生成：牆延伸到畫面兩端不收邊，門在正中間；
+# 切的時候縮到牆高＝圖框高、門洞中心對上設計的門洞欄，外側五分之一的牆鏡射接長到整排，再照各段圖框切。
+# fire 那排的牆腳接在 south 那排上，接縫在 blend 那兩格交叉淡入。
+LINES = {
+    'tea': dict(objs=['茶水間牆西', '茶水間牆東'], gap=(8, 9), ref='茶水間牆西',
+                desc='a white interior office partition wall with a thin grey skirting at the bottom; in the middle an open doorway with no door '
+                     '(the doorway is empty and see-through, showing the background), slim white door jambs on both sides of the doorway'),
+    'boss': dict(objs=['主任室南牆西', '主任室門', '主任室南牆東'], gap=(38, 39), ref='主任室門',
+                 desc='a frosted pale-blue glass office partition wall with slim aluminium frames and a dark aluminium base rail; in the middle a glass door '
+                      'swung fully open and folded flat against the partition beside the doorway, so the doorway itself is empty and see-through (showing the background)'),
+    'south': dict(objs=['南牆茶水間', '南牆西', '電梯', '南牆中'], center=24, ref='電梯',
+                  desc='a grey office corridor wall with a dark skirting at the bottom; in the middle, set into the same wall and the same height as the wall, '
+                       'two silver stainless steel elevator doors with call buttons between them and a small floor indicator above each door (no readable text)'),
+    'fire': dict(objs=['樓梯門', '南牆東'], gap=(40, 41), ref='樓梯門', base='south', blend=(36, 38),
+                 desc='a grey office corridor wall with a dark skirting at the bottom (exactly the same wall as image 2); in the middle a dark grey steel fire exit door '
+                      'set into the wall, the door open into darkness so the doorway is empty and see-through (showing the background), a glowing green running-man '
+                      'exit sign above it (no text)', key='magenta'),
+}
+COLS = {   # 直的牆：整條一張，一格一格切（最下面那格帶著牆朝南的端面）
+    'glasscol': dict(prefix='主任室西牆', desc='a frosted pale-blue glass office partition with slim aluminium frames'),
+    'whitecol': dict(prefix='茶水間東牆', desc='a white interior office partition wall with a thin grey skirting'),
+}
+LINE_OBJS = {n for v in LINES.values() for n in v['objs']}
+
+
+def line_prompt(desc, n_cells, up):
+    return (f"Game map object sprite. Match the art style of image 1 exactly: image 1 is a crop of the same pixel-art game map "
+            f"(16-bit style pixel art, crisp pixels, cyberpunk night office with cyan and magenta accents), the same 3/4 top-down camera from the south "
+            f"(about 50 degrees, showing the top edge and the south-facing front), the same lighting from the top left.\n"
+            f"Draw one long straight horizontal wall: {desc}.\n"
+            f"The wall runs across the WHOLE width of the image and is cut off straight at the left and right image edges (more of the same wall continues beyond): "
+            f"no corners, no end caps, no end posts; the top edge and the skirting stay at exactly the same height from left to right. "
+            f"The wall is about {up + 1} cells tall where the image is about {n_cells} cells wide; place it in the lower part of the image. The feature is centered and left-right symmetric.\n"
+            f"Draw only the wall: no floor, no cast shadow on the floor, no people. Clean edges.\n")
+
+
+def col_prompt(desc, n, up):
+    return (f"Game map object sprite. Match the art style of image 1 exactly (16-bit style pixel art, crisp pixels, cyberpunk night office), "
+            f"the same 3/4 top-down camera from the south (about 50 degrees).\n"
+            f"Draw {desc}, running straight north-south, away from the viewer, so on screen it is one long narrow vertical strip: "
+            f"its long thin top edge runs from the very top of the image downward, and at the bottom end you see the wall's south-facing end face. "
+            f"The strip is about 1 cell wide and {n + up} cells tall (the end face at the bottom is about {up + 1} cells tall). Centered, nothing else.\n"
+            f"Draw only the wall: no floor, no shadow, no people. Clean edges.\n")
+
+
+def screen(key):
+    bg = '#00FF00 pure green' if key == 'green' else '#FF00FF pure magenta'
+    return f"Background: a completely flat opaque {bg} fill, no gradient, no shadow. No text, no letters, no watermark."
+
+
+def lines_gen(a, only=()):
+    d = layout.load(a); obs = {o['name']: o for o in layout.objects(d)}
+    def run(job):
+        name, p, refs, size = job
+        try: codex11.gen(p, os.path.join(RAW, f'line-{a}-{name}.png'), refs, size=size); print(name, 'ok', flush=True)
+        except Exception as e: print(name, 'FAIL', e, flush=True)
+    first, later = [], []
+    for k, v in LINES.items():
+        if only and k not in only: continue
+        o = obs[v['ref']]; up = o['up']; n = sum(obs[x]['foot'][2] for x in v['objs'])
+        refs = [crop_ref(a, d, o)]
+        if v.get('base'): refs.append(os.path.join(RAW, f"line-{a}-{v['base']}.png"))
+        job = (k, line_prompt(v['desc'], min(n, 12), up) + screen(v.get('key', 'green')), refs, '1536x1024')
+        (later if v.get('base') else first).append(job)
+    for k, v in COLS.items():
+        if only and k not in only: continue
+        cs = [o for o in layout.objects(d) if o['name'].startswith(v['prefix'])]
+        first.append((k, col_prompt(v['desc'], len(cs), cs[0]['up']) + screen('green'), [crop_ref(a, d, cs[0])], '1024x1536'))
+    with ThreadPoolExecutor(4) as ex: list(ex.map(run, first))
+    with ThreadPoolExecutor(4) as ex: list(ex.map(run, later))   # 要拿 south 那張當牆的參考
+
+
+def premul_resize(im, size):
+    a = np.asarray(im.convert('RGBA'), np.float32); al = a[..., 3:4] / 255.0
+    r = np.asarray(Image.fromarray(np.concatenate([a[..., :3] * al, a[..., 3:4]], -1).round().astype(np.uint8), 'RGBA').resize(size, Image.LANCZOS), np.float32)
+    al2 = np.clip(r[..., 3:4] / 255.0, 1e-4, 1)
+    return Image.fromarray(np.concatenate([np.clip(r[..., :3] / al2, 0, 255), r[..., 3:4]], -1).round().astype(np.uint8), 'RGBA')
+
+
+def line_strip(a, d, k, MW):
+    """一排牆 → 整張地圖寬的長條（下緣＝牆腳那一列的下緣）"""
+    v = LINES[k]; obs = {o['name']: o for o in layout.objects(d)}; rows = obs[v['objs'][0]]['frame'][3]
+    fig = key_out(os.path.join(RAW, f'line-{a}-{k}.png'), v.get('key', 'green'))
+    al = np.asarray(fig)[..., 3] > 128; wall_px = al[:, :max(2, fig.width // 20)].any(1).sum()   # 最左一小條（只有牆）的高度
+    s = rows * PX / wall_px; im = premul_resize(fig, (round(fig.width * s), round(fig.height * s)))
+    if 'gap' in v:
+        A = np.asarray(im)[..., 3] > 128; row = A[int(im.height - PX * 0.5)]; c = im.width // 2; l = r = c
+        while l > 0 and not row[l]: l -= 1
+        while r < im.width - 1 and not row[r]: r += 1
+        g0, g1 = v['gap']; sx = (g1 - g0 + 1) * PX / max(1, r - l)
+        print(k, '門洞寬', round((r - l) / PX, 2), '格 → 左右縮放', round(sx, 2))
+        if not .7 <= sx <= 1.3: raise SystemExit(f'{k} 門洞寬差太多（{round(sx, 2)}），重產')
+        im = premul_resize(im, (round(im.width * sx), im.height)); l, r = round(l * sx), round(r * sx)
+        x0 = round((g0 + g1 + 1) / 2 * PX - (l + r) / 2)
+    else:
+        x0 = round(v['center'] * PX - im.width / 2)
+    strip = Image.new('RGBA', (MW, im.height)); strip.alpha_composite(im, (x0, 0)) if x0 >= 0 else strip.alpha_composite(im.crop((-x0, 0, im.width, im.height)), (0, 0))
+    cw = im.width // 5; Lc, Rc = im.crop((0, 0, cw, im.height)), im.crop((im.width - cw, 0, im.width, im.height))
+    x, flip = x0, True
+    while x > 0:
+        t = Lc.transpose(Image.FLIP_LEFT_RIGHT) if flip else Lc; x -= cw
+        strip.alpha_composite(t, (x, 0)) if x >= 0 else strip.alpha_composite(t.crop((-x, 0, cw, im.height)), (0, 0)); flip = not flip
+    x, flip = x0 + im.width, True
+    while x < MW:
+        t = Rc.transpose(Image.FLIP_LEFT_RIGHT) if flip else Rc; strip.alpha_composite(t.crop((0, 0, min(cw, MW - x), im.height)), (x, 0)); x += cw; flip = not flip
+    return strip
+
+
+def bottom_pad(im, h):
+    if im.height >= h: return im.crop((0, im.height - h, im.width, im.height))
+    c = Image.new('RGBA', (im.width, h)); c.alpha_composite(im, (0, h - im.height)); return c
+
+
+def lines_cut(a):
+    d = layout.load(a); obs = {o['name']: o for o in layout.objects(d)}; od = os.path.join(G, f'assets/objects/{a}'); MW = d['map']['w'] * PX
+    strips = {}
+    for k, v in LINES.items():
+        st = line_strip(a, d, k, MW)
+        if v.get('base'):
+            base = strips[v['base']]; h = max(base.height, st.height); base, st = bottom_pad(base, h), bottom_pad(st, h)
+            b0, b1 = v['blend'][0] * PX, v['blend'][1] * PX
+            B, S = np.asarray(base, np.float32), np.asarray(st, np.float32)
+            w = np.clip((np.arange(MW) - b0) / (b1 - b0), 0, 1)[None, :, None]    # 0＝base、1＝這排
+            st = Image.fromarray((B * (1 - w) + S * w).round().astype(np.uint8), 'RGBA'); strips[v['base']] = st
+        strips[k] = st
+    for k, v in LINES.items():
+        st = strips[k]
+        for n in v['objs']:
+            fx, fy, fw, fh = obs[n]['frame']
+            bottom_pad(st.crop((fx * PX, 0, (fx + fw) * PX, st.height)), fh * PX).save(os.path.join(od, f'{n}.png'))
+    for k, v in COLS.items():
+        cs = sorted([o for o in layout.objects(d) if o['name'].startswith(v['prefix'])], key=lambda o: o['foot'][1]); up = cs[0]['up']
+        fig = key_out(os.path.join(RAW, f'line-{a}-{k}.png'), 'green'); fig = premul_resize(fig, (PX, (len(cs) + up) * PX))
+        for i, o in enumerate(cs): fig.crop((0, i * PX, PX, (i + up + 1) * PX)).save(os.path.join(od, f"{o['name']}.png"))
+    print('整排的牆切好', list(LINES), list(COLS))
+
+
+def ground_patch(a):
+    """地面底圖局部修補（不重產整張）：電梯 2026-10-09 改成嵌在牆裡，原本電梯前那塊石材地板露出一條 → 用往右 12 格（地毯花紋週期的整數倍）的地毯蓋掉"""
+    if a != 'office': return
+    p = os.path.join(G, 'assets/maps/office_ground.png'); im = Image.open(p).convert('RGB'); c = im.width // 48
+    im.paste(im.crop((30 * c, 27 * c, 42 * c, 30 * c)), (18 * c, 27 * c)); im.save(p); print('地面修補：電梯前地板 → 地毯')
 
 
 def sheet(a):
@@ -175,4 +323,5 @@ def sheet(a):
 if __name__ == '__main__':
     cmd, a, *rest = sys.argv[1:]
     if cmd == 'gen': gen(a, [r for r in rest if not r.startswith('--')], '--redo' in rest)
+    elif cmd == 'lines': lines_gen(a, rest)
     else: globals()[cmd](a)

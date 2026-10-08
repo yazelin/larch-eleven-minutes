@@ -19,7 +19,7 @@ Larch 第三屆創作者挑戰《自由與限制》第二部投稿（第一部�
 | `src/story.py` | 讀原文與新寫 |
 | `src/layout.py`、`art/objects_<地圖>.yaml` | 分層地圖設計檔（照《香布纏．續》：佔地、往上長、排序列） |
 | `art/blocks.py`、`art/compose.py` | 單色塊驗證圖、構圖圖 |
-| `art/objects_gen.py` | 物件與地面產圖、去背、擺放（走 .11 codex-image，`art/codex11.py`） |
+| `art/objects_gen.py` | 物件與地面產圖、去背、擺放（走 .11 codex-image，`art/codex11.py`）；同一排的牆連門整排一張生成再切段（`LINES`、`COLS`，照《續》嚴家） |
 | `art/walk.py` | 走路圖（沿用《續》的 walk.py） |
 | `art/anchor/` | 九個王戰角色定錨 |
 | `art/battle_gen.py` | 戰鬥圖：照定錨在綠幕重產再去背 → `assets/battle/` |

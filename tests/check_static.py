@@ -5,7 +5,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / 'src'))
 import build, story, layout
 DONE = list(story.ORIG)   # 原文全部章節都已接進遊戲
-ON_OBJECT = {'intro', 'monitor', 'drawer', 'sink', 'sink-1', 'sink-2', 'sink-3'}   # 刻意放在物件佔地上、從旁邊按的互動點
+ON_OBJECT = {'intro', 'monitor', 'drawer'}   # 刻意放在物件佔地上、從旁邊按的互動點
 OPS = {'eq', 'neq', 'gte', 'lte'}
 if os.environ.get('NEG'):   # 負控制：原文多一段沒接進遊戲的，必須被抓到
     k = next(h for h in story.ORIG if h.startswith('四'))   # 地圖逐段取用的章節（整節進卡片的章節會連假段落一起放進去）
