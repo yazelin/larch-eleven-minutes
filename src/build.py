@@ -40,7 +40,7 @@ def interface(p):
                          cgGalleryItems=[{'url': f'/files/assets/{f}', 'title': t, 'locked': lk} for f, t, lk in gallery if (ROOT / f'assets/{f}').exists()])
 
 
-TITLE_STATUS = 'GFW · 23:47'
+TITLE_STATUS = 'GFW · 23:49'
 TITLE_SUB = next(l for l in (ROOT / 'canon/介紹文.md').read_text(encoding='utf-8').splitlines() if l.strip() and not l.startswith('#')).strip()   # 介紹文第一句
 
 

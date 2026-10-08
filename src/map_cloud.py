@@ -1,4 +1,4 @@
-"""雲海裡的防火長城（m-cloud）：原文「四　23:35」「五　23:47」，最後接審訊室（二）與三個結局。
+"""雲海裡的防火長城（m-cloud）：原文「四　23:37」「五　23:49」，最後接審訊室（二）與三個結局。
 phase：cloud（進來；從十九樓帶來的 card 在這裡蓋掉）→ hunt（捧起江禾那一則，審查兵追來）→ gate（砍倒四個以上，門前亮起人影）
        → w2（第一班倒下）→ whale（第二班倒下）→ free（大肥魚的鎖開了）→ end（備援系統扣回來）。
 wall：'' 牆在／down 鎖鏈崩開（牆段圖片看這個變數消失）。
@@ -20,7 +20,7 @@ def cam():
 
 
 def stages():
-    f, v = section('四　23:35'), section('五　23:47')
+    f, v = section('四　23:37'), section('五　23:49')
     return {
         'gate': [cam(), say(f[7]), say(f[8]), heal(), fight('b-w1'), setv('phase', 'w2')],
         'w2': [say(f[9]), heal(), fight('b-w2'), setv('phase', 'whale')],
@@ -34,10 +34,10 @@ def stages():
 
 
 def events(walk):
-    f = section('四　23:35')
+    f = section('四　23:37')
     st = stages()
     # 10-09 修：從十九樓一路玩過來時 phase 是 card（拿到管理員卡），雲端的事件原本都寫 phase=='' → 全部不會啟動。進場就把進度設成 cloud
-    ev_ = [ev('intro', 20, 0, trigger='auto', once=True, actions=[setv('phase', 'cloud'), say('四　23:35　防火長城'), say(f[0]), say(f[1]), say(f[2])])]
+    ev_ = [ev('intro', 20, 0, trigger='auto', once=True, actions=[setv('phase', 'cloud'), say('四　23:37　防火長城'), say(f[0]), say(f[1]), say(f[2])])]
     # 第三座山：走到山腳那一排任何一格就捧起來（10-09 作者：走到那一則前沒有反應 → 原本要面對它按鍵）
     mound = ev('mound3', *PT['mound3'], name='第三座山', marker={'label': '江禾那一則', 'kind': 'quest'}, trigger='touch',
                pages=[page('mound-he', [P('cloud')], [say(f[3]), item('he', '江禾那一則'), say(f[4]), setv('phase', 'hunt')], trigger='touch')])

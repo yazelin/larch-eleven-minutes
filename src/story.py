@@ -1,5 +1,5 @@
 """讀 canon/原文.md 與 canon/新寫.md：遊戲裡的句子一律從這裡取，不在程式裡手打（照《起跑總在開始前》的規則）。
-原文：section('一　23:02') → 那一節的段落（引用區塊 > 開頭的連續幾行合成一段）。"""
+原文：section('一　23:04') → 那一節的段落（引用區塊 > 開頭的連續幾行合成一段）。"""
 import pathlib, re
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 USED = set()   # 用過的段落（check_static 用來比對原文是否全用上）

@@ -1,4 +1,4 @@
-"""自製插件 eleven-minutes：二十樓核心機房的終端機卡。句子從原文「三　23:31」讀。"""
+"""自製插件 eleven-minutes：二十樓核心機房的終端機卡。句子從原文「三　23:33」讀。"""
 import json, pathlib
 from story import section
 
@@ -10,7 +10,7 @@ HOPS = ['1  10.19.0.1', '2  10.20.0.1', '3  202.97.0.1', '4  GFW／主控  * * *
 
 
 def script():
-    s = section('三　23:31'); cmd = lambda t: t.strip('`')
+    s = section('三　23:33'); cmd = lambda t: t.strip('`')
     return {'intro': s[1], 'steps': [{'cmd': cmd(s[2]), 'out': s[3]}, {'cmd': cmd(s[4]), 'out': s[5], 'hops': HOPS},
                                      {'cmd': cmd(s[6]), 'out': s[7], 'bad': True}],
             'after': s[8], 'done': '戴上頭盔'}

@@ -111,7 +111,11 @@ def main(summary):
     project = dict(online)
     if len(online.get('boards', [])) > len(built['boards']):
         raise SystemExit(f"線上有 {len(online['boards'])} 塊白板、本機只有 {len(built['boards'])} 塊；推送會蓋掉多的那塊，先確認")
-    for k in ('boards', 'nodes', 'edges', 'variables', 'activeBoardId', 'name'):   # 介紹文以網頁上的為準（canon/介紹文.md 同一份），不覆寫
+    for k in ('boards', 'nodes', 'edges', 'variables', 'activeBoardId', 'name'):
+        project[k] = built[k]
+    # 介紹文：canon/介紹文.md 是唯一來源（網頁上那份是它推上去的；10-09 改日期時一起更新）。作者在網頁改過的話要先抄回這個檔
+    project['description'] = '\n\n'.join(l.strip() for l in (ROOT / 'canon/介紹文.md').read_text(encoding='utf-8').splitlines() if l.strip() and not l.startswith('#'))
+    for k in ():
         project[k] = built[k]
     project['settings'] = merge_settings(online.get('settings'), built['settings'])
     try:

@@ -1,4 +1,4 @@
-"""十九樓　網管中心（m-office）：原文「一　23:02」到「二　23:19」。
+"""十九樓　網管中心（m-office）：原文「一　23:04」到「二　23:21」。
 phase：''（開場）→ order（周主任下令）→ cut（斷河城、抽查）→ sneak（拿泡麵碗）→ bowl（茶水間倒麵）→ alibi（抽屜）→ card（拿到管理員卡，走樓梯）。
 句子一律從 canon/原文.md、canon/新寫.md 讀。"""
 import layout
@@ -12,12 +12,12 @@ P = lambda v: cond('phase', v)
 
 
 def events(walk):
-    one, ask, two = section('一　23:02'), section('審訊室（一）'), section('二　23:19')
+    one, ask, two = section('一　23:04'), section('審訊室（一）'), section('二　23:21')
     hx, hy = 7, 10   # 江凌坐在工位前，面向監控台（工位佔地 4–9 × 8–9，監控台在正前方那格 (7, 9)）
     ev_ = []
     # 開場：章節時間碼＋原文前四段，接著周主任出來
     ev_.append(ev('intro', 20, 0, trigger='auto', once=True,
-                  actions=[say('一　23:02　網管中心')] + [say(t) for t in one[0:4]] + [setv('phase', 'order')]))
+                  actions=[say('一　23:04　網管中心')] + [say(t) for t in one[0:4]] + [setv('phase', 'order')]))
     # 周主任：下令那一段走出辦公室到江凌身後，講完走回去；之後背對門講電話
     zx, zy = 37, 8
     go = [('right', 1), ('down', 6), ('left', 31), ('up', 2)]          # (37,8) → (7,12)，江凌正後方

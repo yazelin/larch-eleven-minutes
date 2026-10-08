@@ -32,7 +32,7 @@ def music(k):
 
 
 def nodes():
-    f = section('四　23:35')
+    f = section('四　23:37')
     say = lambda t: {'speaker': '', 'text': t}
     return [
         cards.battle('b-censor', '審查兵', [E('censor', '審查兵', 24, 5, image=img('censor'))], (800, 600)),
