@@ -13,7 +13,7 @@ import layout
 
 PX = 24   # 每細格幾 px（色塊不需要高解析；引擎照 free 的格數縮放）
 FONT = lambda s: ImageFont.truetype('/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc', s)
-GROUND = {'border': (40, 40, 40), 'carpet': (70, 80, 105), 'office': (150, 120, 90), 'tile': (215, 220, 225), 'lobby': (160, 160, 170), 'cloud': (200, 215, 235), 'void': (20, 25, 45)}
+GROUND = {'border': (40, 40, 40), 'carpet': (70, 80, 105), 'office': (150, 120, 90), 'tile': (215, 220, 225), 'lobby': (160, 160, 170), 'cloud': (200, 215, 235), 'void': (20, 25, 45), 'raised': (95, 100, 112), 'outside': (225, 238, 250)}
 
 
 KIND = {'窗牆': (90, 110, 140), '玻璃牆': (140, 180, 200), '門': (120, 160, 120), '桌': (130, 95, 70), '椅': (60, 60, 60), '櫃': (110, 100, 130),

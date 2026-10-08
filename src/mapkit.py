@@ -101,6 +101,7 @@ def fresh(actions):
     out = []
     for a in actions:
         b = dict(a, id=f'a{next(_ids)}')
+        if 'choice' in a: b['choice'] = dict(a['choice'], options=[dict(o, actions=fresh(o['actions'])) for o in a['choice']['options']])
         out.append(b)
     return out
 
@@ -112,6 +113,32 @@ def spread(e, cells):
         c = dict(e, x=x, y=y)
         if i:
             c.update(id=f"{e['id']}-{i}", name=f"{e['id']}-{i}", actions=fresh(e.get('actions', [])))
+            c.pop('marker', None)   # 名牌只留第一格
             if e.get('pages'): c['pages'] = [dict(p, id=f"{p['id']}-{i}", actions=fresh(p['actions'])) for p in e['pages']]
         out.append(c)
     return out
+
+
+def jump(node, x=None, y=None, face='up'):
+    a = A('jump', cardId=node)
+    if x is not None: a['arrive'] = {'x': x, 'y': y, 'direction': face}
+    return a
+
+
+def add(name, n=1):
+    return A('variable', variable=name, value=str(n), op='add')
+
+
+def heal():
+    return A('heal', value='full')
+
+
+def fight(card_id):
+    """回合制戰鬥（動作地圖上的王也留在戰鬥畫面）。打贏才跑後面的步驟；打輸事件停下，可以再按一次重打。"""
+    return A('battle', cardId=card_id, combat='turn')
+
+
+def fx(effect, strength=0.6, ms=600, color=None):
+    s = {'effect': effect, 'strength': strength, 'durationMs': ms}
+    if color: s['color'] = color
+    return A('screen', screen=s)

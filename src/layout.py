@@ -49,11 +49,12 @@ def hold_cells(d):
     return [(0, y) for y in range(H)] + [(W - 1, y) for y in range(H)] + [(x, 0) for x in range(1, W - 1)] + [(x, H - 1) for x in range(1, W - 1)]
 
 
-def events(d, urls):
-    """物件 → 自由圖片事件；urls：物件名 → 圖網址"""
+def events(d, urls, conds=lambda name: []):
+    """物件 → 自由圖片事件；urls：物件名 → 圖網址；conds：物件名 → 出現條件（長城崩開的時候消失）"""
     obs = objects(d); hold = hold_cells(d)
     assert len(hold) >= len(obs), f'物件 {len(obs)} 個，放事件的格子只有 {len(hold)} 個'
     return [ev(f'obj-{d["map"]["id"]}-{i}', *hold[i], name=o['name'],
+               conditions=conds(o['name']),
                free={'url': urls[o['name']], 'x': o['frame'][0], 'y': o['frame'][1], 'w': o['frame'][2], 'h': o['frame'][3]})
             for i, o in enumerate(obs)]
 

@@ -1,7 +1,7 @@
-"""組出 dist/project.json（本機 larch-preview 用）。目前只有十九樓的色塊驗證版。python3 src/build.py"""
+"""組出 dist/project.json（本機 larch-preview 用）。BLOCKS=1 換成單色塊驗證版；沒有正式圖的地圖自動用色塊。python3 src/build.py"""
 import json, os, pathlib, shutil, sys
-import layout, mapkit, cards, map_office
-from story import section
+import layout, mapkit, cards, plugin, battles, map_office, map_server, map_cloud
+from story import section, new
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 TITLE = '十一分鐘'
 
@@ -17,7 +17,7 @@ def skeleton():
             'activeBoardId': 'main'}
 
 
-VARS = {'phase': ('string', '')}   # 全部故事變數只在這裡定義
+VARS = {'phase': ('string', ''), 'kills': ('number', 0), 'wall': ('string', '')}   # 全部故事變數只在這裡定義
 
 
 def database():
@@ -26,30 +26,62 @@ def database():
     return {'version': 1, 'heroId': 'jiangling', 'actors': [hero]}
 
 
-def office_map():
-    d = layout.load('office'); errs = layout.check(d)
-    if errs: sys.exit('設計檔有問題：\n' + '\n'.join(errs))
-    kind = 'blocks' if os.environ.get('BLOCKS') else 'objects'   # BLOCKS=1：單色塊驗證版
-    urls = {o['name']: f"/files/assets/{kind}/office/{o['name']}.png" for o in layout.objects(d)}
+MAPS = [  # (地圖 id、設計檔、模組、標題、白板位置)
+    ('m-office', 'office', map_office, '十九樓　網管中心', (400, 0)),
+    ('m-server', 'server', map_server, '二十樓　核心機房', (800, 0)),
+    ('m-cloud', 'cloud', map_cloud, '防火長城', (1600, 0)),
+]
+
+
+def map_card(mid, a, mod, title, pos):
+    d = layout.load(a); errs = layout.check(d)
+    if errs: sys.exit(f'{a} 設計檔有問題：\n' + '\n'.join(errs))
+    real = not os.environ.get('BLOCKS') and (ROOT / f'assets/maps/{a}_ground.png').exists()   # 還沒產正式圖的地圖用色塊
+    kind = 'objects' if real else 'blocks'
+    urls = {o['name']: f"/files/assets/{kind}/{a}/{o['name']}.png" for o in layout.objects(d)}
     walk = lambda i: mapkit.walker(f'/files/assets/walk/walk-{i}.png')
-    (hx, hy), npcs = map_office.events(walk)
+    (hx, hy), evs = mod.events(walk)
     hero = mapkit.ev('hero', hx, hy, actor='player', direction='up', sprite=walk('jiangling'))
-    m = mapkit.map_dict('十九樓　網管中心', d['map']['w'], d['map']['h'], f'/files/assets/maps/office_{"blocks" if kind == "blocks" else "ground"}.png', layout.walls(d),
-                        [hero] + npcs + layout.events(d, urls), map_office.guidance())
+    m = mapkit.map_dict(title, d['map']['w'], d['map']['h'], f'/files/assets/maps/{a}_{"ground" if real else "blocks"}.png', layout.walls(d),
+                        [hero] + evs + layout.events(d, urls, getattr(mod, 'wall_conditions', lambda n: [])), mod.guidance())
+    if mod is map_cloud: m['combat'] = 'action'
     names = [n for _, n, _, _ in mapkit.RPG_VARS] + list(VARS)
-    node = mapkit.map_node('m-office', '十九樓　網管中心', m, names, pos=(400, 0)); node['data'].pop('start')
+    node = mapkit.map_node(mid, title, m, names, pos=pos); node['data'].pop('start')
     return node
+
+
+ENDINGS = [('e1', '結局一　送出'), ('e2', '結局二　交給 PRISM'), ('e3', '結局三　修回去')]
 
 
 def build():
     p = skeleton(); board = p['boards'][0]
     p['nodes'], p['edges'] = board['nodes'], board['edges']
     p['settings']['plugins']['larch-rpg-system']['settings']['database'] = json.dumps(database(), ensure_ascii=False)
-    board['nodes'].append(cards.dialogue('c0', '序　審訊室', section('序　審訊室'), (0, 0), start=True))
-    board['nodes'].append(office_map())
-    board['nodes'].append(cards.dialogue('ci1', '審訊室（一）', section('審訊室（一）'), (400, 300)))
-    cards.link(board, 'c0', 'm-office')
+    p['settings']['plugins'][plugin.PLUGIN_ID] = plugin.settings_entry()
+    N = board['nodes'].append
+    N(cards.dialogue('c0', '序　審訊室', section('序　審訊室'), (0, 0), start=True))
+    for m in MAPS: N(map_card(*m))
+    N(cards.dialogue('ci1', '審訊室（一）', section('審訊室（一）'), (400, 300)))
+    N(plugin.card_node((1200, 0)))
+    N(cards.dialogue('ci2', '審訊室（二）', section('審訊室（二）'), (1600, 300)))
+    for i, (k, t) in enumerate(ENDINGS):
+        N(cards.dialogue(k, t, [t] + section(t), (2000, i * 200)))
+        cards.link(board, k, 'credits')
+    N(cards.dialogue('credits', '片尾', new('片尾'), (2400, 200)))
+    for n in battles.nodes(): N(n)
+    cards.link(board, 'c0', 'm-office'); cards.link(board, plugin.NODE, 'm-cloud')
+    test_start(p)
     return p
+
+
+def test_start(p):
+    """測試用：START=<卡片 id> 從那張卡開始；PRESET=phase=gate,kills=4 改變數初始值（tests/play_*.mjs 用）"""
+    if os.environ.get('START'):
+        for n in p['nodes']: n['data'].pop('start', None)
+        next(n for n in p['nodes'] if n['id'] == os.environ['START'])['data']['start'] = True
+    for kv in filter(None, os.environ.get('PRESET', '').split(',')):
+        k, v = kv.split('=')
+        next(x for x in p['variables'] if x['name'] == k)['defaultValue'] = int(v) if v.isdigit() else v
 
 
 def main():

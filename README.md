@@ -10,7 +10,11 @@ Larch 第三屆創作者挑戰《自由與限制》第二部投稿（第一部�
 
 | 檔案 | 內容 |
 |---|---|
-| `src/build.py` | 組出 `dist/project.json`：序章卡 → 十九樓地圖 → 審訊室卡（`BLOCKS=1` 換成單色塊版） |
+| `src/build.py` | 組出 `dist/project.json`：序章 → 十九樓 → 二十樓 → 終端機卡 → 雲端長城（王戰、審訊室（二）、三結局）→ 片尾。`BLOCKS=1` 換成單色塊版；還沒產正式圖的地圖自動用色塊。測試用 `START=<卡 id>`、`PRESET=phase=gate,kills=4` |
+| `src/map_server.py` | 二十樓核心機房：開場、終端機 |
+| `src/map_cloud.py` | 雲端長城：找江禾那一則、審查兵動作戰鬥、門前四場回合制王戰（打輸再按門重打）、鎖鏈崩開與扣回、結局選擇 |
+| `src/battles.py` | 戰鬥卡：審查兵、獵犬、第一班、第二班、大肥魚、PRISM（招式名取自原文） |
+| `src/plugin.py`、`src/plugin/terminal.html` | 自製插件 `eleven-minutes`：終端機卡（ping、traceroute、sudo wall） |
 | `src/map_office.py` | 十九樓事件：開場、周主任下令、監控台、茶水間、警衛擋人、抽屜、樓梯門；任務提示 |
 | `src/story.py` | 讀原文與新寫 |
 | `src/layout.py`、`art/objects_<地圖>.yaml` | 分層地圖設計檔（照《香布纏．續》：佔地、往上長、排序列） |
@@ -18,6 +22,8 @@ Larch 第三屆創作者挑戰《自由與限制》第二部投稿（第一部�
 | `art/objects_gen.py` | 物件與地面產圖、去背、擺放（走 .11 codex-image，`art/codex11.py`） |
 | `art/walk.py` | 走路圖（沿用《續》的 walk.py） |
 | `art/anchor/` | 九個王戰角色定錨 |
+| `art/battle_gen.py` | 戰鬥圖：照定錨在綠幕重產再去背 → `assets/battle/` |
+| `docs/過關SOP.md` | 每一關的九步過關流程與進度表 |
 
 ## 指令
 

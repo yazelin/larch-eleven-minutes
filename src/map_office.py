@@ -45,9 +45,9 @@ def events(walk):
     # 抽屜：管理員卡
     ev_.append(ev('drawer', 41, 8, name='抽屜',
                   pages=[page('drawer-card', [P('alibi')], [say(two[3]), say(two[4]), item('admincard', '管理員卡'), setv('phase', 'card')])]))
-    # 樓梯門：拿到卡以後往二十樓（二十樓還沒做）
+    # 樓梯門：拿到卡以後往二十樓核心機房
     stairs = ev('stairs', 40, 31, trigger='touch', marker={'label': '樓梯', 'kind': 'exit'},
-                pages=[page('stairs-up', [P('card'), has('admincard')], [say(t) for t in new('二十樓製作中')], trigger='touch')])
+                pages=[page('stairs-up', [P('card'), has('admincard')], [jump('m-server', *layout.load('server')['points']['hero_start'])], trigger='touch')])
     ev_ += spread(stairs, [(40, 31), (41, 31)])
     ev_.append(ev('guard', *PT['guard_a'], name='警衛', actor='npc', solid=True, direction='left', movement='horizontal', sprite=walk('guard')))
     return (hx, hy), ev_

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+:root{color-scheme:dark;--cy:#3df2ff;--mg:#ff3d9a;--ok:#5dff8f;--bad:#ff5a5a}
+html,body{margin:0;height:100%;overflow:hidden;background:#05070d;color:#cfe9ee;font-family:"Noto Sans Mono CJK TC","Noto Sans TC",ui-monospace,monospace}
+#crt{position:absolute;inset:4vh 4vw;border:1px solid rgba(61,242,255,.45);clip-path:polygon(18px 0,100% 0,100% calc(100% - 18px),calc(100% - 18px) 100%,0 100%,0 18px);
+  background:radial-gradient(ellipse at center,rgba(20,40,55,.85),rgba(4,8,14,.96));box-shadow:inset 0 0 60px rgba(61,242,255,.12);padding:3vh 3vw;box-sizing:border-box;overflow:auto;pointer-events:none}
+#crt::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.22) 0 2px,transparent 2px 4px)}
+#bar{font-size:13px;letter-spacing:.2em;color:var(--mg);margin-bottom:2vh}
+#out{font-size:clamp(15px,2.4vh,22px);line-height:1.75;white-space:pre-wrap}
+.cmd{color:var(--ok)} .cmd::before{content:"root@gfw-core:~# ";color:var(--cy)}
+.bad{color:var(--bad)} .nar{color:#e7f4f6;opacity:.92;margin:1.2vh 0}
+.cur{display:inline-block;width:.6em;background:var(--ok);animation:b 1s steps(1) infinite}
+@keyframes b{50%{opacity:0}}
+#go{position:absolute;left:50%;bottom:7vh;translate:-50% 0;min-height:52px;padding:0 28px;font:600 18px "Noto Sans TC",sans-serif;color:#05070d;background:var(--cy);
+  border:0;clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);cursor:pointer;box-shadow:0 0 18px rgba(61,242,255,.6)}
+#go:active{scale:.96}
+#tap{position:absolute;inset:0}
+@media (prefers-reduced-motion:reduce){.cur{animation:none}}
+</style></head>
+<body>
+<div id="tap"></div>
+<div id="crt"><div id="bar">GFW CORE TERMINAL ／ 20F</div><div id="out"></div></div>
+<button id="go" hidden></button>
+<script src="common.js"></script>
+<script>
+/* 終端機：江凌一個一個打指令。點畫面、空白鍵、Enter 或按鈕＝打下一個指令（手機不用真的打字）。
+   script：{intro, steps:[{cmd, out, hops?, bad?}], after, done}；最後一個按鈕送 larch:complete。 */
+var S, i = -1, busy = false, out = document.getElementById('out'), go = document.getElementById('go');
+function line(cls, t) { var d = document.createElement('div'); d.className = cls; d.textContent = t; out.appendChild(d); out.parentNode.scrollTop = 1e9; return d; }
+function type(d, t, ms, cb) {
+  var k = 0, cur = document.createElement('span'); cur.className = 'cur'; cur.innerHTML = '&nbsp;';
+  (function step() { d.textContent = t.slice(0, k); d.appendChild(cur); if (k++ < t.length) setTimeout(step, ms); else { cur.remove(); cb(); } })();
+}
+function label() {
+  if (i + 1 < S.steps.length) { go.textContent = '輸入：' + S.steps[i + 1].cmd; }
+  else { go.textContent = S.done; }
+  go.hidden = false;
+}
+function next() {
+  if (busy || !S) return;
+  if (i + 1 >= S.steps.length) { L.done(); return; }
+  busy = true; go.hidden = true; i++;
+  var s = S.steps[i];
+  type(line('cmd', ''), s.cmd, 45, function () {
+    setTimeout(function () {
+      (s.hops || []).forEach(function (h, n) { setTimeout(function () { line('', h); }, n * 380); });
+      setTimeout(function () {
+        type(line(s.bad ? 'bad' : 'nar', ''), s.out, 28, function () {
+          if (i + 1 < S.steps.length || !S.after) { busy = false; label(); return; }
+          setTimeout(function () { type(line('nar', ''), S.after, 28, function () { busy = false; label(); }); }, 600);
+        });
+      }, (s.hops || []).length * 380 + 300);
+    }, 350);
+  });
+}
+L.onInit(function () {
+  S = L.script(); out.innerHTML = '';
+  busy = true; type(line('nar', ''), S.intro, 28, function () { busy = false; label(); });
+});
+L.press(next);
+go.addEventListener('click', next);
+</script>
+</body></html>
