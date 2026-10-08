@@ -17,6 +17,17 @@ def skeleton():
             'activeBoardId': 'main'}
 
 
+def interface(p):
+    """介面：作者在 Larch 套用的官方「霓虹訊號」（2026-10-09 從雲端讀回 src/ui/interface.json）。我們改過的部位寫在 src/ui/<部位>.css|html，蓋過原本的"""
+    ui = json.loads((ROOT / 'src/ui/interface.json').read_text(encoding='utf-8'))
+    for part, v in ui['customInterfaces'].items():
+        for ext in ('css', 'html'):
+            f = ROOT / f'src/ui/{part}.{ext}'
+            if f.exists(): v['html'] = f.read_text(encoding='utf-8')
+    keep = ('resolution', 'textSpeed', 'autoAdvanceDelay', 'typingEffect')   # 這幾個以本機為準
+    p['settings'].update({k: v for k, v in ui.items() if k not in keep})
+
+
 VARS = {'phase': ('string', ''), 'kills': ('number', 0), 'wall': ('string', '')}   # 全部故事變數只在這裡定義
 
 
@@ -54,7 +65,7 @@ ENDINGS = [('e1', '結局一　送出'), ('e2', '結局二　交給 PRISM'), ('e
 
 
 def build():
-    p = skeleton(); board = p['boards'][0]
+    p = skeleton(); board = p['boards'][0]; interface(p)
     p['nodes'], p['edges'] = board['nodes'], board['edges']
     p['settings']['plugins']['larch-rpg-system']['settings']['database'] = json.dumps(database(), ensure_ascii=False)
     p['settings']['plugins'][plugin.PLUGIN_ID] = plugin.settings_entry()

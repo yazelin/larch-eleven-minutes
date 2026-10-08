@@ -23,6 +23,7 @@ Larch 第三屆創作者挑戰《自由與限制》第二部投稿（第一部�
 | `art/walk.py` | 走路圖（沿用《續》的 walk.py） |
 | `art/anchor/` | 九個王戰角色定錨 |
 | `art/battle_gen.py` | 戰鬥圖：照定錨在綠幕重產再去背 → `assets/battle/` |
+| `src/ui/interface.json` | 介面：作者在 Larch 套用的官方「霓虹訊號」（2026-10-09 讀回）；要改哪個部位就放 `src/ui/<部位>.css`／`.html` 蓋過去 |
 | `docs/過關SOP.md` | 每一關的九步過關流程與進度表 |
 
 ## 指令
@@ -35,3 +36,4 @@ Larch 第三屆創作者挑戰《自由與限制》第二部投稿（第一部�
     node tests/layer_shots.mjs [office|server|cloud]      # 分層遮擋截圖
     node tests/play_rest.mjs [1|2|3]                      # 二十樓到結局（約 12 分鐘，每個結局各跑一次）
     NEG=1 python3 tests/check_static.py                   # 負控制：要失敗
+    node tests/ui_shots.mjs                               # 介面截圖：標題、對話卡、地圖、王戰
