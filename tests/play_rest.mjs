@@ -33,11 +33,11 @@ async function btn(t) {   // 點畫面上文字含 t 的可見按鈕
   return false;
 }
 async function battle(name, skill = '刪除程式', cost = 6) {   // 打到戰鬥畫面消失；回傳 true＝打贏（畫面回到地圖且沒有敗北字樣）
-  await until(new RegExp('ENCOUNTER ' + name), 60000);
+  await until(new RegExp('(ENCOUNTER|BOSS BATTLE) ' + name), 60000);
   for (let r = 0; r < 80; r++) {
     const t = await text();
     if (r % 10 === 0) { console.log('  ', name, '第', r, '步', (t.match(/江凌 HP \d+/) || [''])[0]); await shot(`5-${name}-live`); }
-    if (!/ENCOUNTER/.test(t)) return true;
+    if (!/ENCOUNTER|BOSS BATTLE/.test(t)) return true;
     if (/敗北|DEFEAT|全滅/.test(t)) return false;
     const mp = Number((t.match(/MP (\d+)/) || [0, 0])[1]);
     if (await btn('繼續')) {}                                  // 勝利畫面
@@ -63,8 +63,9 @@ try {
   // 審查兵追過來：原地一直砍
   const end = Date.now() + 180000;
   let lastWalk = Date.now();
-  while (Date.now() < end && !/ENCOUNTER/.test(await text())) {   // 砍倒第四隻以後第一班自動開打
+  while (Date.now() < end && !/ENCOUNTER|BOSS BATTLE/.test(await text())) {   // 砍倒第四隻以後第一班自動開打
     await page.keyboard.press('j'); await sleep(350); await ui.advance();
+    if (process.env.DEBUG && Date.now() % 7 < 1) { const tt = await text(); console.log('  hunt', tt.slice(-120).replace(/\s+/g, ' ')); }
     if (Date.now() - lastWalk > 25000) { lastWalk = Date.now(); await ui.clickText('砍倒追來的審查兵', 3000).catch(() => {}); }   // 站著等不到就往門走，路上遇到再砍
   }
   await shot('4-hunt');
@@ -73,7 +74,7 @@ try {
     let won = false;
     for (let k = 0; k < 3 && !won; k++) {
       if (k > 0) { await note(retry); await ui.clickText(retry); await sleep(8000); }   // 第一場在門前亮起人影後自動開打；打輸才走回門前（走到就觸發）
-      if (name === '大肥魚' && k === 0) { const t0 = await until(/靠近了才看清楚|ENCOUNTER 大肥魚/, 60000); if (/靠近了才看清楚/.test(t0)) { await sleep(1500); await shot('5-大肥魚-map'); } }   // 鏡頭移到門前，看得到地圖上的大肥魚
+      if (name === '大肥魚' && k === 0) { const t0 = await until(/靠近了才看清楚|BOSS BATTLE 大肥魚/, 60000); if (/靠近了才看清楚/.test(t0)) { await sleep(1500); await shot('5-大肥魚-map'); } }   // 鏡頭移到門前，看得到地圖上的大肥魚
       won = await battle(name, /班/.test(name) ? '刪除程式' : '拆開規則', /班/.test(name) ? 6 : 4);
       await shot(`5-${name}-${k}`);
       if (!won) console.log('  打輸', name, '重打');

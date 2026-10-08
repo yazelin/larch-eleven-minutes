@@ -37,7 +37,8 @@ def events(walk):
     f = section('四　23:37')
     st = stages()
     # 10-09 修：從十九樓一路玩過來時 phase 是 card（拿到管理員卡），雲端的事件原本都寫 phase=='' → 全部不會啟動。進場就把進度設成 cloud
-    ev_ = [ev('intro', 20, 0, trigger='auto', once=True, actions=[setv('phase', 'cloud'), say('四　23:37　防火長城'), say(f[0]), say(f[1]), say(f[2])])]
+    late = ('cloud', 'hunt', 'gate', 'w2', 'whale', 'free', 'end')   # 已經在雲海裡（讀檔回來）就不要再重設進度
+    ev_ = [ev('intro', 20, 0, trigger='auto', once=True, conditions=[cond('phase', k, 'neq') for k in late], actions=[setv('phase', 'cloud'), say('四　23:37　防火長城'), say(f[0]), say(f[1]), say(f[2])])]
     # 第三座山：走到山腳那一排任何一格就捧起來（10-09 作者：走到那一則前沒有反應 → 原本要面對它按鍵）
     mound = ev('mound3', *PT['mound3'], name='第三座山', marker={'label': '江禾那一則', 'kind': 'quest'}, trigger='touch',
                pages=[page('mound-he', [P('cloud')], [say(f[3]), item('he', '江禾那一則'), say(f[4]), setv('phase', 'hunt')], trigger='touch')])
@@ -62,10 +63,13 @@ def events(walk):
     for i, k in enumerate(['gate', 'w2', 'whale', 'free']):   # 第一班也自動接（10-09：門改成走到才觸發，站在門前的人等不到）
         ev_.append(ev(f'next-{k}', 25 + i, 0, trigger='condition', once=True, conditions=[P(k)], actions=fresh(st[k])))
     # 地圖上的王：大肥魚比牆還高，站在門前、畫在牆前面；鎖開了以後稜鏡從牆外的雲層升起來
-    big = lambda id, x, k, fx, fy, fw, fh: ev(id, x, 0, name=id, conditions=[P(k)],
-                                              free={'url': f'/files/assets/battle/{id.split("-")[0]}.webp', 'x': fx, 'y': fy, 'w': fw, 'h': fh})
-    ev_ += [big('dafeiyu-map', 30, 'whale', 23.6, 0, 8.8, 12), big('dafeiyu-free', 31, 'free', 23.6, 0, 8.8, 12),   # 圖框下緣在第 11 列：畫在長城（第 9 列）前面，不被牆蓋掉；12 格高，頭頂高過長城（原文：比牆還高）
-            big('prism-map', 32, 'free', 38, 0, 5.5, 8)]
+    art = {'dafeiyu-map': 'dafeiyu', 'dafeiyu-free': 'dafeiyu_free', 'prism-map': 'prism_r', 'dafeiyu-relock': 'dafeiyu', 'dafeiyu-end': 'dafeiyu'}   # PRISM 鏡像、放在大肥魚左邊，眼睛往右看著她（10-09 作者）   # 鎖開了以後換成解開鎖鏈的那張（10-09 作者）
+    big = lambda id, x, k, fx, fy, fw, fh, extra=(): ev(id, x, 0, name=id, conditions=[P(k), *extra],
+                                              free={'url': f'/files/assets/battle/{art[id].split("@")[0]}.webp', 'x': fx, 'y': fy, 'w': fw, 'h': fh})
+    ev_ += [big('dafeiyu-map', 30, 'whale', 23.6, 0, 8.8, 12), big('dafeiyu-free', 31, 'free', 24.0, 0, 8.1, 12, [cond('wall', 'down')]),
+            # 鎖鏈扣回來（wall 回到 ''）：又被鎖上（10-09 作者：之後長城又鎖回去了）
+            big('dafeiyu-relock', 33, 'free', 23.6, 0, 8.8, 12, [cond('wall', 'down', 'neq')]), big('dafeiyu-end', 34, 'end', 23.6, 0, 8.8, 12),   # 圖框下緣在第 11 列：畫在長城（第 9 列）前面，不被牆蓋掉；12 格高，頭頂高過長城（原文：比牆還高）
+            big('prism-map', 32, 'free', 16.5, 0, 5.5, 8, [cond('wall', 'down')])]   # 稜鏡退回雲層以後（鎖鏈扣回來）就不見
     return PT['hero_start'], ev_
 
 

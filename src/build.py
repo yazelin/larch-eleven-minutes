@@ -113,6 +113,10 @@ def build():
         cards.link(board, k, 'credits')
     N(cards.dialogue('credits', '片尾', new('片尾'), (2400, 200), bg='/files/assets/cover/title.webp' if (ROOT / 'assets/cover/title.webp').exists() else ''))
     for n in battles.nodes(): N(n)
+    # CG 解鎖（10-09 作者問什麼時候解鎖）：看到序章解鎖審訊室，進哪個結局解鎖那張
+    for nid, f in (('c0', 'scenes/interrogation.webp'), ('e1', 'scenes/e1.webp'), ('e2', 'scenes/e2.webp'), ('e3', 'scenes/e3.webp')):
+        if (ROOT / f'assets/{f}').exists():
+            next(n for n in board['nodes'] if n['id'] == nid)['data']['cgOps'] = [{'id': f'cg-{nid}', 'mode': 'unlock', 'url': f'/files/assets/{f}'}]
     cards.link(board, 'c0', 'm-office'); cards.link(board, plugin.NODE, 'm-cloud')
     test_start(p)
     return p

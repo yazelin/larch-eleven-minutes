@@ -11,6 +11,7 @@ def E(id, name, hp, atk, df=2, *specials, image='', scale=None, pos=None, lead=N
     e = {'id': id, 'name': name, 'hp': hp, 'attack': atk, 'defense': df, 'image': image, 'portrait': image}   # 有 portrait 才用整張畫（不轉像素）
     if specials: e['specials'] = list(specials)
     if scale: e['scale'] = scale
+    e['flip'] = True   # 敵人站左邊、江凌在右邊：圖都產成面向左，要鏡像成面向右（10-09 作者：PRISM 的眼睛應該向右）
     if lead: e['special'] = lead   # 帶頭的那一個：引擎看到 special 就把開場說成「某某 降臨」（不然是「等怪獸出現了」，10-09 作者：AI 們不是怪物）
     if pos: e['x'], e['y'] = pos   # 站位（戰場寬高的百分比）。引擎把江凌放在右半邊，敵人要留在左半邊，不然出手會衝到主角那一側、看起來打在隊友身上
     return e

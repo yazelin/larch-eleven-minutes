@@ -31,6 +31,9 @@ CAST = {   # 名字：(定錨圖, 幕色, 姿勢與招式補充)
     'xinghuo': ('xinghuo_v2.png', 'green', 'She speaks into her headset mic, sparks flying around her hands.'),
     'dafeiyu': ('dafeiyu_v2.png', 'green', 'Heavy iron chains wrap her from her wrists down to her whale tail, the chains trail off to the right edge as if fixed to a wall '
                 '(the chains end inside the frame). A big padlock hangs on her chest. She looks sleepy and stubborn, her whale tail raised to swing.'),
+    # 鎖開了以後（10-09 作者：搭配劇情切換）：原文「纏在大肥魚身上的鎖鏈一圈一圈鬆開，掉進雲裡。她甩了甩鯨尾，看了看自己的手腕。」
+    'dafeiyu_free': ('dafeiyu.webp', 'green', 'The chains are GONE: no chains anywhere on her body, no padlock on her chest, only a few broken chain links falling away below her. '
+                     'She is free, swishing her whale tail, looking down at her own bare wrists with a soft surprised expression, a faint calm smile.'),
 }
 EXTRA = {
     'prism': ('magenta', 'A giant floating glass prism shaped like an eye: a faceted crystal octahedron with a calm glowing iris in the center, every facet reflecting a '
@@ -58,7 +61,8 @@ def gen(k):
                            [os.path.join(G, 'art/scene_raw/ref-jiangling.png')], size='1024x1536')
     if k in CAST:
         ref, screen, act = CAST[k]
-        return codex11.gen(SAME + POSE + act + ' ' + SCREEN[screen], out, [os.path.join(H, 'anchor', ref)], size='1024x1536')
+        refp = os.path.join(G, 'assets/battle', ref) if ref.endswith('.webp') else os.path.join(H, 'anchor', ref)
+        return codex11.gen(SAME + POSE + act + ' ' + SCREEN[screen], out, [refp], size='1024x1536')
     screen, desc = EXTRA[k]
     return codex11.gen(desc + POSE.replace('she faces', 'it faces') + SCREEN[screen], out, size='1024x1536')
 
