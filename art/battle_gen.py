@@ -40,6 +40,10 @@ EXTRA = {
     'hound': ('green', 'A sniffer hound made of grey data: lean grey dog, no eyes, one glowing red scan line across its face, nose down sniffing, full body side view facing left. '
               'Anime game enemy illustration. '),
 }
+HERO = ('Image 1 is the game sprite of Jiang Ling, a modern Chinese network engineer about 28: short black hair, thin black-framed glasses, a dark charcoal zip-up hoodie open over '
+        'a plain white T-shirt, a blue lanyard with a white ID card, dark jeans, grey sneakers (use the sprite only for his look). Redraw him as a full-body anime battle illustration in the same '
+        'style as the boss art: standing in a fighting stance, body turned three-quarters toward the viewer\'s LEFT (he faces enemies on the left), one hand raised with glowing cyan lines of code '
+        'and a delete cursor forming a blade of light, determined tired eyes. ')
 BG = ('A battle background for an anime RPG boss fight, wide landscape, no characters. A sea of grey-blue clouds under a black sky, a colossal wall made of giant '
       'dark red neon chain links lying stacked, stretching from the left horizon to the right horizon, each link as tall as a building. Faint cyan grid lines float in '
       'the clouds. Small piles of grey glowing dots at the foot of the wall. Pixel-neon game art, crisp. No text, no logo.')
@@ -49,6 +53,9 @@ def gen(k):
     os.makedirs(RAW, exist_ok=True); out = os.path.join(RAW, f'{k}.png')
     if k == 'bg':
         return codex11.gen(BG, out, size='1536x1024')
+    if k == 'jiangling':
+        return codex11.gen(HERO + POSE.replace('she faces', 'he faces').replace("toward the viewer's left (", "toward the viewer's left (") + SCREEN['magenta'], out,
+                           [os.path.join(G, 'art/scene_raw/ref-jiangling.png')], size='1024x1536')
     if k in CAST:
         ref, screen, act = CAST[k]
         return codex11.gen(SAME + POSE + act + ' ' + SCREEN[screen], out, [os.path.join(H, 'anchor', ref)], size='1024x1536')
@@ -57,6 +64,7 @@ def gen(k):
 
 
 def screen_of(k):
+    if k == 'jiangling': return 'magenta'
     return CAST[k][1] if k in CAST else EXTRA[k][0]
 
 

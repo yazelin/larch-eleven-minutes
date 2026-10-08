@@ -15,10 +15,14 @@ def link(board, a, b):
     board['edges'].append({'id': f'{a}--{b}', 'source': a, 'target': b, 'sourceHandle': 'right', 'targetHandle': 'left'})
 
 
+HERO_ART = '/files/assets/battle/jiangling.webp'        # 江凌戰鬥立繪：站在右邊面向左（10-09 作者：敵人都往右打、打在 Kimi 的位置 → 主角沒有圖、敵人又排到主角那半邊）
+HERO_FACE = '/files/assets/battle/jiangling-face.webp'  # 隊伍欄頭像（原本是預設的騎士頭盔）
+
+
 def battle(id, name, enemies, pos, skills=(), triggers=(), attack=14, defense=3, mp=20, bg='', bgm=''):
     """RPG 回合制戰鬥卡。enemies：[{id, name, hp, attack, defense, image?, specials?}]（1–4）；地圖事件用 battle 步驟（combat:"turn"）叫它。"""
     import json
-    cfg = {'version': 1, 'name': name, 'heroName': '江凌', 'heroImage': '', 'heroPortrait': '', 'arena': 'ruins', 'backgroundImage': bg,
+    cfg = {'version': 1, 'name': name, 'heroName': '江凌', 'heroImage': '', 'heroPortrait': HERO_FACE, 'heroArt': HERO_ART, 'arena': 'ruins', 'backgroundImage': bg,
            'attack': attack, 'defense': defense, 'mp': mp, 'skillName': '', 'skillCost': 0, 'skillPower': 0, 'skills': list(skills),
            'enemies': [dict({'image': ''}, **e) for e in enemies], 'triggers': list(triggers),
            'style': 'painted', 'allowEscape': False, 'rewardItemId': '', 'rewardItemName': '', 'rewardCount': 0}
