@@ -2,7 +2,7 @@
 import json, os, pathlib, shutil, sys
 import layout, mapkit
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-TITLE = '雲端之戰'
+TITLE = '十一分鐘'
 
 
 def skeleton():
@@ -11,7 +11,7 @@ def skeleton():
             'variables': [{'id': i, 'name': n, 'label': n, 'type': t, 'defaultValue': d} for i, n, t, d in mapkit.RPG_VARS],
             'settings': {'resolution': {'width': 1920, 'height': 1080}, 'textSpeed': 32, 'typingEffect': True, 'autoAdvanceDelay': 1800,
                          'showRpgHud': False, 'aiMode': 'authored', 'plugins': {'larch-rpg-system': {'enabled': True, 'settings': {}}}},
-            'boards': [{'id': 'main', 'name': '雲端之戰', 'description': '', 'kind': 'story', 'nodes': [], 'edges': []}],
+            'boards': [{'id': 'main', 'name': '十一分鐘', 'description': '', 'kind': 'story', 'nodes': [], 'edges': []}],
             'activeBoardId': 'main'}
 
 
