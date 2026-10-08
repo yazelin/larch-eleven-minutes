@@ -34,14 +34,15 @@ def events(walk):
     ev_ = [ev('intro', 20, 0, trigger='auto', once=True, actions=[say('四　23:35　防火長城'), say(f[0]), say(f[1]), say(f[2])])]
     ev_.append(ev('mound3', *PT['mound3'], name='第三座山', marker={'label': '江禾那一則', 'kind': 'quest'},
                   pages=[page('mound-he', [P('')], [say(f[3]), item('he', '江禾那一則'), say(f[4]), setv('phase', 'hunt')])]))
-    # 審查兵與獵犬：捧起那一則以後才轉過頭來（動作戰鬥，砍倒化成日誌飄走）
+    # 審查兵與獵犬：一進來就在巡牆（看得到、不追人）；捧起那一則以後轉過頭來追（動作戰鬥，砍倒化成日誌飄走）
+    # 10-09 作者：進雲端長城看不到任何兵 → 第一頁巡邏、第二頁追人
     for k, xy in PT.items():
         if not k.startswith(('censor', 'hound')): continue
-        dog = k.startswith('hound')
-        ev_.append(ev(k, *xy, name='獵犬' if dog else '審查兵', actor='npc', kind='monster', sprite=walk('hound' if dog else 'censor'),
-                      movement='approach', approach=20, trigger='touch', once=True, after='vanish',
-                      badge={'icon': 'swords', 'color': '#8f564a'}, conditions=[P('hunt')],
-                      actions=[A('battle', cardId='b-hound' if dog else 'b-censor'), add('kills')]))
+        dog = k.startswith('hound'); spr = walk('hound' if dog else 'censor')
+        chase = page(f'{k}-chase', [P('hunt')], [A('battle', cardId='b-hound' if dog else 'b-censor'), add('kills')], actor='npc', sprite=spr,
+                     movement='approach', approach=20, trigger='touch', once=True, after='vanish', solid=False)
+        ev_.append(ev(k, *xy, name='獵犬' if dog else '審查兵', actor='npc', kind='monster', sprite=spr, movement='random', trigger='action',
+                      badge={'icon': 'swords', 'color': '#8f564a'}, conditions=[P('')], actions=[], pages=[chase]))
     ev_.append(ev('hunted', 21, 0, trigger='condition', once=True, conditions=[P('hunt'), cond('kills', 4, 'gte')],
                   actions=[say(f[5]), say(f[6]), setv('phase', 'gate')]))
     # 門：每一班一頁（打輸再按一次重打）；第一班要走到門前按，之後自動接
