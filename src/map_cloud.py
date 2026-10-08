@@ -5,7 +5,7 @@ wall：'' 牆在／down 鎖鏈崩開（牆段圖片看這個變數消失）。
 王戰都是回合制：門前按一下開打；打輸事件停下，再按門一次從那一班重打。打贏以後下一班由 condition 事件自動接上。"""
 import layout
 from mapkit import *
-from story import section
+from story import section, new
 
 D = layout.load('cloud')
 PT = {k: tuple(v) for k, v in D['points'].items()}
@@ -32,7 +32,7 @@ def events(walk):
     f = section('四　23:35')
     st = stages()
     ev_ = [ev('intro', 20, 0, trigger='auto', once=True, actions=[say('四　23:35　防火長城'), say(f[0]), say(f[1]), say(f[2])])]
-    ev_.append(ev('mound3', *PT['mound3'], name='第三座山', marker={'label': '光點', 'kind': 'quest'},
+    ev_.append(ev('mound3', *PT['mound3'], name='第三座山', marker={'label': '江禾那一則', 'kind': 'quest'},
                   pages=[page('mound-he', [P('')], [say(f[3]), item('he', '江禾那一則'), say(f[4]), setv('phase', 'hunt')])]))
     # 審查兵與獵犬：捧起那一則以後才轉過頭來（動作戰鬥，砍倒化成日誌飄走）
     for k, xy in PT.items():
@@ -45,8 +45,10 @@ def events(walk):
     ev_.append(ev('hunted', 21, 0, trigger='condition', once=True, conditions=[P('hunt'), cond('kills', 4, 'gte')],
                   actions=[say(f[5]), say(f[6]), setv('phase', 'gate')]))
     # 門：每一班一頁（打輸再按一次重打）；第一班要走到門前按，之後自動接
-    gate = ev('gate', *PT['gate'], name='長城門', marker={'label': '門', 'kind': 'quest'},
-              pages=[page(f'gate-{k}', [P(k)], fresh(acts)) for k, acts in st.items()])
+    # 太早走到門前：說明現在該做什麼（新寫，待作者定稿）
+    early = [page('gate-early', [P('')], [say(t) for t in new('門還鎖著')]), page('gate-hunt', [P('hunt')], [say(t) for t in new('審查兵還在追')])]
+    gate = ev('gate', *PT['gate'], name='長城門', marker={'label': '長城門', 'kind': 'quest'},
+              pages=early + [page(f'gate-{k}', [P(k)], fresh(acts)) for k, acts in st.items()])
     ev_ += spread(gate, [PT['gate'], (28, 10), (29, 10), (26, 10)])
     for i, k in enumerate(['w2', 'whale', 'free']):
         ev_.append(ev(f'next-{k}', 22 + i, 0, trigger='condition', once=True, conditions=[P(k)], actions=fresh(st[k])))
@@ -63,9 +65,11 @@ def wall_conditions(name):
     return [cond('wall', 'down', 'neq')] if name.startswith('長城') else []
 
 
-GUIDANCE = [('在灰色的山裡找江禾那一則', 'mound3', ''), ('砍倒追來的審查兵，往牆走', 'gate', 'hunt'), ('走到牆中段的門前', 'gate', 'gate'),
+GUIDANCE = [('在灰色的山裡找江禾那一則', 'mound3', ''), ('走到牆中段的門前', 'gate', 'gate'),
             ('回到門前，再打一次', 'gate', 'w2'), ('回到門前，再打一次', 'gate', 'whale'), ('回到門前，再打一次', 'gate', 'free')]
 
 
 def guidance():
-    return [{'text': t, 'eventId': e, 'conditions': [P(v)]} for t, e, v in GUIDANCE]
+    g = [{'text': t, 'eventId': e, 'conditions': [P(v)]} for t, e, v in GUIDANCE]
+    hunt = [{'text': f'砍倒追來的審查兵（還差 {4 - k} 個）', 'eventId': 'gate', 'conditions': [P('hunt'), cond('kills', k)]} for k in range(4)]
+    return g[:1] + hunt + g[1:]

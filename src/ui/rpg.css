@@ -1,0 +1,425 @@
+/* @larch-params {
+  "neon": { "type": "color", "label": "霓虹主色", "labelEn": "Neon", "default": "#39f3ff" },
+  "pulse": { "type": "color", "label": "第二色", "labelEn": "Second neon", "default": "#ff3fb4" }
+} */
+/* 霓虹訊號的 RPG：地圖狀態列是一條資料讀數，地名是掛在上面的終端機分頁；暫停選單是滿版 HUD，導覽是底部的工作列；戰鬥是四個角落的 HUD：左上指令終端機、右上隊伍資料、左下遭遇資訊、右下鎖定目標。 */
+:root { --surface: #060b16 !important; --ink: #e6fbff !important; --fg: #e6fbff !important; --muted: #a9d6de !important; --line: color-mix(in srgb, var(--skin-neon) 55%, transparent) !important; --control: #0d1a2b !important; --strong: var(--skin-neon) !important; --strong-fg: #060b16 !important; --focus: var(--skin-pulse) !important; --ns-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace; --ns-sans: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif; --ns-n55: color-mix(in srgb, var(--skin-neon) 55%, transparent); --ns-n35: color-mix(in srgb, var(--skin-neon) 35%, transparent); --ns-n20: color-mix(in srgb, var(--skin-neon) 20%, transparent); --ns-panel: linear-gradient(160deg, rgba(8, 16, 30, .95), rgba(4, 7, 14, .96)); --ns-scan: repeating-linear-gradient(180deg, rgba(255, 255, 255, .025) 0 1px, transparent 1px 3px); --ns-brackets: linear-gradient(var(--skin-neon), var(--skin-neon)) 0 0 / 9px 1.5px no-repeat, linear-gradient(var(--skin-neon), var(--skin-neon)) 0 0 / 1.5px 9px no-repeat, linear-gradient(var(--skin-neon), var(--skin-neon)) 100% 0 / 9px 1.5px no-repeat, linear-gradient(var(--skin-neon), var(--skin-neon)) 100% 0 / 1.5px 9px no-repeat, linear-gradient(var(--skin-neon), var(--skin-neon)) 0 100% / 9px 1.5px no-repeat, linear-gradient(var(--skin-neon), var(--skin-neon)) 0 100% / 1.5px 9px no-repeat, linear-gradient(var(--skin-neon), var(--skin-neon)) 100% 100% / 9px 1.5px no-repeat, linear-gradient(var(--skin-neon), var(--skin-neon)) 100% 100% / 1.5px 9px no-repeat; --ns-cut: linear-gradient(135deg, transparent calc(50% - .8px), var(--skin-neon) calc(50% - .8px) calc(50% + .8px), transparent calc(50% + .8px)); }
+
+/* ── 共用按鈕 ── */
+body > :is(header, footer) button, #quest-fold, #loader .loader-actions button, #dialogue :is(.dialogue-actions button, .dlg-choice), .rpg-pause-menu :is(.pm-content button:not(.pm-party-member, .pm-slot-frame, .pm-bag-item), .pm-close), .rpg-battle :is(.bt-talk button, .battle-actions[data-menu="result"] button), .rpg-shop button, .rpg-naming button { border: 0; border-radius: 0; background: rgba(13, 26, 43, .92); color: #e6fbff; box-shadow: inset 0 0 0 1px var(--ns-n55); text-shadow: none; font-family: var(--ns-mono); letter-spacing: .08em; transform: none; }
+body > :is(header, footer) button:is(:hover, :focus-visible, [aria-pressed="true"]), #quest-fold:is(:hover, :focus-visible), #loader .loader-actions button:is(:hover, :focus-visible), #dialogue :is(.dialogue-actions button, .dlg-choice):is(:hover, :focus-visible), .rpg-pause-menu :is(.pm-content button:not(.pm-party-member, .pm-slot-frame, .pm-bag-item), .pm-close):is(:hover, :focus-visible, [aria-pressed="true"]):not(:disabled), .rpg-battle :is(.bt-talk button, .battle-actions[data-menu="result"] button):is(:hover, :focus-visible), .rpg-shop button:is(:hover, :focus-visible):not(:disabled), .rpg-shop :is(.shop-tabs button[aria-selected="true"], button.shop-go:not(:disabled)), .rpg-naming button:is(:hover, :focus-visible, .naming-go), #wheel .wheel-cancel:is(:hover, :focus-visible) { background: var(--skin-neon); color: #060b16; text-shadow: none; box-shadow: 0 0 14px color-mix(in srgb, var(--skin-neon) 40%, transparent); }
+:where(#loader, #dialogue, .rpg-pause-menu, .rpg-battle, .rpg-shop, .rpg-naming, #wheel, body > header, body > footer, #quest-wrap) :is(button, input):focus-visible { outline: 2px solid var(--skin-pulse); outline-offset: 2px; }
+:where(body > header, body > footer, #quest-wrap, .pm-content, .rpg-shop, .rpg-naming) button:not(.pm-slot-frame, .pm-bag-item):active:not(:disabled) { background: var(--skin-pulse); color: #060b16; }
+:is(.pm-content, .rpg-shop, .rpg-naming) button:not(.pm-slot-frame, .pm-bag-item):disabled { background: #0b1018; color: #93a3a8; box-shadow: inset 0 0 0 1px #3c4a50; }
+
+/* ── 地圖：狀態列是一條資料讀數，地名是掛在上方的終端機分頁（不裁切，整塊都看得到） ── */
+body > header, #quest-wrap #quest, #notice, body > footer .hint, #banner, #dialogue .dlg-box, .bt-talk, .rpg-shop, .rpg-shop .shop-detail, .rpg-naming { border: 0; border-radius: 0; background: var(--ns-panel); color: #e6fbff; box-shadow: inset 0 0 0 1px var(--ns-n55), inset 3px 0 0 var(--skin-neon); backdrop-filter: blur(6px); font-family: var(--ns-sans); }
+body > header { top: 30px; left: 16px; margin: 0; gap: 8px; padding: 10px 10px 10px 14px; overflow: visible; clip-path: none; background: var(--ns-scan), var(--ns-panel); }
+body > header::before { display: none; }
+body > header .location { position: static; display: grid; grid-template-columns: auto auto minmax(0, 1fr); grid-template-areas: "faces hp text"; align-items: center; gap: 4px 10px; min-width: 0; }
+body > header .hud-party { display: contents; }
+body > header strong#title { position: absolute; left: 10px; top: -23px; bottom: auto; z-index: 1; display: inline-flex; align-items: center; gap: 6px; max-width: calc(100% - 20px); height: 24px; margin: 0; padding: 0 12px; overflow: hidden; border: 0; border-radius: 0; background: #060b16; color: var(--skin-neon) !important; font: 700 13px/24px var(--ns-mono); letter-spacing: .12em; text-overflow: ellipsis; white-space: nowrap; text-shadow: 0 0 8px color-mix(in srgb, var(--skin-neon) 70%, transparent); box-shadow: inset 0 0 0 1px var(--skin-neon), inset 0 -2px 0 #060b16, 0 0 12px color-mix(in srgb, var(--skin-neon) 30%, transparent); clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%); transform: none; }
+body > header strong#title::before { flex: none; width: auto; height: auto; margin: 0; border: 0; border-radius: 0; background: none; box-shadow: none; color: var(--skin-pulse); content: "LOC:"; font-size: 10px; letter-spacing: .1em; transform: none; }
+body > header #status { color: var(--skin-neon) !important; }
+body > header .hud-faces { grid-area: faces; display: flex; gap: 4px; }
+body > header .hud-faces::after { display: none; }
+body > header .hud-faces canvas { display: block; width: 38px; height: 38px; margin: 0; padding: 3px; border: 0; border-radius: 0; outline: 0; object-fit: cover; background: var(--ns-brackets), #02050b; box-shadow: none; image-rendering: pixelated; }
+body > header .hud-faces button.hud-face { padding: 0; border: 0; border-radius: 0; background: none; box-shadow: none; }
+body > header .hud-faces button.hud-face canvas { width: 30px; height: 30px; opacity: .8; }
+body > header .hud-faces button.hud-face:is(:hover, :focus-visible) { background: none; box-shadow: none; }
+body > header .hud-faces button.hud-face:is(:hover, :focus-visible) canvas { opacity: 1; background: var(--ns-brackets), color-mix(in srgb, var(--skin-neon) 20%, #02050b); }
+body > header .hud-hp { grid-area: hp; width: 120px; height: 10px; padding: 0; border: 1px solid var(--ns-n55); border-radius: 0; background: #02050b; box-shadow: none; }
+body > header .hud-hp i { border-radius: 0; background: repeating-linear-gradient(90deg, transparent 0 6px, #02050b 6px 8px), linear-gradient(90deg, var(--skin-neon), #b8fbff); box-shadow: 0 0 8px var(--ns-n55); }
+body > header .hud-hp.low i { background: repeating-linear-gradient(90deg, transparent 0 6px, #02050b 6px 8px), linear-gradient(90deg, var(--skin-pulse), #ffb3dd); }
+body > header .hud-hp-text { grid-area: text; display: inline-flex; align-items: center; gap: 8px; color: #a9d6de !important; font: 600 12px/1 var(--ns-mono); white-space: nowrap; }
+body > header .hud-hp-text .hud-lv { padding: 2px 6px; border: 0; border-radius: 0; background: var(--skin-pulse); color: #060b16 !important; font: 800 11px/1.2 var(--ns-mono); font-style: normal; }
+body > header > button { display: grid; place-items: center; width: 38px; height: 38px; min-height: 38px; padding: 0; font-size: 16px; }
+body > header :is(#weapon, #bag) { width: auto; gap: 6px; padding: 0 12px 0 8px; font-size: 12px; }
+#quest-wrap #quest { padding: 8px 34px 9px 16px; background: var(--ns-scan), var(--ns-panel); box-shadow: inset 0 0 0 1px var(--ns-n55), inset 3px 0 0 var(--skin-pulse); }
+#quest-wrap #quest::before { display: none; }
+#quest-wrap #quest small { color: var(--skin-pulse) !important; font-family: var(--ns-mono); letter-spacing: .16em; }
+#quest-wrap #quest small::before { border-radius: 0; background: var(--skin-pulse); color: #060b16; }
+#quest-wrap #quest span { color: #e6fbff !important; }
+#quest-wrap #quest::after { color: var(--skin-neon); }
+#quest-wrap #quest:is(:hover, :focus-visible) { box-shadow: inset 0 0 0 1px var(--skin-neon), inset 3px 0 0 var(--skin-pulse), 0 0 16px var(--ns-n35); }
+#quest-fold { width: 30px; height: 30px; min-height: 30px; padding: 0; }
+.rpg-waypoint { padding: 3px 10px 4px; border: 0; border-radius: 0; background: rgba(6, 11, 22, .92); color: #e6fbff; font: 700 12px/1.35 var(--ns-mono); letter-spacing: .06em; box-shadow: inset 0 0 0 1px var(--ns-n55), inset 2px 0 0 var(--skin-neon); backdrop-filter: none; }
+.rpg-waypoint::after, .rpg-waypoint:is([data-kind="exit"], .is-objective, :hover)::after { left: calc(50% - 4px); bottom: -5px; width: 8px; height: 5px; border: 0; background: var(--skin-neon); clip-path: polygon(0 0, 100% 0, 50% 100%); transform: none; }
+.rpg-waypoint:is([data-kind="exit"], .is-objective) { background: rgba(6, 11, 22, .92); box-shadow: inset 0 0 0 1px var(--skin-pulse), inset 2px 0 0 var(--skin-pulse); }
+.rpg-waypoint:is([data-kind="exit"], .is-objective)::after { background: var(--skin-pulse); }
+.rpg-waypoint.is-objective::before { border: 0; border-radius: 0; background: var(--skin-pulse); color: #060b16; }
+.rpg-waypoint:hover { background: color-mix(in srgb, var(--skin-neon) 20%, #060b16); color: #fff; }
+.rpg-waypoint:focus-visible { outline: 2px solid var(--skin-pulse); outline-offset: 3px; }
+#banner { min-width: min(420px, 80vw); padding: 12px 40px 14px; background: var(--ns-scan), var(--ns-panel); clip-path: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px); }
+#banner::before, #banner::after { display: none; }
+#banner strong { color: #f2feff; font-family: var(--ns-sans); letter-spacing: .14em; text-shadow: 0 0 2px #fff, 0 0 16px var(--skin-neon); }
+#banner small { color: var(--skin-pulse); font-family: var(--ns-mono); letter-spacing: .36em; }
+body > footer .pad button { width: 48px; height: 48px; font-size: 20px; }
+body > footer #interact { padding: 0 16px; background: var(--skin-neon); color: #060b16; }
+body > footer .stick { border: 1px solid var(--ns-n55); border-radius: 50%; background: rgba(6, 11, 22, .7); box-shadow: 0 0 14px var(--ns-n20); }
+body > footer .stick i { border: 1px solid var(--skin-neon); background: #060b16; box-shadow: 0 0 10px var(--ns-n55); }
+body > footer .stick.active i { background: var(--skin-neon); }
+#loader { background: var(--ns-scan), radial-gradient(ellipse 70% 60% at 50% 45%, #0b1c2e, #03050b 75%); color: #e6fbff; }
+#loader small { color: var(--skin-pulse); font-family: var(--ns-mono); letter-spacing: .4em; }
+#loader strong { color: #f2feff; text-shadow: 0 0 14px var(--skin-neon); }
+#loader p { color: #a9d6de; font-family: var(--ns-mono); }
+#loader .loader-bar { border: 1px solid var(--ns-n55); border-radius: 0; background: #02050b; }
+#loader .loader-bar i { background: repeating-linear-gradient(90deg, transparent 0 8px, #02050b 8px 10px), linear-gradient(90deg, var(--skin-neon), var(--skin-pulse)); }
+#loader .loader-motes i { background: var(--skin-neon); box-shadow: 0 0 8px var(--skin-neon); }
+
+@media (max-width: 700px) {
+  body > header { top: 30px; left: 12px; gap: 6px; padding: 8px 8px 8px 10px; }
+  body > header .location { grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "faces hp" "faces text"; gap: 5px 8px; }
+  body > header .hud-faces canvas { width: 34px; height: 34px; }
+  body > header .hud-hp { width: 100%; min-width: 96px; }
+  body > header .hud-hp-text { gap: 5px; font-size: 11px; }
+  body > header > button { width: 34px; height: 34px; min-height: 34px; font-size: 14px; }
+  body > header strong#title { font-size: 12px; }
+}
+
+/* ── 地圖上的對話 ── */
+#dialogue { --dlg-speaker: var(--skin-neon) !important; --dlg-text: #e6fbff !important; --dlg-font: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif !important; }
+#dialogue .dlg-nameplate { padding: 4px 14px; border: 1px solid var(--skin-neon); border-radius: 0; background: #060b16; box-shadow: 0 0 12px var(--ns-n35); }
+#dialogue #speaker { background: none; box-shadow: none; color: var(--skin-neon); font-family: var(--ns-mono); letter-spacing: .14em; }
+#dialogue #speaker::before { color: var(--skin-pulse); content: "["; }
+#dialogue #speaker::after { color: var(--skin-pulse); content: "]"; }
+#dialogue #text { color: #e6fbff; }
+
+/* ── 暫停選單：滿版 HUD，上面一條細細的標題列，導覽是底部的工作列 ── */
+.rpg-pause-menu { --pm-bg: #060b16; --pm-fg: #e6fbff; --pm-muted: #a9d6de; --pm-control: #0d1a2b; --pm-border: var(--ns-n55); --pm-strong: var(--skin-neon); --pm-on-strong: #060b16; --pm-focus: var(--skin-pulse); --pm-line: var(--ns-n35); color: #e6fbff; font-family: var(--ns-sans); }
+.rpg-pause-panel, #local-menu.rpg-pause-menu { padding: 0; overflow: hidden; border: 0; border-radius: 0; background: var(--ns-cut) 0 0 / 18px 18px no-repeat, var(--ns-cut) 100% 100% / 18px 18px no-repeat, var(--ns-scan), linear-gradient(rgba(57, 243, 255, .03) 1px, transparent 1px) 0 0 / 100% 28px, linear-gradient(90deg, rgba(57, 243, 255, .03) 1px, transparent 1px) 0 0 / 28px 100%, linear-gradient(160deg, rgba(7, 14, 26, .97), rgba(3, 6, 12, .98)); color: #e6fbff; box-shadow: inset 0 0 0 1px var(--ns-n55), 0 0 40px var(--ns-n20), 0 30px 90px rgba(0, 0, 0, .6); clip-path: polygon(18px 0, 100% 0, 100% calc(100% - 18px), calc(100% - 18px) 100%, 0 100%, 0 18px); backdrop-filter: blur(8px); outline: 0; }
+.rpg-pause-panel { width: min(1240px, 100%); }
+.rpg-pause-panel > .rpg-pause-menu { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; grid-template-rows: auto minmax(0, 1fr) auto; grid-template-areas: "title where foot close" "book book book book" "nav nav nav nav"; column-gap: 16px; row-gap: 0; padding: 0; background: none; }
+.rpg-pause-panel .pm-header > div:first-child { grid-area: title; align-self: center; display: flex; align-items: baseline; gap: 10px; padding: 12px 0 12px 26px; }
+.pm-header small { display: block; margin: 0; color: var(--skin-pulse); font: 700 11px/1 var(--ns-mono); letter-spacing: .3em; }
+.pm-header small::after { margin-left: 10px; color: var(--ns-n55); content: "//"; }
+.pm-header h2 { margin: 0; color: #f2feff; font: 900 21px/1.2 var(--ns-sans); letter-spacing: .08em; text-shadow: 0 0 2px #fff, 0 0 12px color-mix(in srgb, var(--skin-neon) 70%, transparent); }
+.rpg-pause-panel .pm-where { grid-area: where; align-self: center; justify-self: start; display: inline-flex; align-items: center; gap: 6px; max-width: 100%; margin: 0; padding: 4px 10px; overflow: hidden; border: 0; border-radius: 0; background: rgba(57, 243, 255, .08); color: var(--skin-neon); font: 700 12px/1.3 var(--ns-mono); letter-spacing: .08em; text-overflow: ellipsis; white-space: nowrap; box-shadow: inset 0 0 0 1px var(--ns-n35); }
+.rpg-pause-panel .pm-where svg { width: 13px; height: 13px; color: var(--skin-pulse); }
+.rpg-pause-panel .pm-close { grid-area: close; align-self: center; justify-self: end; display: grid; place-items: center; width: 38px; height: 38px; min-height: 38px; margin: 0 22px 0 0; padding: 0; color: var(--skin-neon); }
+.pm-close::before, .pm-close::after { display: none; }
+.pm-close svg { display: block; width: 18px; height: 18px; }
+/* 細標題列底下一條霓虹線。 */
+.rpg-pause-panel .pm-header::after { display: none; }
+.rpg-pause-panel .pm-content { grid-area: book; position: relative; min-width: 0; min-height: 0; overflow: auto; margin: 0; padding: 20px 26px 18px; border: 0; border-top: 1px solid var(--ns-n35); border-bottom: 1px solid var(--ns-n35); border-radius: 0; background: radial-gradient(ellipse 60% 70% at 0% 0%, rgba(57, 243, 255, .06), transparent 70%); color: #e6fbff; box-shadow: none; scrollbar-gutter: auto; scrollbar-width: thin; scrollbar-color: var(--ns-n55) transparent; }
+/* 底部工作列：一排圖示，目前的那格底下亮一條線。 */
+.rpg-pause-panel .pm-nav { grid-area: nav; display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 4px; min-width: 0; margin: 0; padding: 8px 18px 10px; overflow-x: auto; overflow-y: hidden; border: 0; background: linear-gradient(180deg, rgba(57, 243, 255, .05), rgba(2, 5, 11, .6)); scrollbar-width: none; }
+.rpg-pause-panel .pm-nav .pm-nav-label { display: none; }
+.rpg-pause-panel .pm-tiles { display: flex; flex-direction: row; align-items: stretch; justify-content: center; gap: 4px; }
+.rpg-pause-panel .pm-nav button.pm-tile { position: relative; flex: none; flex-direction: column; justify-content: center; gap: 4px; width: 86px; min-width: 0; min-height: 58px; padding: 6px 4px 8px; border: 0; border-radius: 0; background: transparent; color: #a9d6de; font: 600 12px/1.2 var(--ns-sans); letter-spacing: .04em; white-space: nowrap; box-shadow: none; text-shadow: none; transform: none; transition: background .15s, color .15s; }
+.rpg-pause-panel .pm-nav button.pm-tile::before { display: none; }
+.rpg-pause-panel .pm-nav button.pm-tile::after { position: absolute; left: 22px; right: 22px; bottom: 2px; height: 2px; background: var(--skin-neon); box-shadow: 0 0 10px var(--skin-neon); content: ""; opacity: 0; transition: opacity .15s, left .2s, right .2s; }
+.rpg-pause-panel .pm-tile .pm-tile-icon { display: grid; place-items: center; width: 34px; height: 30px; color: var(--skin-neon); }
+.rpg-pause-panel .pm-nav button.pm-tile svg { width: 20px; height: 20px; color: inherit; }
+.rpg-pause-panel .pm-nav button.pm-tile:hover { background: rgba(57, 243, 255, .08); color: #f2feff; transform: none; }
+.rpg-pause-panel .pm-nav button.pm-tile[aria-current="page"] { background: linear-gradient(180deg, transparent, rgba(57, 243, 255, .16)); color: #f2feff; box-shadow: none; text-shadow: 0 0 8px color-mix(in srgb, var(--skin-neon) 60%, transparent); transform: none; }
+.rpg-pause-panel .pm-nav button.pm-tile[aria-current="page"] .pm-tile-icon { background: var(--ns-brackets); filter: drop-shadow(0 0 6px var(--skin-neon)); }
+.rpg-pause-panel .pm-nav button.pm-tile[aria-current="page"]::after { left: 10px; right: 10px; opacity: 1; }
+.rpg-pause-panel .pm-nav button.pm-tile:focus-visible { outline: 2px solid var(--skin-pulse); outline-offset: -2px; }
+.rpg-pause-panel .pm-nav button.pm-tile:active { background: rgba(255, 63, 180, .16); }
+/* 內頁共用。 */
+.pm-content :is(h2, h3, h4, p, span, b, strong, dd, li, label, em, output) { text-shadow: none; }
+.pm-content :is(h3, b, strong, dd) { color: #f2feff; }
+.pm-content :is(p, span, li, label, em) { color: #e6fbff; }
+.pm-content :is(small, dt), .pm-location { color: #a9d6de; }
+.pm-page-title { display: flex; align-items: center; gap: 10px; margin: 0 0 14px; color: #f2feff; font: 800 19px/1.3 var(--ns-sans); letter-spacing: .06em; }
+.pm-page-title::before { color: var(--skin-pulse); content: ">"; font-family: var(--ns-mono); }
+.pm-page-title::after, .pm-content .pm-hero h3::after { flex: 1; height: 1px; background: linear-gradient(90deg, var(--ns-n55), transparent); content: ""; }
+.pm-section-title, .rpg-pause-menu .vn2-settings-body h4 { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; margin: 0 0 8px; color: var(--skin-neon); font: 700 12px/1.3 var(--ns-mono); letter-spacing: .2em; }
+.rpg-pause-menu :is(.pm-section-title, .vn2-settings-body h4)::before { flex: none; width: 6px; height: 6px; background: var(--skin-pulse); content: ""; transform: none; }
+.pm-section-title small { color: #a9d6de; font-size: 11px; letter-spacing: .04em; }
+/* 角色狀態：三欄——全像投影的立繪、生命與能力、夥伴與紀錄，1280×720 一頁放得下。 */
+.rpg-pause-panel .pm-content[data-page="status"] { display: grid; grid-template-columns: minmax(200px, 250px) minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: auto auto minmax(0, 1fr); grid-template-areas: "figure card party" "figure card facts" "figure card attrs"; align-content: start; column-gap: 26px; row-gap: 14px; }
+.rpg-pause-panel .pm-content[data-page="status"] > * { grid-column: 2 / -1; min-width: 0; margin: 0; }
+.rpg-pause-panel .pm-content[data-page="status"] > .pm-hero { display: contents; }
+.rpg-pause-panel .pm-content[data-page="status"] > .pm-party { grid-area: party; }
+.rpg-pause-panel .pm-content[data-page="status"] > .pm-facts { grid-area: facts; align-self: start; }
+.rpg-pause-panel .pm-content[data-page="status"] > .pm-attributes { grid-area: attrs; align-self: start; }
+[data-page="status"] .pm-figure { grid-area: figure; position: relative; display: grid; grid-template-columns: minmax(0, 1fr); place-items: end center; align-self: stretch; min-width: 0; min-height: 300px; padding: 20px 10px 26px; background: radial-gradient(ellipse 50% 12% at 50% 94%, color-mix(in srgb, var(--skin-neon) 45%, transparent), transparent 70%), repeating-linear-gradient(180deg, rgba(57, 243, 255, .06) 0 1px, transparent 1px 4px), radial-gradient(ellipse 60% 55% at 50% 60%, rgba(57, 243, 255, .1), transparent 72%), var(--ns-brackets); }
+[data-page="status"] .pm-figure.has-standee { grid-template-columns: minmax(0, 1fr); }
+[data-page="status"] .pm-standee { grid-area: 1 / 1; width: 100%; max-width: 200px; max-height: 300px; margin: 0; filter: drop-shadow(0 0 10px color-mix(in srgb, var(--skin-neon) 45%, transparent)) saturate(1.1); }
+[data-page="status"] .pm-figure .pm-portrait { grid-area: 1 / 1; position: relative; z-index: 1; display: grid; place-items: center; width: 70px; height: 70px; margin: 0; padding: 0; overflow: hidden; border-radius: 0; background: var(--ns-brackets), rgba(2, 5, 11, .9); box-shadow: 0 0 14px var(--ns-n35); }
+[data-page="status"] .pm-figure.has-standee .pm-portrait { justify-self: start; align-self: end; margin: 0 0 -10px -4px; }
+[data-page="status"] .pm-figure:not(.has-standee) .pm-portrait { align-self: center; width: 150px; height: 150px; }
+[data-page="status"] .pm-portrait::before, [data-page="status"] .pm-portrait::after { display: none; }
+[data-page="status"] .pm-portrait canvas { width: auto; height: auto; max-width: 56px; max-height: 56px; filter: none; }
+[data-page="status"] .pm-figure:not(.has-standee) .pm-portrait canvas { max-width: 112px; max-height: 120px; }
+[data-page="status"] .pm-hero-card { grid-area: card; display: grid; grid-template-columns: minmax(0, 1fr); align-content: start; gap: 7px; min-width: 0; }
+.pm-hero-card > small { order: 0; color: var(--skin-pulse) !important; font: 700 11px/1.3 var(--ns-mono); letter-spacing: .24em; }
+.pm-content .pm-hero h3 { order: 0; display: flex; align-items: center; gap: 10px; margin: 0 0 6px; color: #f2feff; font: 900 30px/1.15 var(--ns-sans); letter-spacing: .06em; text-shadow: 0 0 14px color-mix(in srgb, var(--skin-neon) 50%, transparent); }
+.pm-health-label, .pm-level { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin: 0; color: #a9d6de; font: 600 12px/1.2 var(--ns-mono); letter-spacing: .06em; }
+.rpg-pause-menu :is(.pm-health-label, .pm-level) span { color: #a9d6de; }
+.pm-health-label strong { color: var(--skin-neon); font: 700 22px/1 var(--ns-mono); text-shadow: 0 0 10px color-mix(in srgb, var(--skin-neon) 50%, transparent); }
+.pm-level { margin-top: 6px; }
+.pm-level b { color: #f2feff; font: 800 17px/1 var(--ns-mono); }
+.pm-health, .pm-exp { height: 12px; margin: 0; padding: 2px; border: 1px solid var(--ns-n55); border-radius: 0; background: #02050b; box-shadow: none; }
+.pm-exp { height: 8px; padding: 1px; }
+.pm-health > i { border-radius: 0; background: repeating-linear-gradient(90deg, transparent 0 8px, #02050b 8px 10px), linear-gradient(90deg, var(--skin-neon), #b8fbff); box-shadow: 0 0 8px var(--ns-n55); }
+.pm-exp > i { border-radius: 0; background: linear-gradient(90deg, var(--skin-pulse), #ffb3dd); }
+.pm-health-note { margin: 0; color: #a9d6de !important; font: 12px/1.5 var(--ns-mono); }
+.pm-health-note::before { color: var(--skin-pulse); content: "// "; }
+.pm-stat-row { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 8px 0 0; }
+.pm-stat, .pm-gear-skill { gap: 8px; padding: 8px 10px; border: 0; border-radius: 0; background: rgba(13, 26, 43, .85); color: #e6fbff; box-shadow: inset 0 0 0 1px var(--ns-n35), inset 2px 0 0 var(--skin-neon); }
+.rpg-pause-menu :is(.pm-stat, .pm-gear-skill) > svg { color: var(--skin-neon); }
+.rpg-pause-menu :is(.pm-stat, .pm-gear-skill) :is(small, em) { color: #a9d6de !important; font-family: var(--ns-mono); font-size: 11px; }
+.rpg-pause-menu :is(.pm-stat, .pm-gear-skill) b { color: #f2feff !important; }
+.pm-stat b { font: 800 20px/1 var(--ns-mono); }
+.pm-stat[data-delta="up"] { box-shadow: inset 0 0 0 1px #6cf0a8, inset 2px 0 0 #6cf0a8; }
+.pm-stat[data-delta="up"] em { color: #6cf0a8 !important; }
+.pm-stat[data-delta="down"] { box-shadow: inset 0 0 0 1px var(--skin-pulse), inset 2px 0 0 var(--skin-pulse); }
+.pm-stat[data-delta="down"] em { color: #ff8fd0 !important; }
+.pm-party-row { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+.pm-party-member { display: flex; align-items: center; gap: 10px; min-width: 0; padding: 5px 12px 5px 6px; border: 0; border-radius: 0; background: rgba(13, 26, 43, .55); color: #e6fbff; box-shadow: inset 0 0 0 1px var(--ns-n20); }
+.pm-party-member[data-joined] { background: rgba(13, 26, 43, .9); box-shadow: inset 0 0 0 1px var(--ns-n35), inset 2px 0 0 var(--skin-neon); }
+.pm-party-member[data-leading] { box-shadow: inset 0 0 0 1px var(--skin-pulse), inset 2px 0 0 var(--skin-pulse); }
+.pm-party-face { flex: none; display: grid; place-items: start center; width: 40px; height: 40px; overflow: hidden; border-radius: 0; background: var(--ns-brackets), #02050b; }
+.pm-party-face canvas { width: 46px; height: auto; max-width: none; max-height: none; }
+.pm-party-face > svg { width: 20px; height: 20px; margin-top: 10px; color: #a9d6de; }
+.pm-party-standee { width: 40px; height: 40px; border: 1px solid var(--skin-neon); border-radius: 0; background: #02050b; }
+.pm-party-member b { color: #f2feff; font: 700 14px/1.3 var(--ns-sans); }
+.pm-party-member small { color: #a9d6de !important; font: 11px/1.4 var(--ns-mono); }
+.pm-party-lead { min-height: 30px; padding: 3px 10px; font-size: 12px; }
+.pm-facts { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin: 0; }
+.pm-attributes .pm-facts { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.pm-facts > div { padding: 7px 10px 8px; border: 0; border-radius: 0; background: rgba(13, 26, 43, .7); color: #e6fbff; box-shadow: inset 0 -1px 0 var(--ns-n55); }
+.pm-facts dt { margin: 0 0 4px; color: #a9d6de !important; font: 600 11px/1.2 var(--ns-mono); letter-spacing: .08em; }
+.pm-facts dd { color: var(--skin-neon) !important; font: 700 18px/1.2 var(--ns-mono); }
+.pm-facts dd small { color: #a9d6de !important; font-size: 11px; }
+/* 裝備：六角形裝備格、資料格道具。 */
+.pm-rune { border: 1px solid var(--ns-n55); background: radial-gradient(ellipse, rgba(57, 243, 255, .22), transparent 70%); box-shadow: 0 0 24px var(--ns-n35); }
+.pm-diamond { inset: 4px 2px; border: 0; border-radius: 0; background: var(--skin-neon); clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%); box-shadow: none; transform: none; }
+.pm-diamond::before { position: absolute; inset: 1.5px; background: radial-gradient(circle, rgba(57, 243, 255, .16), #02050b 70%); clip-path: inherit; content: ""; }
+.rpg-pause-menu button.pm-slot-frame:is(:hover, :focus-visible):not(:disabled) .pm-diamond, .pm-slot:is([data-state="match"], [data-state="target"]) .pm-diamond { background: var(--skin-pulse); box-shadow: none; transform: none; }
+.rpg-pause-menu button.pm-slot-frame:is(:hover, :focus-visible):not(:disabled) .pm-diamond::before, .pm-slot:is([data-state="match"], [data-state="target"]) .pm-diamond::before { background: radial-gradient(circle, rgba(57, 243, 255, .32), #02050b 75%); }
+.rpg-pause-menu button.pm-slot-frame:disabled .pm-diamond { background: #3c4a50; }
+.rpg-pause-menu button.pm-slot-frame:disabled .pm-diamond::before { background: #0b1018; }
+.rpg-pause-menu :is(.pm-slot-frame .pm-slot-empty, .pm-locked) { color: #93a3a8; }
+.pm-slot-label small { color: var(--skin-pulse) !important; font-family: var(--ns-mono); letter-spacing: .14em; }
+.pm-slot-label b { color: #e6fbff !important; }
+.rpg-pause-menu button.pm-bag-item { border: 0; border-radius: 0; background: rgba(13, 26, 43, .9); color: #e6fbff; box-shadow: inset 0 0 0 1px var(--ns-n35); }
+.rpg-pause-menu button.pm-bag-item:is(:hover, :focus-visible):not(:disabled) { background: color-mix(in srgb, var(--skin-neon) 18%, #0d1a2b); box-shadow: inset 0 0 0 1px var(--skin-neon); }
+.rpg-pause-menu button.pm-bag-item[aria-pressed="true"] { background: color-mix(in srgb, var(--skin-neon) 24%, #0d1a2b); color: #f2feff; box-shadow: inset 0 0 0 2px var(--skin-neon), 0 0 12px var(--ns-n35); }
+.rpg-pause-menu button.pm-bag-item:disabled { background: rgba(13, 26, 43, .4); box-shadow: inset 0 0 0 1px #24323a; }
+.pm-bearer { border-radius: 0; background: var(--skin-pulse); color: #060b16 !important; font-family: var(--ns-mono); }
+.rpg-pause-menu :is(.pm-worn-mark, .pm-worn-mark small) { color: var(--skin-neon) !important; }
+.pm-gear-note { border-left: 2px solid var(--skin-pulse); border-radius: 0; background: rgba(13, 26, 43, .8); color: #a9d6de; font-family: var(--ns-mono); }
+.pm-gear-note b { color: #f2feff !important; }
+/* 系統設定：一行一行的資料讀數。 */
+.rpg-pause-menu .vn2-menu-row { min-height: 44px; padding: 8px 10px 8px 14px; border: 0; border-bottom: 1px dashed var(--ns-n20); border-radius: 0; background: transparent; color: #cdeff5; box-shadow: inset 2px 0 0 var(--ns-n35); }
+.rpg-pause-menu .vn2-menu-row:hover { background: linear-gradient(90deg, rgba(57, 243, 255, .1), transparent 75%); }
+.rpg-pause-menu .vn2-menu-row:focus-within { box-shadow: inset 2px 0 0 var(--skin-neon); }
+.rpg-pause-menu .vn2-menu-row > span { color: #cdeff5 !important; font: 600 14px var(--ns-sans); }
+.rpg-pause-menu .vn2-menu-row b { color: var(--skin-neon) !important; font: 700 12px var(--ns-mono); }
+.rpg-pause-menu .vn2-menu-row input[type="range"] { height: 6px; border: 1px solid var(--ns-n55); border-radius: 0; background: #02050b; accent-color: var(--skin-neon); }
+.rpg-pause-menu input[type="range"]::-webkit-slider-thumb { width: 10px; height: 18px; border: 0; border-radius: 0; background: var(--skin-neon); box-shadow: 0 0 10px var(--skin-neon); }
+.rpg-pause-menu input[type="range"]::-moz-range-thumb { width: 10px; height: 18px; border: 0; border-radius: 0; background: var(--skin-neon); }
+.rpg-pause-menu .vn2-menu-toggle input { accent-color: var(--skin-neon); }
+.rpg-pause-menu .vn2-reading-note { color: #a9d6de !important; font-family: var(--ns-mono); }
+.rpg-pause-menu .vn2-menu-actions > button { min-height: 42px; font-size: 13px; }
+.rpg-pause-menu .studio-select .select-menu-trigger, .rpg-pause-menu .studio-select .select-menu-trigger:is(:hover, [aria-expanded="true"]) { border: 0; border-radius: 0; background: #02050b; color: #e6fbff; box-shadow: inset 0 0 0 1px var(--ns-n55); font: 600 14px var(--ns-mono); }
+.rpg-pause-menu .studio-select .select-menu-trigger:is(:hover, [aria-expanded="true"]) { background: #0d1a2b; box-shadow: inset 0 0 0 1px var(--skin-neon); }
+/* 標題列右邊：Esc 提示與「繼續冒險」。 */
+.rpg-pause-panel .pm-footer { grid-area: foot; display: flex; align-items: center; justify-content: flex-end; gap: 12px; margin: 0; padding: 0; border: 0; background: none; color: #e6fbff; }
+.pm-footer::before, .pm-footer::after { display: none; }
+.pm-footer p { color: #a9d6de; font: 12px/1.4 var(--ns-mono); }
+.rpg-pause-menu kbd { margin-right: 6px; padding: 2px 6px; border: 0; border-radius: 0; background: #0d1a2b; color: var(--skin-neon); font: 700 11px var(--ns-mono); box-shadow: inset 0 0 0 1px var(--ns-n55); }
+button.pm-primary { min-height: 38px; padding: 0 18px; border: 0; border-radius: 0; background: var(--skin-neon); color: #060b16; font: 800 14px/1 var(--ns-mono); letter-spacing: .14em; clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px); box-shadow: none; text-shadow: none; }
+button.pm-primary::before { content: "> "; }
+button.pm-primary svg { color: inherit; }
+button.pm-primary:is(:hover, :focus-visible) { background: var(--skin-pulse); color: #060b16; box-shadow: none; }
+button.pm-primary:focus-visible { outline: 2px solid #f2feff; outline-offset: -5px; }
+button.pm-primary:active { background: #f2feff; transform: none; }
+@media (max-width: 680px) {
+  .rpg-pause-panel > .rpg-pause-menu { grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto auto minmax(0, 1fr) auto; grid-template-areas: "title close" "where foot" "book book" "nav nav"; column-gap: 8px; }
+  .rpg-pause-panel .pm-header > div:first-child { padding: 12px 0 8px 18px; }
+  .rpg-pause-panel .pm-where { margin: 0 0 10px 18px; }
+  .rpg-pause-panel .pm-footer { margin: 0 14px 10px 0; }
+  .pm-footer p { display: none; }
+  .rpg-pause-panel .pm-close { margin-right: 16px; }
+  .rpg-pause-panel .pm-content { padding: 14px 14px 16px; }
+  .rpg-pause-panel .pm-nav { justify-content: flex-start; padding: 6px 8px 8px; }
+  .rpg-pause-panel .pm-tiles { gap: 0; }
+  .rpg-pause-panel .pm-nav button.pm-tile { width: 50px; min-height: 52px; padding: 4px 0 6px; font-size: 10px; letter-spacing: 0; }
+  .rpg-pause-panel .pm-tile .pm-tile-icon { width: 30px; height: 26px; }
+  .rpg-pause-panel .pm-content[data-page="status"] { grid-template-columns: 116px minmax(0, 1fr); grid-template-areas: "figure card" "party party" "facts facts" "attrs attrs"; grid-template-rows: auto; column-gap: 14px; }
+  [data-page="status"] .pm-figure { min-height: 200px; padding: 12px 6px 18px; }
+  [data-page="status"] .pm-standee { max-height: 190px; }
+  [data-page="status"] .pm-figure .pm-portrait { width: 52px; height: 52px; }
+  .pm-content .pm-hero h3 { font-size: 24px; }
+  .pm-stat-row { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+  .pm-stat { padding: 5px 8px; }
+  .pm-stat b { font-size: 16px; }
+  .rpg-pause-menu :is(.pm-facts, .pm-attributes .pm-facts) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* ── 戰鬥：四個角落的 HUD ── */
+.rpg-battle { --ink: #e6fbff !important; --muted: #a9d6de !important; --gold: var(--skin-neon) !important; --danger: #ff8fd0 !important; --bt-panel: rgba(8, 16, 30, .95) !important; --bt-panel-2: rgba(4, 7, 14, .93) !important; --bt-panel-soft: rgba(4, 7, 14, .82) !important; --bt-shade: 2 5 11 !important; --bt-edge: var(--skin-neon) !important; --bt-edge-soft: var(--ns-n35) !important; --bt-deep: #02050b !important; --bt-well-a: #12304a !important; --bt-well-b: #060b16 !important; --bt-track: #02050b !important; --bt-orb-a: #10233a !important; --bt-orb-b: #050a14 !important; --bt-orb-ink: #e6fbff !important; --bt-orb-glyph: var(--skin-neon) !important; --bt-orb-hover-a: #16405e !important; --bt-orb-hover-b: #0a1a2b !important; --bt-orb-off-a: #0b1018 !important; --bt-orb-off-ink: #93a3a8 !important; --bt-orb-off-edge: #3c4a50 !important; --bt-radius: 0px !important; --bt-blur: 4px !important; --bt-font: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace !important; --ns-top: 280px; --ns-dock: 160px; }
+/* 上方保留一條給指令終端機與隊伍資料，戰場上的角色不會站到那裡；遭遇資訊實際顯示在左下角。 */
+.battle-top { left: 0; right: 0; top: 0; display: block; height: var(--ns-top); padding: 0; background: linear-gradient(180deg, rgba(2, 5, 11, .55), transparent); }
+.battle-top::before { position: fixed; left: 18px; bottom: 16px; z-index: 3; width: min(440px, calc(100% - 36px)); height: 120px; background: var(--ns-scan), var(--ns-panel); box-shadow: inset 0 0 0 1px var(--ns-n55), inset 3px 0 0 var(--skin-pulse); clip-path: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px); content: ""; }
+.battle-top > * { position: fixed; z-index: 4; left: 36px; max-width: min(400px, calc(100% - 72px)); margin: 0; }
+.battle-caption { bottom: 108px; color: var(--skin-pulse); font-size: 11px; letter-spacing: .3em; }
+.battle-caption::before { margin-right: 6px; color: var(--skin-neon); content: "!"; }
+.rpg-battle.is-boss .battle-caption { color: #ff8fd0; }
+.battle-top h2 { bottom: 68px; overflow: hidden; color: #f2feff; font: 900 24px/1.3 var(--ns-sans); letter-spacing: .04em; text-overflow: ellipsis; white-space: nowrap; text-shadow: 0 0 2px #fff, 0 0 14px color-mix(in srgb, var(--skin-neon) 70%, transparent); }
+.battle-turn { left: auto; right: max(36px, calc(100% - 442px)); bottom: 108px; padding: 1px 6px; background: var(--skin-neon); color: #060b16; font-size: 11px; font-weight: 800; letter-spacing: .1em; text-shadow: none; }
+.battle-turn.is-hurry { background: var(--skin-pulse); }
+.battle-log { bottom: 24px; max-height: 3em; overflow: hidden; color: #cdeff5; font-size: 14px; line-height: 1.5; text-shadow: none; }
+.battle-log::before { color: var(--skin-pulse); content: "> "; }
+/* 右上：隊伍資料面板；奧義條在面板最下面，整條看得到。 */
+.battle-dock { left: 0; right: 0; bottom: 0; display: block; height: var(--ns-dock); padding: 0; background: none; }
+.battle-party, .battle-party[data-size] { position: fixed; top: 14px; right: 76px; z-index: 5; display: grid; grid-template-columns: repeat(var(--members, 1), minmax(0, 230px)); gap: 6px 8px; width: auto; max-width: calc(100% - 96px); padding: 24px 10px 10px; background: var(--ns-scan), var(--ns-panel); box-shadow: inset 0 0 0 1px var(--ns-n55), 0 0 22px var(--ns-n20); clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px)); }
+.battle-party[data-size='1'] { grid-template-columns: minmax(0, 300px); }
+.battle-party::before { position: absolute; left: 12px; top: 7px; color: var(--skin-pulse); content: "PARTY // LINK"; font: 700 10px/1 var(--ns-mono); letter-spacing: .26em; }
+.battle-member { display: grid; grid-template-columns: 46px minmax(0, 1fr); align-items: center; gap: 0 10px; min-width: 0; padding: 6px 8px 6px 6px; border: 0; border-radius: 0; background: rgba(13, 26, 43, .8); box-shadow: inset 2px 0 0 var(--ns-n35); backdrop-filter: none; clip-path: none; transform: none; }
+.battle-member::before { display: none; }
+.battle-member[aria-current="true"] { background: linear-gradient(90deg, rgba(57, 243, 255, .16), rgba(13, 26, 43, .85)); box-shadow: inset 3px 0 0 var(--skin-neon), 0 0 14px var(--ns-n35); transform: none; }
+.battle-member-face, .battle-party:not([data-size='1']) .battle-member-face { display: grid; place-items: center; width: 46px; height: 46px; padding: 3px; background: var(--ns-brackets), #02050b; }
+.battle-member .battle-portrait, .battle-party:not([data-size='1']) .battle-portrait { width: 40px; height: 40px; border: 0; border-radius: 0; background: none; box-shadow: none; object-fit: cover; object-position: 50% 12%; }
+.battle-member .battle-face, .battle-party:not([data-size='1']) .battle-face { width: 40px; height: 32px; border: 0; border-radius: 0; background: none; box-shadow: none; }
+.battle-member-body { gap: 1px 8px; }
+.battle-member-name, .battle-party:not([data-size='1']) .battle-member-name { margin: 0 0 2px; color: #f2feff; font: 800 14px/1.2 var(--ns-sans); letter-spacing: .04em; }
+.battle-member[aria-current="true"] .battle-member-name::before { color: var(--skin-neon); content: "▶ "; }
+.battle-stat small { color: #a9d6de; font-size: 10px; }
+.battle-stat b, .battle-party:not([data-size='1']) .battle-stat b { color: var(--skin-neon); font-size: 15px; }
+.battle-mp-value b, .battle-party:not([data-size='1']) .battle-mp-value b { color: #c3c9ff; font-size: 13px; }
+.battle-member .battle-bar, .battle-limit-box .battle-bar.limit { height: 7px; border-radius: 0; background: #02050b; box-shadow: inset 0 0 0 1px var(--ns-n35); }
+.battle-member .battle-bar i { border-radius: 0; background: repeating-linear-gradient(90deg, transparent 0 6px, #02050b 6px 7px), linear-gradient(90deg, var(--skin-neon), #b8fbff); }
+.battle-member .battle-bar.mp { height: 5px; }
+.battle-member .battle-bar.mp i { background: linear-gradient(90deg, #6f7dff, #b9c1ff); }
+.battle-member.is-low .battle-bar.hp i { background: repeating-linear-gradient(90deg, transparent 0 6px, #02050b 6px 7px), linear-gradient(90deg, var(--skin-pulse), #ffb3dd); }
+.battle-member-down { color: #ff8fd0; }
+.battle-limit-box { grid-column: 1 / -1; display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 10px; margin: 0; padding: 4px 4px 0; border: 0; background: none; clip-path: none; box-shadow: none; }
+.battle-limit-value { color: var(--skin-pulse); font-size: 11px; font-weight: 700; letter-spacing: .12em; }
+.battle-limit-box .battle-bar.limit i { border-radius: 0; background: repeating-linear-gradient(90deg, transparent 0 6px, #02050b 6px 7px), linear-gradient(90deg, var(--skin-pulse), var(--skin-neon)); }
+/* 右下：鎖定目標。 */
+.battle-command-area { position: fixed; right: 18px; bottom: 20px; z-index: 4; max-width: 34%; }
+.battle-target-label { gap: 8px; padding: 8px 14px; border: 0; border-radius: 0; background: rgba(6, 11, 22, .94); color: var(--skin-neon); font-size: 13px; font-weight: 700; letter-spacing: .08em; box-shadow: inset 0 0 0 1px var(--ns-n55), inset -3px 0 0 var(--skin-pulse); clip-path: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px); }
+.battle-target-label::before { color: var(--skin-pulse); content: "LOCK"; font-size: 10px; letter-spacing: .2em; }
+.battle-target-label .bt-glyph { color: var(--skin-pulse); }
+/* 左上：指令終端機（在上方保留的那一條裡，不擋到角色）。一行一個指令，前面是 >，選到的那行後面有閃爍的游標。 */
+.battle-actions.battle-ring:not([data-menu="result"]), .rpg-battle[data-layout] .battle-actions.battle-ring:not([data-menu="result"]) { left: 18px; right: auto; top: 14px; bottom: auto; display: grid; grid-template-columns: minmax(0, 1fr); align-content: start; gap: 2px; width: 230px; height: auto; max-height: calc(var(--ns-top) - 24px); margin: 0; padding: 30px 8px 10px; overflow-x: hidden; overflow-y: auto; border: 0; border-radius: 0; background: var(--ns-scan), var(--ns-panel); box-shadow: inset 0 0 0 1px var(--ns-n55), inset 3px 0 0 var(--skin-neon), 0 0 22px var(--ns-n20); transform: none; translate: none; clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%); animation: ns-term-in .3s steps(6, end) both; scrollbar-width: thin; scrollbar-color: var(--ns-n55) transparent; }
+.battle-actions.battle-ring:is([data-menu="skills"], [data-menu="items"]), .rpg-battle[data-layout] .battle-actions.battle-ring:is([data-menu="skills"], [data-menu="items"]) { width: 336px; }
+.battle-actions.battle-ring:not([data-menu="result"])::before { position: absolute; left: 12px; right: 12px; top: 9px; display: block; width: auto; height: auto; overflow: hidden; translate: none; border: 0; border-radius: 0; background: none; box-shadow: none; color: var(--skin-pulse); content: "CMD://" attr(aria-label); font: 700 10px/1.2 var(--ns-mono); letter-spacing: .2em; text-overflow: ellipsis; white-space: nowrap; animation: none; }
+.battle-actions.battle-ring:not([data-menu="result"])::after { display: none; }
+.battle-ring:not([data-menu="result"]) :is(.bt-orb, .bt-card), .rpg-battle[data-layout] .battle-ring:not([data-menu="result"]) .bt-orb { --orb: auto; position: relative; display: flex; align-items: center; justify-content: flex-start; gap: 8px; width: 100%; height: auto; min-height: 34px; margin: 0; padding: 3px 26px 3px 8px; border: 0; border-radius: 0; clip-path: none; background: transparent; color: #cdeff5; box-shadow: none; text-shadow: none; font: 700 16px/1.2 var(--ns-mono); letter-spacing: .06em; text-align: left; white-space: nowrap; translate: none; scale: none; transform: none; animation: none; }
+.battle-ring:not([data-menu="result"]) .bt-orb::before { flex: none; width: auto; height: auto; margin: 0; background: none; color: var(--skin-pulse); content: ">"; }
+.battle-ring:not([data-menu="result"]) .bt-orb::after { position: absolute; right: 8px; top: calc(50% - 8px); display: block; width: 8px; height: 16px; background: var(--skin-neon); content: ""; opacity: 0; }
+.battle-ring :is(.bt-orb, .bt-card) span { max-width: none; overflow: hidden; text-overflow: ellipsis; }
+.battle-ring :is(.bt-orb, .bt-card) .bt-glyph { flex: none; width: 18px; height: 18px; color: var(--skin-neon); }
+.battle-ring :is(.bt-orb, .bt-card) .bt-glyph svg { width: 16px; height: 16px; }
+.battle-ring:not([data-menu="result"]) :is(.bt-orb, .bt-card):is(:hover, :focus-visible):not(:disabled) { background: linear-gradient(90deg, rgba(57, 243, 255, .2), rgba(57, 243, 255, .04)); color: #fff; box-shadow: inset 2px 0 0 var(--skin-neon); scale: none; }
+.battle-ring:not([data-menu="result"]) .bt-orb:is(:hover, :focus-visible):not(:disabled)::after { opacity: 1; animation: ns-blink 1s steps(2, end) infinite; }
+.battle-ring :is(.bt-orb, .bt-card):focus-visible { outline: 1px solid var(--skin-pulse); outline-offset: -2px; }
+.battle-ring :is(.bt-orb, .bt-card):active:not(:disabled) { background: color-mix(in srgb, var(--skin-pulse) 30%, #060b16); scale: none; }
+.battle-ring :is(.bt-orb, .bt-card):disabled { background: transparent; color: #7f9196; box-shadow: none; text-decoration: line-through; text-decoration-color: rgba(127, 145, 150, .6); cursor: not-allowed; }
+.battle-ring :is(.bt-orb, .bt-card):disabled .bt-glyph, .battle-ring .bt-orb:disabled::before { color: #7f9196; }
+.battle-ring .bt-orb.is-attack { color: #f2feff; }
+.battle-ring .bt-orb.battle-limit { background: linear-gradient(90deg, color-mix(in srgb, var(--skin-pulse) 40%, #060b16), rgba(57, 243, 255, .2)); color: #fff; white-space: normal; box-shadow: inset 0 0 0 1px var(--skin-pulse); animation: ns-pulse 1.2s ease-in-out infinite; }
+.battle-ring .bt-orb.battle-limit span { white-space: normal; line-height: 1.3; }
+.battle-ring .bt-orb.is-confirming { color: #ff8fd0; box-shadow: inset 2px 0 0 var(--skin-pulse); }
+.battle-ring :is(.bt-orb, .bt-card) .bt-dmg, .rpg-battle[data-commands="list"] .battle-ring[data-menu="main"] .bt-orb .bt-dmg { position: static; flex: none; min-width: 0; margin-left: auto; padding: 1px 5px; border: 0; border-radius: 0; background: rgba(57, 243, 255, .14); color: var(--skin-neon); font-size: 11px; box-shadow: inset 0 0 0 1px var(--ns-n35); animation: none; }
+.battle-ring:not([data-menu="result"]) .bt-card { padding-left: 18px; font-size: 14px; }
+.battle-ring .bt-card::before { left: 6px; top: 8px; bottom: 8px; width: 3px; border-radius: 0; background: var(--fx, var(--skin-neon)); box-shadow: 0 0 6px var(--fx, var(--skin-neon)); }
+.battle-ring:is([data-menu="skills"], [data-menu="items"]) .bt-orb { margin-top: 6px; border-top: 1px dashed var(--ns-n35); color: #a9d6de; font-size: 13px; }
+.battle-ring:is([data-menu="skills"], [data-menu="items"]) .bt-orb::before { content: "<"; }
+@keyframes ns-term-in { from { clip-path: polygon(0 0, 0 0, 0 0, 0 100%, 0 100%); } }
+@keyframes ns-blink { 50% { opacity: 0; } }
+@keyframes ns-pulse { 50% { box-shadow: inset 0 0 0 1px var(--skin-pulse), 0 0 16px color-mix(in srgb, var(--skin-pulse) 60%, transparent); } }
+/* 敵人名牌、行動預告、輪到誰。 */
+.battle-unit-label { padding: 4px 10px 5px; border: 0; border-radius: 0; background: rgba(6, 11, 22, .94); box-shadow: inset 0 0 0 1px var(--ns-n55), inset 0 2px 0 var(--skin-pulse); }
+.battle-unit-label b { color: #f2feff; font: 700 14px/1.3 var(--ns-sans); }
+.battle-unit-label small { color: #a9d6de; font-size: 10px; }
+.battle-enemy .battle-bar { height: 5px; border-radius: 0; }
+.battle-enemy .battle-bar i { background: linear-gradient(90deg, var(--skin-pulse), #ffb3dd); }
+.battle-unit[aria-pressed="true"] .battle-unit-label { box-shadow: inset 0 0 0 1px var(--skin-neon), inset 0 2px 0 var(--skin-pulse), 0 0 16px var(--ns-n35); }
+.battle-unit[aria-pressed="true"] .battle-unit-label::after { border: 0; border-radius: 0; background: var(--skin-pulse); color: #060b16; font-weight: 800; }
+.rpg-battle :is(.bt-intent, .bt-turn-tag) { border: 0; border-radius: 0; background: rgba(6, 11, 22, .94); box-shadow: inset 0 0 0 1px var(--ns-n55); }
+.bt-turn-tag::after { border-color: var(--skin-neon); background: #060b16; }
+.bt-callout { color: #f2feff; font-family: var(--ns-sans); font-weight: 900; text-shadow: 0 0 2px #fff, 0 0 18px var(--skin-neon), 3px 0 0 color-mix(in srgb, var(--skin-pulse) 70%, transparent); }
+/* 戰鬥結束與戰鬥中的對白。 */
+.battle-result { padding: 28px 44px 24px; border: 0; border-radius: 0; background: var(--ns-scan), var(--ns-panel); box-shadow: inset 0 0 0 1px var(--skin-neon), 0 0 30px var(--ns-n35); clip-path: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px); }
+.battle-result small { color: var(--skin-pulse); letter-spacing: .4em; }
+.battle-result h3 { color: #f2feff; font-family: var(--ns-sans); font-weight: 900; text-shadow: 0 0 2px #fff, 0 0 16px var(--skin-neon); }
+.battle-result p { color: #cdeff5; }
+.battle-actions.battle-ring[data-menu="result"] button { min-width: 180px; min-height: 44px; font-size: 16px; }
+.bt-talk b { color: var(--skin-neon); font-family: var(--ns-mono); }
+.bt-talk p { color: #e6fbff; }
+@media (max-width: 600px) {
+  .rpg-battle { --ns-top: 176px; --ns-dock: 340px; }
+  .battle-party, .battle-party[data-size] { top: 10px; left: 10px; right: 58px; grid-template-columns: repeat(min(var(--members, 1), 2), minmax(0, 1fr)); max-width: none; }
+  .battle-party[data-size='1'] { grid-template-columns: minmax(0, 1fr); }
+  .battle-member { grid-template-columns: 38px minmax(0, 1fr); gap: 0 8px; }
+  .battle-member-face, .battle-party:not([data-size='1']) .battle-member-face { width: 38px; height: 38px; }
+  .battle-member .battle-portrait, .battle-party:not([data-size='1']) .battle-portrait { width: 32px; height: 32px; }
+  .battle-top::before { left: 10px; right: 10px; bottom: 10px; width: auto; height: 104px; }
+  .battle-top > * { left: 24px; max-width: calc(100% - 48px); }
+  .battle-caption, .battle-turn { bottom: 90px; }
+  .battle-top .battle-turn { left: auto; right: 24px; }
+  .battle-top h2 { bottom: 56px; font-size: 19px; }
+  .battle-log { bottom: 18px; font-size: 12px; }
+  .battle-actions.battle-ring:not([data-menu="result"]), .rpg-battle[data-layout] .battle-actions.battle-ring:not([data-menu="result"]) { top: auto; bottom: 126px; width: 190px; max-height: 214px; }
+  .battle-actions.battle-ring:is([data-menu="skills"], [data-menu="items"]), .rpg-battle[data-layout] .battle-actions.battle-ring:is([data-menu="skills"], [data-menu="items"]) { width: calc(100% - 36px); }
+  .battle-ring:not([data-menu="result"]) :is(.bt-orb, .bt-card), .rpg-battle[data-layout] .battle-ring:not([data-menu="result"]) .bt-orb { min-height: 34px; font-size: 14px; }
+}
+
+/* ── 商店 ── */
+.rpg-shop { clip-path: polygon(22px 0, 100% 0, 100% calc(100% - 22px), calc(100% - 22px) 100%, 0 100%, 0 22px); }
+.rpg-shop[open] { grid-template-columns: minmax(0, 1fr); }
+.rpg-shop > * { min-width: 0; }
+.rpg-shop::backdrop { background: rgba(2, 4, 10, .65); }
+.rpg-shop :is(.shop-head, .shop-foot, .shop-total) { border-color: var(--ns-n35); border-style: solid; }
+.rpg-shop :is(h2, h3, b, output) { color: #f2feff; }
+.rpg-shop .shop-price { color: var(--skin-neon); font-family: var(--ns-mono); }
+.rpg-shop :is(small, .shop-note, .shop-foot, .shop-qty > span, .shop-empty, .shop-toast) { color: #a9d6de; }
+.rpg-shop .shop-wallet { border: 1px solid var(--skin-neon); border-radius: 0; background: #060b16; color: #e6fbff; box-shadow: none; }
+.rpg-shop .shop-wallet b { color: var(--skin-neon); font-family: var(--ns-mono); }
+.rpg-shop :is(.shop-wallet span, .shop-art span) { border: 1px solid var(--ns-n35); border-radius: 0; background: #02050b; }
+.rpg-shop .shop-row { border: 0; border-radius: 0; background: rgba(13, 26, 43, .8); color: #e6fbff; box-shadow: inset 2px 0 0 var(--ns-n35); }
+.rpg-shop .shop-row:hover { background: color-mix(in srgb, var(--skin-neon) 12%, #0d1a2b); }
+.rpg-shop .shop-row[aria-selected="true"] { background: linear-gradient(90deg, color-mix(in srgb, var(--skin-neon) 24%, #0d1a2b), rgba(13, 26, 43, .8)); box-shadow: inset 4px 0 0 var(--skin-pulse), 0 0 12px var(--ns-n20); }
+.rpg-shop .shop-detail { box-shadow: inset 0 0 0 1px var(--ns-n35); }
+.rpg-shop .shop-list { border-radius: 0; }
+.rpg-shop .shop-list:focus-visible { outline: 2px solid var(--skin-pulse); outline-offset: 2px; }
+.rpg-shop .shop-short { color: #ff8fd0; }
+.rpg-shop kbd { border-color: var(--ns-n35); border-radius: 0; background: #060b16; color: #e6fbff; }
+
+/* ── 取名 ── */
+.rpg-naming { overflow: visible; }
+.rpg-naming .naming-body { grid-template-columns: minmax(0, 1fr); }
+.rpg-naming .naming-face { border: 1px solid var(--skin-neon); border-radius: 0; background: #060b16; clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%); box-shadow: none; }
+.rpg-naming small { color: var(--skin-pulse); font-family: var(--ns-mono); letter-spacing: .3em; }
+.rpg-naming h2 { color: #f2feff; font-family: var(--ns-sans); }
+.rpg-naming input { border: 0; border-radius: 0; background: #02050b; color: #f2feff; box-shadow: inset 0 0 0 1px var(--skin-neon); font-family: var(--ns-mono); }
+.rpg-naming .naming-note { color: #a9d6de; }
+
+/* ── 轉盤 ── */
+#wheel .wheel-stage { --accent: var(--skin-neon) !important; --on-accent: #060b16 !important; }
+#wheel .wheel-dial { background: repeating-conic-gradient(from calc(var(--span) / -2 - 1deg), var(--skin-pulse) 0 1deg, #050a14 1deg var(--span)); box-shadow: 0 0 0 6px #02050b, 0 0 0 7px var(--skin-neon), 0 0 34px color-mix(in srgb, var(--skin-neon) 40%, transparent), 0 24px 70px rgba(0, 0, 0, .8); }
+#wheel :is(.wheel-title, .wheel-name, .wheel-keys, .wheel-cancel) { border: 1px solid var(--skin-neon); border-radius: 0; background: #060b16; color: #e6fbff; box-shadow: 0 0 12px var(--ns-n35); font-family: var(--ns-mono); }
+@media (prefers-reduced-motion: reduce) { .battle-actions.battle-ring, .battle-ring .bt-orb::after, .battle-ring .bt-orb.battle-limit { animation: none !important; } .rpg-pause-panel .pm-nav button.pm-tile, .rpg-pause-panel .pm-nav button.pm-tile::after { transition: none; } }
+/* ── 多人連線：頻道燈號是終端機的狀態列、聊天一行行跑在面板上、按鈕與右上角的關閉鍵是切角的方鍵 ── */
+.mp-chip, .mp-follow, .mp-duel { border: 0; border-radius: 0; background: rgba(13, 26, 43, .92); color: #e6fbff; box-shadow: inset 0 0 0 1px var(--ns-n55); text-shadow: none; font-family: var(--ns-mono); letter-spacing: .08em; transform: none; clip-path: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px); padding: 6px 14px; }
+.mp-tool { border: 0; border-radius: 0; background: rgba(13, 26, 43, .92); color: #e6fbff; box-shadow: inset 0 0 0 1px var(--ns-n55); text-shadow: none; font-family: var(--ns-mono); letter-spacing: .08em; transform: none; border-radius: 0; }
+.mp-chip:is(:hover, :focus-visible), .mp-tool:is(:hover, :focus-visible) { background: var(--skin-neon); color: #060b16; text-shadow: none; outline: none; }
+.mp-line { border: 0; border-radius: 0; background: var(--ns-panel); color: #e6fbff; box-shadow: inset 0 0 0 1px var(--ns-n55), inset 3px 0 0 var(--skin-neon); backdrop-filter: blur(6px); padding: 4px 10px; border-radius: 0; font-family: var(--ns-mono); font-size: 12px; letter-spacing: .02em; }
+.mp-line b { color: var(--skin-neon); }
+.mp-line b::before { content: "> "; color: var(--skin-pulse); }
+.mp-line.mine b { color: var(--skin-pulse); }
+.mp-line.system { color: #a9d6de; font-style: normal; }
+.mp-line.dm { box-shadow: inset 0 0 0 1px var(--ns-n55), inset 3px 0 0 #c77dff; }
+.mp-line.dm b { color: #e2b8ff; }
+.mp-ui.composing .mp-log { background: rgba(6, 11, 22, .72); box-shadow: inset 0 0 0 1px var(--ns-n35); }
+.mp-input { border: 0; border-radius: 0; background: rgba(13, 26, 43, .92); color: #e6fbff; box-shadow: inset 0 0 0 1px var(--ns-n55); text-shadow: none; font-family: var(--ns-mono); letter-spacing: .08em; transform: none; font-family: var(--ns-mono); }
+.mp-send { border: 0; border-radius: 0; background: rgba(13, 26, 43, .92); color: #e6fbff; box-shadow: inset 0 0 0 1px var(--ns-n55); text-shadow: none; font-family: var(--ns-mono); letter-spacing: .08em; transform: none; background: var(--skin-neon); color: #060b16; }
+.mp-emotes { border: 0; border-radius: 0; background: var(--ns-panel); color: #e6fbff; box-shadow: inset 0 0 0 1px var(--ns-n55), inset 3px 0 0 var(--skin-neon); backdrop-filter: blur(6px); }
+.mp-badge { border-radius: 0; background: var(--skin-pulse); color: #060b16; box-shadow: none; }
+.mp-tag { border-radius: 0; background: rgba(6, 11, 22, .88); color: #e6fbff; box-shadow: inset 0 0 0 1px var(--skin-neon); text-shadow: none; font-family: var(--ns-mono); }
+[data-larch-ui="close"] { border: 0; border-radius: 0; background: rgba(13, 26, 43, .92); color: #e6fbff; box-shadow: inset 0 0 0 1px var(--ns-n55); text-shadow: none; font-family: var(--ns-mono); letter-spacing: .08em; transform: none; border-radius: 0; clip-path: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px); }
+[data-larch-ui="close"]:is(:hover, :focus-visible) { background: var(--skin-neon); color: #060b16; text-shadow: none; }
+/* 同行的夥伴：點一下在上面看他的資料。 */
+button.pm-party-member[data-joined]:is(:hover, :focus-visible) { background: rgba(20, 44, 70, .95); color: #e6fbff; }
+button.pm-party-member[aria-current="true"] { box-shadow: inset 0 0 0 1px var(--skin-neon), inset 4px 0 0 var(--skin-neon), 0 0 14px color-mix(in srgb, var(--skin-neon) 40%, transparent); }
+
+/* 《十一分鐘》補充（2026-10-09 作者：跳出提示跟任務提示疊在一起）：引擎把 #notice 固定在左上 90px，正好壓在任務提示上，移到畫面下方中間 */
+#notice { top: auto !important; bottom: 128px; left: 50% !important; translate: -50% 0; max-width: min(560px, calc(100% - 32px)); text-align: center; }

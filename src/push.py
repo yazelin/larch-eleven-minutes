@@ -57,6 +57,7 @@ def merge_settings(online, built):
     for part, v in built.get('customInterfaces', {}).items():
         if part not in ci: ci[part] = v; continue
         if v.get('params'): ci[part]['params'] = {**ci[part].get('params', {}), **v['params']}
+        if any((ROOT / f'src/ui/{part}.{e}').exists() for e in ('css', 'html')): ci[part]['html'] = v['html']   # 我們補過的部位（src/ui/<部位>）才覆寫程式碼
     # 標題副標圖層：線上沒有副標圖層才補（作者在網頁改過就保留）
     ts = m.setdefault('titleScreen', {}); layers = ts.setdefault('layers', [])
     for L in (built.get('titleScreen') or {}).get('layers', []):

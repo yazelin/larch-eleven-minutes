@@ -58,7 +58,7 @@ try {
   await note('在灰色的山裡找江禾那一則'); await shot('3-cloud');
   assert(true, '終端機三個指令打完，戴上頭盔進雲海');
   await ui.clickText('在灰色的山裡找江禾那一則'); await sleep(9000); await page.keyboard.press('Space');
-  await note('砍倒追來的審查兵，往牆走');
+  await note('砍倒追來的審查兵');
   assert(true, '捧起江禾那一則');
   // 審查兵追過來：原地一直砍
   const end = Date.now() + 180000;

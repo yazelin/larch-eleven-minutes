@@ -57,7 +57,7 @@ TYPES = {
     'firedoor': (2, 4, 1, 'a dark grey steel fire exit door frame with the door open into darkness (the doorway is empty so the background shows through), a glowing green running-man exit sign above it (no text)', False, 'magenta'),
     # 二十樓（m-server）
     'crac': (3, 4, 1, 'a white precision air conditioning unit for a server room standing against the wall, front grille vents, a small status display glowing cyan', False, 'green'),
-    'rack': (8, 5, 1, 'a long row of tall black server racks side by side, mesh front doors, rows of tiny blinking green and cyan status lights, cable bundles', True, 'magenta'),
+    'rack': (8, 5, 1, 'a long row of tall black server racks side by side, mesh front doors, rows of tiny blinking green and cyan status lights, cable bundles', False, 'magenta'),   # 整張縮進框（10-09 作者：機櫃被切掉）
     'terminal': (3, 3, 1, 'a plain steel desk with one black computer monitor showing only a single green text cursor, a keyboard, and a sleek black VR helmet resting beside it', False, 'magenta'),
     # 雲端長城（m-cloud）
     'mound1': (6, 4, 2, 'a small hill made of thousands of dim grey glowing dots piled up (each dot is a captured message), soft and loose like sand, faint grey glow', False, 'magenta'),
