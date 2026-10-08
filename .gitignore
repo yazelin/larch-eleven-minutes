@@ -13,3 +13,4 @@ art/check/*.log
 art/scene_raw/
 art/music_raw/
 snapshots/
+dist-play/
