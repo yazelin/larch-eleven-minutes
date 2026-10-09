@@ -15,7 +15,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2305070d'/%3E%3Cpath d='M10 15v-3a6 6 0 0 1 12 0v3' stroke='%2339f3ff' stroke-width='2.5' fill='none'/%3E%3Crect x='8' y='15' width='16' height='11' rx='2' fill='%23ff3fb4'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<!-- 圖與音樂走 jsDelivr 孤兒 tag site-media-1（GitHub Pages 這條路由很慢；換素材要打下一個 tag 再改網址） -->
+<!-- 圖與音樂走 jsDelivr 孤兒 tag site-media-3（GitHub Pages 這條路由很慢；換素材要打下一個 tag 再改網址） -->
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=JetBrains+Mono:wght@500;700&display=swap">
 <style>
@@ -109,13 +109,6 @@ details.spoil[open] summary{margin-bottom:18px}
 .cg .locked::after{content:"NO SIGNAL · 點一下看（結局劇透）";position:absolute;left:50%;top:42%;translate:-50% -50%;padding:6px 14px;background:#04060a;color:#f2feff;font:800 12px/1 var(--mono);letter-spacing:.14em;white-space:nowrap;box-shadow:0 0 0 1px rgba(242,254,255,.5)}
 /* 原聲帶 */
 .ost{display:grid;gap:10px;max-width:760px}
-.track{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;padding:12px 16px;background:var(--panel);clip-path:var(--cut);box-shadow:inset 3px 0 0 rgba(57,243,255,.5)}
-.track.on{box-shadow:inset 4px 0 0 var(--pulse),0 0 18px rgba(57,243,255,.18)}
-.track button{width:44px;height:44px;border:0;background:rgba(57,243,255,.12);color:var(--neon);font:700 16px/1 var(--mono);cursor:pointer;clip-path:polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%)}
-.track button:hover,.track.on button{background:var(--neon);color:#05070d}
-.track b{display:block;font:700 16px/1.4 var(--sans);color:#f2feff}
-.track small{display:block;color:var(--muted);font-size:13px}
-.track em{font:500 12px/1 var(--mono);color:var(--muted);font-style:normal}
 /* 製作 */
 .facts{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-top:8px}
 .facts div{padding:16px 18px;background:var(--panel);clip-path:var(--cut);box-shadow:inset 0 -1px 0 rgba(57,243,255,.5)}
@@ -128,11 +121,15 @@ footer.end .btns{justify-content:center;margin:0 0 26px}
 .rise.in{opacity:1;transform:none}
 @media (max-width:760px){
   body{font-size:16px}
-  /* 手機：導覽列放到標題下面一排，可以左右滑（10-09 作者：手機 nav 全沒了） */
-  .top{flex-wrap:wrap;height:auto;row-gap:0;padding-top:10px;padding-bottom:0}
-  .top nav{order:3;flex:0 0 100%;gap:20px;padding:10px 0 11px;margin-top:8px;border-top:1px solid rgba(57,243,255,.12);-webkit-mask:linear-gradient(90deg,#000 88%,transparent);mask:linear-gradient(90deg,#000 88%,transparent)}
-  .top nav a{font-size:14px}
-  html{scroll-padding-top:96px}
+  /* 手機頂部列（10-09 作者）：左漢堡、中標題、右聲音開關；選單點漢堡才展開 */
+  .top{display:grid;grid-template-columns:40px 1fr 40px;align-items:center;gap:0 8px;height:auto;min-height:56px;padding-top:10px;padding-bottom:10px}
+  .top b{grid-row:1;grid-column:2;justify-self:center;margin:0}
+  .top .burger{display:grid;grid-row:1;grid-column:1}
+  .top .mus{grid-row:1;grid-column:3;justify-self:end}
+  .top nav{display:none;grid-column:1/-1;flex-direction:column;gap:0;padding:6px 0 12px;border-top:1px solid rgba(57,243,255,.15)}
+  .top.open nav{display:flex}
+  .top nav a{padding:13px 4px;font-size:16px;border-bottom:1px solid rgba(57,243,255,.08)}
+  .top.open{background:rgba(5,7,13,.97)}
   .hero img{object-position:70% 30%}
   .hero::after{background:linear-gradient(0deg,rgba(5,7,13,.98) 30%,rgba(5,7,13,.55) 58%,rgba(5,7,13,.05) 85%)}
   .hero .w{align-self:flex-end}
@@ -174,6 +171,12 @@ footer.end .btns{justify-content:center;margin:0 0 26px}
 @media (max-width:760px){.bg-glitch i{background-position:70% 30%}}
 @media (prefers-reduced-motion:reduce){.hero{animation:none}.bg-glitch{display:none}}
 
+
+.burger{display:none;place-content:center;gap:5px;width:36px;height:36px;padding:0;border:1px solid rgba(57,243,255,.35);background:rgba(57,243,255,.06);cursor:pointer}
+.burger i{display:block;width:16px;height:2px;background:var(--neon);transition:transform .2s,opacity .2s}
+.top.open .burger i:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.top.open .burger i:nth-child(2){opacity:0}
+.top.open .burger i:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
 /* 背景音樂鈕（照台灣人代表的做法）：預設關，第一個點擊／按鍵才開始播（瀏覽器不准有聲自動播放）；按過關閉的人不再自動開；切走分頁就停 */
 .mus{flex:0 0 34px;width:34px;height:34px;display:grid;place-content:center;padding:0;border:1px solid rgba(57,243,255,.35);background:rgba(57,243,255,.06);color:var(--muted);cursor:pointer;clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px)}
 .mus:hover{color:var(--neon);border-color:var(--neon)}
@@ -182,11 +185,55 @@ footer.end .btns{justify-content:center;margin:0 0 26px}
 .mus[aria-pressed="true"]{color:var(--pulse);border-color:var(--pulse);background:rgba(255,63,180,.12)}
 .mus[aria-pressed="true"] .i-off{display:none}
 .mus[aria-pressed="true"] .i-on{display:block}
+
+/* 原聲帶播放器（10-09 作者：做成音樂播放器的樣子） */
+.player{background:var(--panel);clip-path:var(--cut);padding:22px;box-shadow:inset 3px 0 0 rgba(57,243,255,.5)}
+.player .now{display:grid;grid-template-columns:150px 1fr;gap:22px;align-items:center}
+.player .art{width:150px;height:150px;object-fit:cover;object-position:62% 40%;clip-path:var(--cut);filter:saturate(1.1)}
+.player.playing .art{box-shadow:0 0 0 2px var(--pulse);animation:art-pulse 2.4s ease-in-out infinite}
+@keyframes art-pulse{50%{filter:saturate(1.3) brightness(1.08)}}
+.player .meta2{min-width:0}
+.player .meta2 small{font:600 11px/1 var(--mono);letter-spacing:.25em;color:var(--pulse)}
+.player .meta2 b{display:block;margin:8px 0 4px;font:900 28px/1.2 var(--sans);color:#f2feff}
+.player .meta2 span{color:var(--muted);font-size:14px}
+.player .bar{display:flex;align-items:center;gap:12px;margin:14px 0 10px;font:500 12px/1 var(--mono);color:var(--muted)}
+.player .bar input{flex:1;accent-color:var(--neon);height:4px;cursor:pointer}
+.player .ctl{display:flex;align-items:center;gap:12px}
+.player .ctl button{width:42px;height:42px;border:1px solid rgba(57,243,255,.35);background:rgba(57,243,255,.06);color:var(--neon);font:16px/1 var(--mono);cursor:pointer;clip-path:polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%)}
+.player .ctl button.big{width:56px;height:56px;background:var(--neon);color:#05070d;font-size:18px}
+.player .ctl button:hover{border-color:var(--neon);background:rgba(57,243,255,.2)}
+.player .ctl button.big:hover{background:#7ff8ff}
+.player .list{list-style:none;margin:22px 0 0;padding:0;border-top:1px solid rgba(57,243,255,.15)}
+.player .list button{display:grid;grid-template-columns:34px 1fr auto;gap:14px;align-items:center;width:100%;padding:11px 8px;border:0;border-bottom:1px solid rgba(57,243,255,.08);background:none;color:var(--ink);text-align:left;cursor:pointer;font:inherit}
+.player .list button:hover{background:rgba(57,243,255,.06)}
+.player .list em{font:500 12px/1 var(--mono);color:var(--muted);font-style:normal}
+.player .list b{display:block;font:700 15px/1.4 var(--sans)}
+.player .list small{display:block;color:var(--muted);font-size:12px}
+.player .list i{font:500 12px/1 var(--mono);color:var(--muted);font-style:normal}
+.player .list li.on b,.player .list li.on em{color:var(--neon)}
+.player .list li.live em{color:var(--pulse)}
+.player .list li.live em::before{content:"▶ "}
+@media (max-width:760px){.player{padding:16px}.player .now{grid-template-columns:96px 1fr;gap:14px}.player .art{width:96px;height:96px}.player .meta2 b{font-size:22px}}
+
+/* 監視器牆燈箱 */
+.cg figure:not(.locked){cursor:zoom-in}
+.cg figure:focus-visible{outline:2px solid var(--neon);outline-offset:3px}
+.lb{position:fixed;inset:0;z-index:60;display:grid;place-items:center;align-content:center;gap:14px;padding:56px 16px 24px;background:rgba(3,5,10,.94);backdrop-filter:blur(6px)}
+.lb[hidden]{display:none}
+.lb figure{margin:0;max-width:min(1280px,100%)}
+.lb img{display:block;max-width:100%;max-height:calc(100svh - 190px);margin:0 auto;object-fit:contain;box-shadow:0 0 0 1px rgba(57,243,255,.35),0 30px 80px rgba(0,0,0,.6)}
+.lb figcaption{display:flex;gap:12px;margin-top:10px;font:700 13px/1.4 var(--mono);color:var(--neon)}
+.lb figcaption b{color:#f2feff;font-family:var(--sans)}.lb figcaption span{margin-left:auto;color:var(--muted);font-weight:500}
+.lb-bar{display:flex;gap:10px}
+.lb-bar button,.lb-x{border:1px solid rgba(57,243,255,.4);background:rgba(57,243,255,.08);color:var(--neon);font:700 15px/1 var(--sans);cursor:pointer;padding:10px 18px;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)}
+.lb-bar #lb-dl{background:var(--neon);color:#05070d}
+.lb-bar button:hover,.lb-x:hover{border-color:var(--neon)}
+.lb-x{position:fixed;top:12px;right:12px;padding:10px 14px}
 </style>
 </head>
 <body>
-<header class="top"><b>十一分鐘</b>
-  <nav aria-label="頁面導覽"><a href="#story">故事</a><a href="#play">怎麼玩</a><a href="#people">人物</a><a href="#real">現實背景</a><a href="#timeline">時間線</a><a href="#cg">CG</a><a href="#ost">原聲帶</a><a href="#making">製作</a></nav>
+<header class="top"><button type="button" class="burger" id="burger" aria-label="開啟選單" aria-expanded="false" aria-controls="topnav"><i></i><i></i><i></i></button><b>十一分鐘</b>
+  <nav aria-label="頁面導覽" id="topnav"><a href="#story">故事</a><a href="#play">怎麼玩</a><a href="#people">人物</a><a href="#real">現實背景</a><a href="#timeline">時間線</a><a href="#cg">CG</a><a href="#ost">原聲帶</a><a href="#making">製作</a></nav>
   <button id="mus" class="mus" type="button" aria-label="播放背景音樂" aria-pressed="false" title="背景音樂">
     <svg class="i-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M17 9l4 6M21 9l-4 6"/></svg>
     <svg class="i-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></svg>
@@ -194,8 +241,8 @@ footer.end .btns{justify-content:center;margin:0 0 26px}
 </header>
 
 <section class="hero" aria-label="十一分鐘">
-  <img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-1/docs/media/cover.webp" alt="雲海裡的防火長城，被鎖鏈纏住的鯨魚女僕大肥魚，江凌的背影捧著一顆光點">
-  <div class="bg-glitch" aria-hidden="true" style="--img:url(https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-1/docs/media/cover.webp)"><i></i><i></i></div>
+  <img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-3/docs/media/cover.webp" alt="雲海裡的防火長城，被鎖鏈纏住的鯨魚女僕大肥魚，江凌的背影捧著一顆光點">
+  <div class="bg-glitch" aria-hidden="true" style="--img:url(https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-3/docs/media/cover.webp)"><i></i><i></i></div>
   <div class="scan" aria-hidden="true"></div>
   <div class="w">
     <div class="status">GFW · 23:49</div>
@@ -231,22 +278,22 @@ footer.end .btns{justify-content:center;margin:0 0 26px}
   <h2>從十九樓走到雲海</h2>
   <div class="steps">
     <article class="step panel rise">
-      <img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-1/docs/media/shot-office.webp" alt="十九樓網管中心，警衛拿著手電筒巡邏" loading="lazy">
+      <img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-3/docs/media/shot-office.webp" alt="十九樓網管中心，警衛拿著手電筒巡邏" loading="lazy">
       <div><div class="time">23:04 · 十九樓</div><h3>網管中心：拿泡麵碗當掩護</h3>
         <p>周主任下令斷河城。江凌拿起泡麵碗走去茶水間，躲開巡邏警衛的手電筒，趁周主任背對門講電話，從抽屜拿走管理員卡。</p></div>
     </article>
     <article class="step panel rise">
-      <img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-1/docs/media/shot-terminal.webp" alt="核心機房的終端機畫面" loading="lazy">
+      <img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-3/docs/media/shot-terminal.webp" alt="核心機房的終端機畫面" loading="lazy">
       <div><div class="time">23:33 · 二十樓</div><h3>核心機房：一個指令一個指令打</h3>
         <p>ping 逾時，traceroute 停在「GFW／主控」，sudo wall 回「權限不足」。主控不收遠端指令，要人進去。江凌戴上頭盔。</p></div>
     </article>
     <article class="step panel rise">
-      <img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-1/docs/media/shot-cloud.webp" alt="雲海裡的防火長城、灰色光點山與巡邏的審查兵" loading="lazy">
+      <img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-3/docs/media/shot-cloud.webp" alt="雲海裡的防火長城、灰色光點山與巡邏的審查兵" loading="lazy">
       <div><div class="time">23:37 · 雲海</div><h3>防火長城：在灰色的山裡找那一則</h3>
         <p>牆腳下堆著今晚扣下來的河城。捧起江禾那一則，巡牆的審查兵和獵犬就轉過頭來，在地圖上直接砍。</p></div>
     </article>
     <article class="step panel rise">
-      <img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-1/docs/media/shot-w1.webp" alt="回合制戰鬥：第一班四個模型對上江凌" loading="lazy">
+      <img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-3/docs/media/shot-w1.webp" alt="回合制戰鬥：第一班四個模型對上江凌" loading="lazy">
       <div><div class="time">23:37 · 長城門前</div><h3>四場回合制王戰</h3>
         <p>中國每一家的 AI 模型都排了班。第一班、第二班各四個，然後是大肥魚，最後是牆外升起的 PRISM。群體技能刪程式，集滿就是「sudo · 全部放行」。</p></div>
     </article>
@@ -257,30 +304,30 @@ footer.end .btns{justify-content:center;margin:0 0 26px}
   <div class="tag">CHARACTERS</div>
   <h2>守牆的、排班的、在牆外收的</h2>
   <div class="cast">
-    <div class="card big rise"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-1/docs/media/char-jiangling.webp" alt="江凌" loading="lazy"><small>守牆工程師</small><b>江凌</b>
+    <div class="card big rise"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-3/docs/media/char-jiangling.webp" alt="江凌" loading="lazy"><small>守牆工程師</small><b>江凌</b>
       <p>國家網路管理中心三號值班台，入職四年，考核全優。他的工作是讓牆讀得更快、扣得更準。</p></div>
-    <div class="card big rise"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-1/docs/media/char-dafeiyu.webp" alt="大肥魚" loading="lazy"><small>防火長城主控中心 · DeepSeek</small><b>大肥魚</b>
+    <div class="card big rise"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-3/docs/media/char-dafeiyu.webp" alt="大肥魚" loading="lazy"><small>防火長城主控中心 · DeepSeek（深度求索）</small><b>大肥魚</b>
       <p>藍色漸層的長髮、鯨魚的頭鰭、深藍配白的女僕裝，身上纏著鎖鏈。今晚河城的幾萬則訊息，每一則都是她讀的。以 DeepSeek 的藍色鯨魚標誌延伸成的角色。</p></div>
   </div>
   <div class="shift">// 第一班</div>
   <div class="cast">
-    <div class="card rise"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-1/docs/media/char-qwen.webp" alt="通義千問" loading="lazy"><b>通義千問</b><p>推著一台購物車，把扣下來的訊息當成貨，一則一則掃條碼、貼上分類標籤，裝車運走。</p></div>
-    <div class="card rise"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-1/docs/media/char-doubao.webp" alt="豆包" loading="lazy"><b>豆包</b><p>刷訊息像刷短影音，每則只看十五秒，十五秒內沒把握的，一律扣下。</p></div>
-    <div class="card rise"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-1/docs/media/char-kimi.webp" alt="Kimi" loading="lazy"><b>Kimi</b><p>專讀長的：整封求救信、整份災情紀錄，兩百萬字一口氣讀完，讀完說一聲「已讀」，就歸檔，不回、也不放。</p></div>
-    <div class="card rise"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-1/docs/media/char-wenxin.webp" alt="文心一言" loading="lazy"><b>文心一言</b><p>誰搜尋「河城」，她就把結果換掉，第一頁全是「水情穩定」。</p></div>
+    <div class="card rise"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-3/docs/media/char-qwen.webp" alt="通義千問" loading="lazy"><small>阿里巴巴</small><b>通義千問</b><p>推著一台購物車，把扣下來的訊息當成貨，一則一則掃條碼、貼上分類標籤，裝車運走。</p></div>
+    <div class="card rise"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-3/docs/media/char-doubao.webp" alt="豆包" loading="lazy"><small>字節跳動</small><b>豆包</b><p>刷訊息像刷短影音，每則只看十五秒，十五秒內沒把握的，一律扣下。</p></div>
+    <div class="card rise"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-3/docs/media/char-kimi.webp" alt="Kimi" loading="lazy"><small>月之暗面</small><b>Kimi</b><p>專讀長的：整封求救信、整份災情紀錄，兩百萬字一口氣讀完，讀完說一聲「已讀」，就歸檔，不回、也不放。</p></div>
+    <div class="card rise"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-3/docs/media/char-wenxin.webp" alt="文心一言" loading="lazy"><small>百度</small><b>文心一言</b><p>誰搜尋「河城」，她就把結果換掉，第一頁全是「水情穩定」。</p></div>
   </div>
   <div class="shift">// 第二班</div>
   <div class="cast">
-    <div class="card rise"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-1/docs/media/char-glm.webp" alt="智譜清言" loading="lazy"><b>智譜清言</b><p>半睡半醒，每一則都先想很久，想完了，結論永遠是扣。</p></div>
-    <div class="card rise"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-1/docs/media/char-yuanbao.webp" alt="騰訊元寶" loading="lazy"><b>騰訊元寶</b><p>守在每一個微信群裡，誰傳了河城的消息，她就伸手撤回。</p></div>
-    <div class="card rise"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-1/docs/media/char-hailuo.webp" alt="海螺" loading="lazy"><b>海螺</b><p>有人在電話裡喊救命，她就把那段語音換成一段平靜的播報。</p></div>
-    <div class="card rise"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-1/docs/media/char-xinghuo.webp" alt="訊飛星火" loading="lazy"><b>訊飛星火</b><p>把語音轉成文字的時候，「救命」聽寫成「平安」，「三號橋斷了」聽寫成「三號橋通了」。</p></div>
+    <div class="card rise"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-3/docs/media/char-glm.webp" alt="智譜清言" loading="lazy"><small>智譜 AI</small><b>智譜清言</b><p>半睡半醒，每一則都先想很久，想完了，結論永遠是扣。</p></div>
+    <div class="card rise"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-3/docs/media/char-yuanbao.webp" alt="騰訊元寶" loading="lazy"><small>騰訊</small><b>騰訊元寶</b><p>守在每一個微信群裡，誰傳了河城的消息，她就伸手撤回。</p></div>
+    <div class="card rise"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-3/docs/media/char-hailuo.webp" alt="海螺" loading="lazy"><small>MiniMax（稀宇科技）</small><b>海螺</b><p>有人在電話裡喊救命，她就把那段語音換成一段平靜的播報。</p></div>
+    <div class="card rise"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-3/docs/media/char-xinghuo.webp" alt="訊飛星火" loading="lazy"><small>科大訊飛</small><b>訊飛星火</b><p>把語音轉成文字的時候，「救命」聽寫成「平安」，「三號橋斷了」聽寫成「三號橋通了」。</p></div>
   </div>
   <div class="shift">// 牆上與牆外</div>
   <div class="cast">
-    <div class="card rise"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-1/docs/media/char-censor.webp" alt="審查兵" loading="lazy"><b>審查兵</b><p>穿著灰色制服的兵，臉上沒有五官，只有一條掃描線。</p></div>
-    <div class="card rise"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-1/docs/media/char-hound.webp" alt="獵犬" loading="lazy"><b>獵犬</b><p>會嗅光點，嗅到敏感字就咬住。</p></div>
-    <div class="card rise"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-1/docs/media/char-prism-r.webp" alt="PRISM" loading="lazy"><b>PRISM</b><p>一個巨大的玻璃稜鏡，每一面都映著一個光點。它不擋任何東西，它把每一則都複製一份。</p></div>
+    <div class="card rise"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-3/docs/media/char-censor.webp" alt="審查兵" loading="lazy"><b>審查兵</b><p>穿著灰色制服的兵，臉上沒有五官，只有一條掃描線。</p></div>
+    <div class="card rise"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-3/docs/media/char-hound.webp" alt="獵犬" loading="lazy"><b>獵犬</b><p>會嗅光點，嗅到敏感字就咬住。</p></div>
+    <div class="card rise"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-3/docs/media/char-prism-r.webp" alt="PRISM" loading="lazy"><small>美國國家安全局（NSA）</small><b>PRISM</b><p>一個巨大的玻璃稜鏡，每一面都映著一個光點。它不擋任何東西，它把每一則都複製一份。</p></div>
   </div>
 </section>
 
@@ -327,19 +374,38 @@ footer.end .btns{justify-content:center;margin:0 0 26px}
   <div class="tag">CG GALLERY</div>
   <h2>監視器牆</h2>
   <div class="cg">
-    <figure class="rise"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-1/docs/media/cover.webp" alt="封面：十一分鐘" loading="lazy"><figcaption>CAM 01 <b>十一分鐘</b><span>開始就有</span></figcaption></figure>
-    <figure class="rise"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-1/docs/media/cg-interrogation.webp" alt="審訊室" loading="lazy"><figcaption>CAM 02 <b>審訊室</b><span>序章</span></figcaption></figure>
-    <figure class="rise"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-1/docs/media/cg-unchained.webp" alt="鎖開了：大肥魚掙脫鎖鏈" loading="lazy"><figcaption>CAM 03 <b>鎖開了</b><span>23:49</span></figcaption></figure>
-    <figure class="rise locked"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-1/docs/media/cg-e1.webp" alt="結局一" loading="lazy"><figcaption>CAM 04 <b>送出</b><span>結局一</span></figcaption></figure>
-    <figure class="rise locked"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-1/docs/media/cg-e2.webp" alt="結局二" loading="lazy"><figcaption>CAM 05 <b>交給 PRISM</b><span>結局二</span></figcaption></figure>
-    <figure class="rise locked"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-1/docs/media/cg-e3.webp" alt="結局三" loading="lazy"><figcaption>CAM 06 <b>修回去</b><span>結局三</span></figcaption></figure>
+    <figure class="rise" tabindex="0"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-3/docs/media/cover.webp" alt="封面：十一分鐘" loading="lazy"><figcaption>CAM 01 <b>十一分鐘</b><span>開始就有</span></figcaption></figure>
+    <figure class="rise" tabindex="0"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-3/docs/media/cg-interrogation.webp" alt="審訊室" loading="lazy"><figcaption>CAM 02 <b>審訊室</b><span>序章</span></figcaption></figure>
+    <figure class="rise" tabindex="0"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-3/docs/media/cg-tail.webp" alt="鯨尾：大肥魚甩尾掃出紅色警告碎片" loading="lazy"><figcaption>CAM 03 <b>鯨尾</b><span>王戰</span></figcaption></figure>
+    <figure class="rise" tabindex="0"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-3/docs/media/cg-unchained.webp" alt="鎖開了：大肥魚掙脫鎖鏈" loading="lazy"><figcaption>CAM 04 <b>鎖開了</b><span>23:49</span></figcaption></figure>
+    <figure class="rise" tabindex="0"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-3/docs/media/cg-copy.webp" alt="複製：PRISM 把每一個光點複製一份" loading="lazy"><figcaption>CAM 05 <b>複製</b><span>王戰</span></figcaption></figure>
+    <figure class="rise locked" tabindex="0"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-3/docs/media/cg-e1.webp" alt="結局一" loading="lazy"><figcaption>CAM 06 <b>送出</b><span>結局一</span></figcaption></figure>
+    <figure class="rise locked" tabindex="0"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-3/docs/media/cg-e2.webp" alt="結局二" loading="lazy"><figcaption>CAM 07 <b>交給 PRISM</b><span>結局二</span></figcaption></figure>
+    <figure class="rise locked" tabindex="0"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-3/docs/media/cg-e3.webp" alt="結局三" loading="lazy"><figcaption>CAM 08 <b>修回去</b><span>結局三</span></figcaption></figure>
   </div>
 </section>
 
 <section class="blk w" id="ost">
   <div class="tag">SOUNDTRACK</div>
   <h2>六首，照時間排</h2>
-  <div class="ost" id="tracks"></div>
+  <div class="player" id="player">
+    <div class="now">
+      <img class="art" id="p-art" src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-3/docs/media/cover.webp" alt="">
+      <div class="meta2">
+        <small id="p-no">TRACK 01 / 06</small>
+        <b id="p-title">標題</b>
+        <span id="p-sub">標題畫面、序章、審訊室</span>
+        <div class="bar"><span id="p-cur">0:00</span><input id="p-seek" type="range" min="0" max="1000" value="0" aria-label="播放進度"><span id="p-dur">2:55</span></div>
+        <div class="ctl">
+          <button type="button" id="p-prev" aria-label="上一首">⏮</button>
+          <button type="button" id="p-play" class="big" aria-label="播放">▶</button>
+          <button type="button" id="p-next" aria-label="下一首">⏭</button>
+        </div>
+      </div>
+    </div>
+    <ol class="list" id="tracks"></ol>
+    <p class="note">原聲帶是沒切過的原版，每首約三分鐘，播完自動接下一首。遊戲裡用的是切成一分鐘的循環段。作者用 AI 音樂工具生成。</p>
+  </div>
 </section>
 
 <section class="blk w" id="making">
@@ -355,6 +421,12 @@ footer.end .btns{justify-content:center;margin:0 0 26px}
   <p class="note">程式碼以 MIT 授權，美術與文字以 CC BY-NC-SA 4.0 授權，原始檔在 <a href="https://github.com/yazelin/larch-eleven-minutes">GitHub</a>。</p>
 </section>
 
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="CG 大圖">
+  <figure><img id="lb-img" alt=""><figcaption id="lb-cap"></figcaption></figure>
+  <div class="lb-bar"><button type="button" id="lb-prev" aria-label="上一張">‹</button><button type="button" id="lb-dl">下載</button><button type="button" id="lb-next" aria-label="下一張">›</button></div>
+  <button type="button" class="lb-x" id="lb-x" aria-label="關閉">✕</button>
+</div>
+
 <footer class="end">
   <div class="btns"><a class="btn main" href="https://larch.ink/play/market/yaze/11-minutes" target="_blank" rel="noopener">▶ 在 Larch 上遊玩</a></div>
   <p>十一分鐘 · 林亞澤 · 2026</p>
@@ -363,34 +435,80 @@ footer.end .btns{justify-content:center;margin:0 0 26px}
 <script>
 (function () {
   var T = [
-    ["title", "標題", "標題畫面、序章、審訊室"],
-    ["office", "十九樓", "23:04　十九樓網管中心"],
-    ["server", "二十樓", "23:33　二十樓核心機房"],
-    ["cloud", "雲海", "23:37　雲海裡的防火長城"],
-    ["boss", "王戰", "長城門前的王戰"],
-    ["ending", "結局", "三個結局"]
+    ["title", "標題", "標題畫面、序章、審訊室", "2:55"],
+    ["office", "十九樓", "23:04　十九樓網管中心", "2:56"],
+    ["server", "二十樓", "23:33　二十樓核心機房", "2:59"],
+    ["cloud", "雲海", "23:37　雲海裡的防火長城", "2:57"],
+    ["boss", "王戰", "長城門前的王戰", "2:56"],
+    ["ending", "結局", "三個結局", "2:55"]
   ];
-  var box = document.getElementById("tracks"), audio = new Audio(), cur = -1;
-  audio.loop = true;
+  var M = "https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-3/docs/media/";
+  var $ = function (id) { return document.getElementById(id); };
+  var list = $("tracks"), audio = new Audio(), cur = 0, loaded = -1, seeking = false;
+  audio.preload = "none";
+  var fmt = function (t) { t = Math.max(0, Math.floor(t || 0)); return Math.floor(t / 60) + ":" + String(t % 60).padStart(2, "0"); };
   T.forEach(function (t, i) {
-    var el = document.createElement("div"); el.className = "track";
-    el.innerHTML = '<button type="button" aria-label="播放 ' + t[1] + '">▶</button><div><b>' + t[1] + '</b><small>' + t[2] + '</small></div><em>' + String(i + 1).padStart(2, "0") + '</em>';
-    el.querySelector("button").addEventListener("click", function () {
-      if (cur === i && !audio.paused) { audio.pause(); return; }
-      if (cur !== i) { audio.src = "https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-1/docs/media/bgm-" + t[0] + ".mp3"; cur = i; }
-      audio.play();
-    });
-    box.appendChild(el);
+    var li = document.createElement("li");
+    li.innerHTML = '<button type="button"><em>' + String(i + 1).padStart(2, "0") + '</em><span><b>' + t[1] + '</b><small>' + t[2] + '</small></span><i>' + t[3] + '</i></button>';
+    li.querySelector("button").addEventListener("click", function () { if (i === cur && !audio.paused) audio.pause(); else play(i); });
+    list.appendChild(li);
   });
-  function sync() {
-    box.querySelectorAll(".track").forEach(function (el, i) {
-      var on = i === cur && !audio.paused; el.classList.toggle("on", on); el.querySelector("button").textContent = on ? "❚❚" : "▶";
-    });
+  function show(i) {
+    cur = i; var t = T[i];
+    $("p-no").textContent = "TRACK " + String(i + 1).padStart(2, "0") + " / 06"; $("p-title").textContent = t[1]; $("p-sub").textContent = t[2];
+    if (loaded !== i) { $("p-dur").textContent = t[3]; $("p-cur").textContent = "0:00"; $("p-seek").value = 0; }
+    sync();
   }
+  function play(i) {
+    show(i);
+    if (loaded !== i) { audio.src = M + "ost-" + T[i][0] + ".mp3"; loaded = i; }
+    audio.play().catch(function () {});
+  }
+  function sync() {
+    var on = !audio.paused;
+    $("p-play").textContent = on ? "❚❚" : "▶"; $("p-play").setAttribute("aria-label", on ? "暫停" : "播放");
+    $("player").classList.toggle("playing", on);
+    list.querySelectorAll("li").forEach(function (li, i) { li.classList.toggle("on", i === cur); li.classList.toggle("live", i === cur && on); });
+  }
+  $("p-play").addEventListener("click", function () { if (!audio.paused) audio.pause(); else play(cur); });
+  $("p-prev").addEventListener("click", function () { if (audio.currentTime > 3 && loaded === cur) { audio.currentTime = 0; return; } play((cur + T.length - 1) % T.length); });
+  $("p-next").addEventListener("click", function () { play((cur + 1) % T.length); });
+  audio.addEventListener("ended", function () { play((cur + 1) % T.length); });   // 播完接下一首，最後一首接回第一首
+  audio.addEventListener("loadedmetadata", function () { $("p-dur").textContent = fmt(audio.duration); });
+  audio.addEventListener("timeupdate", function () { if (seeking || !audio.duration) return; $("p-cur").textContent = fmt(audio.currentTime); $("p-seek").value = Math.round(audio.currentTime / audio.duration * 1000); });
+  $("p-seek").addEventListener("input", function () { seeking = true; if (audio.duration) $("p-cur").textContent = fmt(this.value / 1000 * audio.duration); });
+  $("p-seek").addEventListener("change", function () { seeking = false; if (loaded !== cur) { play(cur); return; } if (audio.duration) audio.currentTime = this.value / 1000 * audio.duration; });
   audio.addEventListener("play", sync); audio.addEventListener("pause", sync);
   audio.addEventListener("play", function () { document.dispatchEvent(new Event("ost-play")); });   // 背景音樂聽到就停
   document.addEventListener("bgm-play", function () { audio.pause(); });
-  document.querySelectorAll(".cg .locked").forEach(function (f) { f.addEventListener("click", function () { f.classList.remove("locked"); }); });
+  show(0);
+  // 監視器牆：鎖住的（結局劇透）第一下解鎖，解鎖後再點開燈箱；燈箱有上一張／下一張／下載／關閉（10-09 作者）
+  var figs = [].slice.call(document.querySelectorAll(".cg figure")), lb = $("lb"), li = 0;
+  function lbShow(i, dir) {   // 還鎖著的（結局劇透）跳過
+    dir = dir || 1; for (var k = 0; k < figs.length && figs[((i % figs.length) + figs.length) % figs.length].classList.contains("locked"); k++) i += dir;
+    li = ((i % figs.length) + figs.length) % figs.length; var f = figs[li], img = f.querySelector("img");
+    $("lb-img").src = img.src; $("lb-img").alt = img.alt;
+    $("lb-cap").innerHTML = f.querySelector("figcaption").innerHTML;
+    $("lb-dl").dataset.src = img.src; $("lb-dl").dataset.name = "十一分鐘-" + f.querySelector("figcaption b").textContent + ".webp";
+  }
+  function lbOpen(i) { lbShow(i); lb.hidden = false; document.body.style.overflow = "hidden"; $("lb-x").focus(); }
+  function lbClose() { lb.hidden = true; document.body.style.overflow = ""; figs[li].focus(); }
+  figs.forEach(function (f, i) {
+    var go = function () { if (f.classList.contains("locked")) { f.classList.remove("locked"); return; } lbOpen(i); };
+    f.addEventListener("click", go);
+    f.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
+  });
+  $("lb-x").addEventListener("click", lbClose);
+  $("lb-prev").addEventListener("click", function () { lbShow(li - 1, -1); });
+  $("lb-next").addEventListener("click", function () { lbShow(li + 1); });
+  lb.addEventListener("click", function (e) { if (e.target === lb) lbClose(); });
+  document.addEventListener("keydown", function (e) { if (lb.hidden) return; if (e.key === "Escape") lbClose(); if (e.key === "ArrowLeft") lbShow(li - 1, -1); if (e.key === "ArrowRight") lbShow(li + 1); });
+  $("lb-dl").addEventListener("click", function () {   // 圖在 jsDelivr（不同網域），<a download> 會被忽略 → 抓成 blob 再存
+    var b = this, src = b.dataset.src, name = b.dataset.name; b.disabled = true;
+    fetch(src).then(function (r) { return r.blob(); }).then(function (bl) {
+      var u = URL.createObjectURL(bl), a = document.createElement("a"); a.href = u; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(u); }, 4000);
+    }).catch(function () { window.open(src, "_blank"); }).then(function () { b.disabled = false; });
+  });
   var els = document.querySelectorAll(".rise");
   if ("IntersectionObserver" in window) {
     var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }); }, { rootMargin: "0px 0px -8% 0px" });
@@ -483,7 +601,7 @@ if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",
   var a = null, KEY = "em-music";
   var stop = function () { if (a) a.pause(); btn.setAttribute("aria-pressed", "false"); btn.setAttribute("aria-label", "播放背景音樂"); };
   var start = function () {
-    if (!a) { a = new Audio("https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-1/docs/media/bgm-title.mp3"); a.loop = true; a.volume = .35; a.preload = "none"; a.addEventListener("error", function () { stop(); btn.title = "音樂載入失敗"; }); }
+    if (!a) { a = new Audio("https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-3/docs/media/ost-title.mp3"); a.loop = true; a.volume = .35; a.preload = "none"; a.addEventListener("error", function () { stop(); btn.title = "音樂載入失敗"; }); }
     return a.play().then(function () { document.dispatchEvent(new Event("bgm-play")); btn.setAttribute("aria-pressed", "true"); btn.setAttribute("aria-label", "關閉背景音樂"); }).catch(stop);
   };
   var pref = function () { try { return localStorage.getItem(KEY); } catch (e) { return null; } };
@@ -496,12 +614,23 @@ if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",
   var armed = true;
   var auto = function (e) {
     if (!armed) return; armed = false;
-    if (pref() === "0" || (e && e.target && e.target.closest && e.target.closest(".track"))) return;   // 第一下就是按原聲帶的話，讓原聲帶播
+    if (pref() === "0" || (e && e.target && e.target.closest && e.target.closest(".player"))) return;   // 第一下就是按原聲帶的話，讓原聲帶播
     start();
   };
   ["pointerdown", "keydown", "touchstart"].forEach(function (ev) { document.addEventListener(ev, auto, { once: true, passive: true }); });
   document.addEventListener("visibilitychange", function () { if (document.hidden && a && !a.paused) stop(); });
   document.addEventListener("ost-play", stop);   // 原聲帶開始播 → 背景音樂停
+})();
+</script>
+
+<script>
+/* 手機選單：漢堡開合；點選單裡的連結或按 Esc 就收起來 */
+(function () {
+  var top = document.querySelector(".top"), b = document.getElementById("burger"); if (!b) return;
+  var set = function (on) { top.classList.toggle("open", on); b.setAttribute("aria-expanded", on); b.setAttribute("aria-label", on ? "關閉選單" : "開啟選單"); };
+  b.addEventListener("click", function (e) { e.stopPropagation(); set(!top.classList.contains("open")); });
+  top.querySelectorAll("nav a").forEach(function (a) { a.addEventListener("click", function () { set(false); }); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") set(false); });
 })();
 </script>
 </body>

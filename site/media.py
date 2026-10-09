@@ -6,7 +6,7 @@ from PIL import Image
 G = os.path.dirname(os.path.dirname(os.path.abspath(__file__))); OUT = os.path.join(G, 'docs/media')
 IMG = {   # 輸出名: (來源, 最長邊)
     'cover.webp': ('assets/cover/title.webp', 1600), 'og.jpg': ('assets/cover/thumb.webp', 1200),
-    'cg-interrogation.webp': ('assets/scenes/interrogation.webp', 1280), 'cg-unchained.webp': ('assets/scenes/unchained.webp', 1280),
+    'cg-interrogation.webp': ('assets/scenes/interrogation.webp', 1280), 'cg-unchained.webp': ('assets/scenes/unchained.webp', 1280), 'cg-tail.webp': ('assets/scenes/tail.webp', 1280), 'cg-copy.webp': ('assets/scenes/copy.webp', 1280),
     'cg-e1.webp': ('assets/scenes/e1.webp', 1280), 'cg-e2.webp': ('assets/scenes/e2.webp', 1280), 'cg-e3.webp': ('assets/scenes/e3.webp', 1280),
     'shot-office.webp': ('art/site_raw/office.png', 1280), 'shot-server.webp': ('art/site_raw/server.png', 1280),
     'shot-terminal.webp': ('art/site_raw/terminal.png', 1280), 'shot-cloud.webp': ('art/site_raw/cloud.png', 1280),
@@ -25,5 +25,9 @@ if __name__ == '__main__':
         im.save(p, quality=82, method=6) if name.endswith('.webp') else im.convert('RGB').save(p, quality=86)
     for k in AUDIO:   # 循環版 60 秒，128k
         subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', os.path.join(G, f'assets/bgm/{k}.mp3'), '-b:a', '128k', os.path.join(OUT, f'bgm-{k}.mp3')], check=True)
+    for k in AUDIO:   # 原聲帶：沒切過的原版（約三分鐘），壓到 -16 LUFS 跟遊戲一致（10-09 作者：原聲帶應該是沒切過的版本）
+        raw = os.path.join(G, f'art/music_raw/{k}.mp3')
+        if os.path.exists(raw):
+            subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', raw, '-af', 'loudnorm=I=-16:TP=-1.5:LRA=11', '-ar', '44100', '-b:a', '128k', os.path.join(OUT, f'ost-{k}.mp3')], check=True)
     tot = sum(os.path.getsize(os.path.join(OUT, f)) for f in os.listdir(OUT))
     print(len(os.listdir(OUT)), '個檔', round(tot / 1e6, 1), 'MB')
