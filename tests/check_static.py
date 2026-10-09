@@ -49,4 +49,14 @@ joined = '\n'.join(texts)
 for sec in DONE:
     for i, para in enumerate(story.ORIG[sec]):
         if para not in texts and para not in joined: errs.append(f'原文沒用上：{sec} 第 {i} 段「{para[:20]}…」')
+# 配音清單要跟劇本同步：改了旁白或台詞沒重跑 voice/gen.py，那一段在遊戲裡就沒聲音（10-09 實際發生）
+import re
+man = json.loads((ROOT / 'voice/manifest.json').read_text(encoding='utf-8')) if (ROOT / 'voice/manifest.json').exists() else {}
+if man:
+    sys.path.insert(0, str(ROOT / 'voice')); import gen
+    paras = [x for src in (story.ORIG, story.NEW) for ps in src.values() for x in ps]
+    for para in paras:
+        if any(gen.who(q) for q in re.findall(r'「([^「」]+)」', para)) and para not in man: errs.append(f'配音清單沒有這段（要重跑 voice/gen.py）：「{para[:20]}…」')
+    for k in man:
+        if k not in paras: errs.append(f'配音清單有劇本已經沒有的段落（要重跑 voice/gen.py）：「{k[:20]}…」')
 print('\n'.join(errs) or 'check_static ok'); sys.exit(1 if errs else 0)
