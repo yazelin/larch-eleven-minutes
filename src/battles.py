@@ -43,30 +43,33 @@ def nodes():
     return [
         cards.battle('b-censor', '審查兵', [E('censor', '審查兵', 24, 5, image=img('censor'))], (800, 600)),
         cards.battle('b-hound', '獵犬', [E('hound', '獵犬', 18, 6, image=img('hound'))], (800, 700)),
+        # PRISM 不防禦（10-09 作者：它不需要防禦；原文它不擋任何東西）：「為了安全」改成半血以下狂暴
+        # 大招倍率與大肥魚出招間隔（10-10 作者）：大招要痛到值得看預告防禦；大肥魚原本每 4 回合的防禦永遠被每 2 回合的吸血蓋掉
+        # 血量（10-09 作者）：第一班每隻 80、第二班每隻 85（原訂 100，用對方法也差 4 點血）、大肥魚 280、鯨尾 1.5 倍（tests/battle_sim.mjs 算過：用對方法 14 回合贏剩 24 血，隨便打會輸）
         # 前兩班（10-09 作者：要豐富一點搭配）：每人兩招，帶頭的放大招會播全螢幕插畫；排序決定跳／飄，兩班都是跳飄交錯
         cards.battle('b-w1', '第一班', [
-            E('qwen', '通義千問', 40, 7, 2, sp('double', '掃條碼'), sp('drain', '加入購物車', every=5), image=img('qwen'),
-              lead={'name': '整車結帳', 'every': 4, 'power': 1}, cut=img('cut-qwen'), scale=0.6, pos=(10, 66)),
-            E('doubao', '豆包', 34, 8, 1, sp('strike', '十五秒', power=2), sp('drain', '滑走', every=4), image=img('doubao'), scale=0.75, pos=(22, 80)),
-            E('kimi', 'Kimi', 46, 6, 3, sp('guard', '已讀'), sp('strike', '兩百萬字', every=4, power=2), image=img('kimi'), scale=0.6, pos=(34, 66)),
-            E('wenxin', '文心一言', 40, 7, 2, {'kind': 'heal', 'name': '水情穩定', 'below': 50, 'amount': 18, 'times': 1}, sp('double', '搜尋結果'),
+            E('qwen', '通義千問', 80, 7, 2, sp('double', '掃條碼'), sp('drain', '加入購物車', every=5), image=img('qwen'),
+              lead={'name': '整車結帳', 'every': 4, 'power': 1.5}, cut=img('cut-qwen'), scale=0.6, pos=(10, 66)),
+            E('doubao', '豆包', 80, 8, 1, sp('strike', '十五秒', power=2), sp('drain', '滑走', every=4), image=img('doubao'), scale=0.75, pos=(22, 80)),
+            E('kimi', 'Kimi', 80, 6, 3, sp('guard', '已讀'), sp('strike', '兩百萬字', every=4, power=2), image=img('kimi'), scale=0.6, pos=(34, 66)),
+            E('wenxin', '文心一言', 80, 7, 2, {'kind': 'heal', 'name': '水情穩定', 'below': 50, 'amount': 18, 'times': 1}, sp('double', '搜尋結果'),
               image=img('wenxin'), scale=0.75, pos=(46, 80))],
             (800, 800), skills=SKILLS, mp=40, attack=18, bg=BG, bgm=music('boss')),
         cards.battle('b-w2', '第二班', [   # 帶頭（有 special）的要排第一：10-09 實測排在第四個的帶頭從來不出手，大招也不放；站位由 pos 決定，跟排序無關
-            E('xinghuo', '訊飛星火', 40, 9, 1, sp('double', '聽寫'), {'kind': 'enrage', 'name': '火力全開', 'below': 40, 'power': 1.5},
-              image=img('xinghuo'), lead={'name': '星火燎原', 'every': 3, 'power': 1}, cut=img('cut-xinghuo'), scale=0.75, pos=(46, 80)),
-            E('glm', '智譜清言', 46, 8, 2, sp('guard', '清言'), sp('drain', '深度思考', every=4), image=img('glm'), scale=0.6, pos=(10, 66)),
-            E('yuanbao', '騰訊元寶', 42, 8, 2, sp('double', '撤回'), sp('drain', '收紅包', every=4), image=img('yuanbao'), scale=0.75, pos=(22, 80)),
-            E('hailuo', '海螺', 38, 7, 2, {'kind': 'heal', 'name': '平靜播報', 'below': 50, 'amount': 20, 'times': 1}, sp('guard', '海螺殼'),
+            E('xinghuo', '訊飛星火', 85, 9, 1, sp('double', '聽寫'), {'kind': 'enrage', 'name': '火力全開', 'below': 40, 'power': 1.5},
+              image=img('xinghuo'), lead={'name': '星火燎原', 'every': 3, 'power': 1.5}, cut=img('cut-xinghuo'), scale=0.75, pos=(46, 80)),
+            E('glm', '智譜清言', 85, 8, 2, sp('guard', '清言'), sp('drain', '深度思考', every=4), image=img('glm'), scale=0.6, pos=(10, 66)),
+            E('yuanbao', '騰訊元寶', 85, 8, 2, sp('double', '撤回'), sp('drain', '收紅包', every=4), image=img('yuanbao'), scale=0.75, pos=(22, 80)),
+            E('hailuo', '海螺', 85, 7, 2, {'kind': 'heal', 'name': '平靜播報', 'below': 50, 'amount': 20, 'times': 1}, sp('guard', '海螺殼'),
               image=img('hailuo'), scale=0.6, pos=(34, 66))],
             (800, 900), skills=SKILLS, attack=18, mp=40, bg=BG, bgm=music('boss')),
         cards.battle('b-whale', '大肥魚', [
-            E('dafeiyu', '大肥魚', 170, 9, 4, sp('drain', '權限不足', every=2), sp('guard', '內容不當', every=4), sp('double', '未經授權', every=5),
-              image=img('dafeiyu'), lead={'name': '鯨尾', 'every': 3, 'power': 1}, cut=img('cut-tail'), scale=1.25, pos=(30, 96))],
+            E('dafeiyu', '大肥魚', 280, 9, 4, sp('drain', '權限不足', every=5), sp('guard', '內容不當', every=7), sp('double', '未經授權', every=4),
+              image=img('dafeiyu'), lead={'name': '鯨尾', 'every': 3, 'power': 1.5}, cut=img('cut-tail'), scale=1.25, pos=(30, 96))],
             (800, 1000), skills=SKILLS, attack=20, mp=40, bg=BG, bgm=music('boss'),
             triggers=[{'id': 'w-start', 'when': 'start', 'lines': [say(f[17])]}]),
         cards.battle('b-prism', 'PRISM', [
-            E('prism', 'PRISM', 160, 10, 4, sp('guard', '為了安全', every=2), sp('drain', '為了真相', every=4), sp('double', '為了你好', every=5),
-              image=img('prism'), lead={'name': '複製', 'every': 3, 'power': 1}, cut=img('cut-copy'), scale=1.0, pos=(30, 90))],
+            E('prism', 'PRISM', 160, 10, 4, {'kind': 'enrage', 'name': '為了安全', 'below': 50, 'power': 1.5}, sp('drain', '為了真相', every=4), sp('double', '為了你好', every=5),
+              image=img('prism'), lead={'name': '複製', 'every': 3, 'power': 2.5}, cut=img('cut-copy'), scale=1.0, pos=(30, 90))],
             (800, 1100), skills=SKILLS, attack=20, mp=40, bg=BG, bgm=music('boss')),
     ]

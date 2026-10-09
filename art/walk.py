@@ -6,7 +6,7 @@ G = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 spec = importlib.util.spec_from_file_location('xuwalk', os.path.expanduser('~/larch-taoyuan/xu/game/art/walk.py'))
 W = importlib.util.module_from_spec(spec); spec.loader.exec_module(W)   # 它會 chdir 到 larch-taoyuan，參考圖一律給絕對路徑
 W.RAW, W.OUT, W.CHK = os.path.join(G, 'art/walk_raw'), os.path.join(G, 'assets/walk'), os.path.join(G, 'art/check')
-W.MIRROR_LEFT, W.MIRROR_RIGHT = set(), {'censor'}   # 審查兵往右那排產成臉朝左（2026-10-09），用左向鏡射
+W.MIRROR_LEFT, W.MIRROR_RIGHT = set(), {'censor', 'jiangling', 'zhou'}   # 審查兵往右那排產成臉朝左（2026-10-09），用左向鏡射；江凌左走用 v4（存成 v9 讓它排最新）、右走用它鏡射（10-09 作者：只有左 v4 正確）；周主任左走用 v2（存成 v9）、右走鏡射（10-10 作者）
 REF = os.path.join(G, 'art/walk_raw/ref-placeholder-front.png')
 DIFF = ("a DIFFERENT person from image 1 (image 1 only shows the camera angle, the walking poses, the body proportions and the painting style to copy; "
         "do NOT copy his face, hair or ancient clothes): ")

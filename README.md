@@ -52,4 +52,5 @@ Larch 第三屆創作者挑戰《自由與限制》第二部投稿（第一部�
     node tests/talk_shots.mjs b-whale 頂樓那一則          # 戰鬥中途台詞截圖（門檻暫改 99%）
     node tests/interro_shots.mjs                          # 審訊室換句連拍（背景不可閃回地圖）
     node tests/slash_shots.mjs                            # 雲端普攻連拍＋左上頭像（不可出現武器）
+    node tests/battle_sim.mjs                             # 王戰計算：用引擎自己的戰鬥規則，兩種打法各打一遍（幾秒）
     node tests/ui_shots.mjs                               # 介面截圖：標題、對話卡、地圖、王戰

@@ -31,15 +31,24 @@ async function btn(t) {   // 點畫面上文字含 t 的可見按鈕
     for (let i = 0; i < n; i++) if (await b.nth(i).isVisible().catch(() => false)) { await b.nth(i).click().catch(() => {}); return true; } }
   return false;
 }
-async function battle(name, skill = '刪除程式', cost = 6) {   // 打到戰鬥畫面消失；回傳 true＝打贏（畫面回到地圖且沒有敗北字樣）
+// 打法（10-10 作者：不要隨便打都贏）：SMART=1（預設）＝奧義集滿就放、預告下回合有大招就防禦、魔力夠放群體技、否則普攻；
+// SMART=0＝隨便打（只放群體技和普攻），是負控制：要打輸才對
+const SMART = process.env.SMART !== '0';
+const special = async () => { for (const f of page.frames()) if (await f.locator('.is-special').first().isVisible().catch(() => false)) return true; return false; };
+async function battle(name, skill = '刪除程式', cost = 6) {   // 回傳 true＝打贏（看到「戰鬥勝利」），false＝打輸
   await until(new RegExp('(ENCOUNTER|BOSS BATTLE) ' + name), 60000);
-  for (let r = 0; r < 80; r++) {
+  await until(/第 \d+ 回合/, 30000);   // 重打時上一場的 ENCOUNTER 字樣還在，要等到回合數出現才算真的開打
+  let won = false, lost = false, round = 0, hp = '';
+  for (let r = 0; r < 120; r++) {
     const t = await text();
-    if (r % 10 === 0) { console.log('  ', name, '第', r, '步', (t.match(/江凌 HP \d+/) || [''])[0]); await shot(`5-${name}-live`); }
-    if (!/ENCOUNTER|BOSS BATTLE/.test(t)) return true;
-    if (/敗北|DEFEAT|全滅/.test(t)) return false;
+    round = Number((t.match(/第 (\d+) 回合/) || [0, round])[1]) || round; hp = (t.match(/江凌 HP (\d+)/) || ['', hp])[1] || hp;
+    if (/戰鬥勝利|Victory/.test(t)) won = true;
+    if (/敗北|DEFEAT|全滅|失去戰鬥能力/.test(t)) lost = true;
+    if (!/ENCOUNTER|BOSS BATTLE/.test(t)) { console.log(`   ${name}：${won && !lost ? '贏' : '輸'}，${round} 回合，江凌剩 ${hp} HP（${SMART ? '用對方法' : '隨便打'}）`); return won && !lost; }
     const mp = Number((t.match(/MP (\d+)/) || [0, 0])[1]);
-    if (await btn('繼續')) {}                                  // 勝利畫面
+    if (await btn('繼續')) {}                                  // 勝利／敗北畫面
+    else if (SMART && await btn('奧義')) {}                    // 大招集滿就放
+    else if (SMART && await special() && await btn('防禦')) {} // 預告下回合有大招：防禦
     else if (await btn(skill)) {}                              // 技能選單開著
     else if (mp >= cost && await btn('技能')) { await sleep(400); await btn(skill); }
     else if (!(await btn('攻擊'))) await ui.advance();

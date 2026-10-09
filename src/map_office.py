@@ -106,7 +106,8 @@ def events(walk):
     # 倒完麵到走進樓梯門之間（sneaking）他在電梯口、茶水間門口、樓梯那一頭之間巡邏，走路時也一路往前看。
     # 視線是看不見的觸發格：每一格一個事件，哪些狀態看得到這格就有幾頁（一格只能放一個事件）。
     (gx, gy), (tx, ty), (sx, sy) = PT['guard_a'], PT['guard_tea'], PT['guard_stairs']
-    posts = {'lift': ((gx, gy), 'left', 4000), 'tea': ((tx, ty), 'down', 5000), 'lift2': ((gx, gy), 'left', 4000), 'stairs': ((sx, sy), 'right', 5000)}
+    # 茶水間門口面朝走廊（right）、不看進茶水間：茶水間是等警衛走開的安全區（10-09 作者：第一次偷卡幾乎固定失敗）
+    posts = {'lift': ((gx, gy), 'left', 4000), 'tea': ((tx, ty), 'right', 5000), 'lift2': ((gx, gy), 'left', 4000), 'stairs': ((sx, sy), 'right', 5000)}
     legs = [('lift', 'tea', [('up', gy - ty), ('left', gx - tx)]), ('tea', 'lift2', [('right', gx - tx), ('down', gy - ty)]),
             ('lift2', 'stairs', [('right', sx - gx), ('down', sy - gy)]), ('stairs', 'lift', [('up', sy - gy), ('left', sx - gx)])]
     leg_pages, states = patrol_legs(posts, legs)
