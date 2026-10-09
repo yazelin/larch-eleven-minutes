@@ -42,7 +42,7 @@ GENERATED_KEYS = ('titleCoverImage', 'projectThumbnail', 'cgGallerySource', 'cgG
 
 
 def merge_settings(online, built):
-    """以線上設定為底，只覆寫產生器負責的鍵：自製插件、RPG 角色資料庫、封面與縮圖。作者在網頁改的其他設定保留。"""
+    """以線上設定為底，只覆寫產生器負責的鍵：自製插件、RPG 角色資料庫與裝備、封面與縮圖。作者在網頁改的其他設定保留。"""
     m = json.loads(json.dumps(online or {}))
     plugins = m.setdefault('plugins', {})
     for k in GENERATED_PLUGINS:
@@ -50,6 +50,7 @@ def merge_settings(online, built):
     rpg = plugins.setdefault('larch-rpg-system', {'enabled': True, 'settings': {}})
     rpg['enabled'] = True
     rpg.setdefault('settings', {})['database'] = built['plugins']['larch-rpg-system']['settings']['database']
+    rpg['settings']['gear'] = built['plugins']['larch-rpg-system']['settings']['gear']   # 內建鐵劍換透明圖（武器不要出現）
     for k in GENERATED_KEYS:
         if k in built: m[k] = built[k]
     # 介面：以作者在網頁套用的為底（作者之後在網頁調的參數保留），只寫產生器負責的標題參數（狀態列、標題音樂）

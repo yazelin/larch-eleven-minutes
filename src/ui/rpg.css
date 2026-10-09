@@ -465,3 +465,11 @@ button.pm-party-member[aria-current="true"] { box-shadow: inset 0 0 0 1px var(--
 }
 /* 戰鬥中途台詞的配圖（10-09 試）：圖是 scenes/ 底下的 CG 時，放大成對話框上方的一格畫面，不當小頭像 */
 .bt-talk-face[src*="/scenes/"] { position: absolute !important; left: 50% !important; right: auto !important; top: 9% !important; bottom: auto !important; width: min(56vw, 860px) !important; max-width: none !important; height: auto !important; max-height: 52vh !important; object-fit: cover; transform: translateX(-50%) !important; border: 1px solid var(--skin-neon, #39f3ff); box-shadow: 0 0 30px rgba(57, 243, 255, .35), 0 20px 60px rgba(0, 0, 0, .6); z-index: 6; }
+/* 審訊室逐句卡換句時背景閃回地圖（10-09 作者：交替閃爍）：引擎每句結束把 #dialogue-backdrop 設成 hidden、下一句再顯示，中間露出地圖。
+   藏起來時不真的拿掉，延遲 0.35 秒再淡出；換句在那之前就接上，背景不斷。對話真的結束才淡回地圖。 */
+#dialogue-backdrop[hidden] { display: block !important; opacity: 0; pointer-events: none; transition: opacity .3s ease .35s; animation: none !important; }
+#dialogue-backdrop:not([hidden]) { opacity: 1; transition: none; animation: none !important; }
+/* 地圖左上角頭像（10-09 作者：沒有對到臉）：引擎從走路圖固定裁 20%–47% 高那一塊，我們的小人頭在更上面 → 裁出來的 canvas 藏起來（留著佔位），框裡改放江凌臉部特寫。只有一個隊員 */
+.hud-faces { padding: 3px; background: var(--ns-brackets), #02050b; }
+.hud-faces > canvas { visibility: hidden; padding: 0 !important; background: none !important; }
+.hud-faces:not(:empty) { background: var(--ns-brackets), url("/files/assets/battle/jiangling-face.webp") center 22% / 115% no-repeat, #02050b; }

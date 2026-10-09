@@ -94,10 +94,15 @@ def scene(k):
 VARS = {'phase': ('string', ''), 'kills': ('number', 0), 'wall': ('string', ''), 'eye': ('string', ''), 'guard_at': ('string', ''), 'zhou_look': ('string', ''), 'sneaking': ('string', ''), 'guard_dir': ('string', ''), 'leg': ('string', '0')}   # 全部故事變數只在這裡定義
 
 
+TRANSPARENT = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='
+# 內建鐵劍只換圖（引擎對內建裝備只吃 image）：砍的動作照舊，手上看不到劍
+GEAR = [{'id': 'rpg-iron-sword', 'name': '刪除程式', 'slot': 'weapon', 'skill': 'slash', 'attack': 6, 'image': TRANSPARENT}]
+
+
 def database():
     hero = {'id': 'jiangling', 'name': '江凌', 'title': '', 'profile': '', 'role': 'party', 'walk': mapkit.walker('/files/assets/walk/walk-jiangling.png'),
             'portrait': '/files/assets/battle/jiangling-face.webp', 'join': 'later', 'kit': 'none', 'rig': '', 'joinVariable': '', 'speed': 2,
-            'attack': 'magic', 'battleArt': '/files/assets/battle/jiangling.webp', 'battlePainted': True}   # 回合制戰鬥的立繪：引擎拿資料庫主角的 battleArt，會蓋掉戰鬥卡上的 heroArt   # 大地圖普攻：magic（10-09 作者：不要拳頭，也不要顯示劍）   # 細格一步半格，速度加倍
+            'attack': 'slash', 'battleArt': '/files/assets/battle/jiangling.webp', 'battlePainted': True}   # 回合制戰鬥的立繪：引擎拿資料庫主角的 battleArt，會蓋掉戰鬥卡上的 heroArt   # 大地圖普攻：slash 用劍砍（10-09 作者：不要法杖、不要拳頭、武器不要出現 → 劍的圖換成透明，見 GEAR）   # 細格一步半格，速度加倍
     return {'version': 1, 'heroId': 'jiangling', 'actors': [hero]}
 
 
@@ -137,6 +142,7 @@ def build():
     p = skeleton(); board = p['boards'][0]; interface(p)
     p['nodes'], p['edges'] = board['nodes'], board['edges']
     p['settings']['plugins']['larch-rpg-system']['settings']['database'] = json.dumps(database(), ensure_ascii=False)
+    p['settings']['plugins']['larch-rpg-system']['settings']['gear'] = json.dumps(GEAR, ensure_ascii=False)
     p['settings']['plugins'][plugin.PLUGIN_ID] = plugin.settings_entry()
     N = board['nodes'].append
     N(cards.dialogue('c0', '序　審訊室', section('序　審訊室'), (0, 0), bg=scene('interrogation'), start=True, bgm=music('title')))
