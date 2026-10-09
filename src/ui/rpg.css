@@ -434,8 +434,11 @@ button.pm-party-member[aria-current="true"] { box-shadow: inset 0 0 0 1px var(--
 
 /* 《十一分鐘》補充（2026-10-09 作者：打王時大肥魚顯得很小）：霓虹訊號在戰鬥畫面上方保留 280px 給指令終端機，引擎把敵人縮進剩下的高度。
    指令終端機在左上、隊伍資料在右上，中間是空的 → 保留帶降低，戰場變高，敵人就能畫大；指令終端機照舊可以往下長（自己的 max-height） */
-.rpg-battle { --ns-top: 96px !important; }
-.battle-actions.battle-ring:not([data-menu="result"]), .rpg-battle[data-layout] .battle-actions.battle-ring:not([data-menu="result"]) { max-height: 300px !important; z-index: 6; }
+/* 只套在寬螢幕：手機上霓虹訊號自己的排法（指令移到下方、上方留 176px）要保留（10-09 手機實測：蓋過去會讓王被隊伍欄和指令蓋住） */
+@media (min-width: 601px) and (min-height: 560px) {
+  .rpg-battle { --ns-top: 96px !important; }
+  .battle-actions.battle-ring:not([data-menu="result"]), .rpg-battle[data-layout] .battle-actions.battle-ring:not([data-menu="result"]) { max-height: 300px !important; z-index: 6; }
+}
 
 /* 《十一分鐘》補充（2026-10-09 作者：奧義應該有別的名字）：引擎把「奧義」「聖劍斬」寫死，用 CSS 換字。江凌是工程師 → sudo（最高權限）。百分比由進度條顯示 */
 .battle-limit-value { font-size: 0 !important; }
@@ -446,3 +449,16 @@ button.pm-party-member[aria-current="true"] { box-shadow: inset 0 0 0 1px var(--
 .bt-cut-text small::after { content: "ROOT ACCESS · sudo"; font-size: 14px; letter-spacing: .3em; }
 .bt-cut-text b { font-size: 0 !important; }
 .bt-cut-text b::after { content: "全部放行"; font-size: clamp(32px, 6vw, 72px); }
+
+/* 手機橫放（高度不到 500px）：霓虹訊號的上方保留 280px＋下方 160px 比整個畫面還高，敵人被擠出畫面 → 兩條都縮小，左下遭遇資訊縮成一行（10-09 手機實測） */
+@media (max-height: 500px) and (min-width: 601px) {
+  .rpg-battle { --ns-top: 64px !important; --ns-dock: 70px !important; }
+  .battle-top::before { height: 56px; width: min(360px, calc(100% - 36px)); bottom: 8px; }
+  .battle-caption { display: none; }
+  .battle-top h2 { bottom: 30px; font-size: 16px; }
+  .battle-turn { bottom: 34px; }
+  .battle-log { bottom: 12px; font-size: 12px; max-height: 1.5em; }
+  .battle-actions.battle-ring:not([data-menu="result"]), .rpg-battle[data-layout] .battle-actions.battle-ring:not([data-menu="result"]) { width: 170px; max-height: calc(100vh - 90px) !important; padding-top: 22px; }
+  .battle-ring:not([data-menu="result"]) :is(.bt-orb, .bt-card), .rpg-battle[data-layout] .battle-ring:not([data-menu="result"]) .bt-orb { min-height: 28px; font-size: 13px; }
+  .battle-party, .battle-party[data-size] { padding: 18px 8px 6px; }
+}
