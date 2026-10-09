@@ -128,7 +128,11 @@ footer.end .btns{justify-content:center;margin:0 0 26px}
 .rise.in{opacity:1;transform:none}
 @media (max-width:760px){
   body{font-size:16px}
-  .top nav{display:none}
+  /* 手機：導覽列放到標題下面一排，可以左右滑（10-09 作者：手機 nav 全沒了） */
+  .top{flex-wrap:wrap;height:auto;row-gap:0;padding-top:10px;padding-bottom:0}
+  .top nav{order:3;flex:0 0 100%;gap:20px;padding:10px 0 11px;margin-top:8px;border-top:1px solid rgba(57,243,255,.12);-webkit-mask:linear-gradient(90deg,#000 88%,transparent);mask:linear-gradient(90deg,#000 88%,transparent)}
+  .top nav a{font-size:14px}
+  html{scroll-padding-top:96px}
   .hero img{object-position:70% 30%}
   .hero::after{background:linear-gradient(0deg,rgba(5,7,13,.98) 30%,rgba(5,7,13,.55) 58%,rgba(5,7,13,.05) 85%)}
   .hero .w{align-self:flex-end}
