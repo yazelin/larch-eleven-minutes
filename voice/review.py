@@ -20,7 +20,7 @@ def para_html(p):
     t = html.escape(p).replace('\n', '<br>')
     f = man.get(p)
     if not f: return f'<p>{t}</p>'
-    if f not in GAME: tags.append('遊戲裡不會播：王戰中途的台詞，引擎不吃語音')
+    if f not in GAME: tags.append('遊戲裡沒掛上這支音檔')   # 檢查用：manifest 有、遊戲沒用到
     for q in re.findall(r'「([^「」]+)」', p):
         w = gen.who(q)
         if w: _, v, emo = gen.clip(w, q); tags.append(f'{w}｜{v.replace("Chinese (Mandarin)_", "").replace("edge:zh-TW-HsiaoChenNeural", "edge-tts 小臻")}｜{emo}')

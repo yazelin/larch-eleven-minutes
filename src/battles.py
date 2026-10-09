@@ -64,8 +64,7 @@ def nodes():
             E('dafeiyu', '大肥魚', 170, 9, 4, sp('drain', '權限不足', every=2), sp('guard', '內容不當', every=4), sp('double', '未經授權', every=5),
               image=img('dafeiyu'), lead={'name': '鯨尾', 'every': 3, 'power': 1}, cut=img('cut-tail'), scale=1.25, pos=(30, 96))],
             (800, 1000), skills=SKILLS, attack=20, mp=40, bg=BG, bgm=music('boss'),
-            triggers=[{'id': 'w-start', 'when': 'start', 'lines': [say(f[17])]},
-                      {'id': 'w-he', 'when': 'enemyHp', 'percent': 45, 'enemy': 'dafeiyu', 'lines': [say(f[18]), say(f[19])]}]),
+            triggers=[{'id': 'w-start', 'when': 'start', 'lines': [say(f[17])]}]),
         cards.battle('b-prism', 'PRISM', [
             E('prism', 'PRISM', 160, 10, 4, sp('guard', '為了安全', every=2), sp('drain', '為了真相', every=4), sp('double', '為了你好', every=5),
               image=img('prism'), lead={'name': '複製', 'every': 3, 'power': 1}, cut=img('cut-copy'), scale=1.0, pos=(30, 90))],

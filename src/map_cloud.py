@@ -25,7 +25,7 @@ def stages():
         'gate': [cam(), say(f[7]), say(f[8]), heal(), fight('b-w1'), setv('phase', 'w2')],
         'w2': [say(f[9]), heal(), fight('b-w2'), setv('phase', 'whale')],
         'whale': [cam(), say(f[10]), say(f[11]), say(f[12]), say(f[13]), say(f[14]), say(f[15], 'player'), say(f[16]),
-                  heal(), fight('b-whale'), say(f[20]), setv('phase', 'free')],
+                  heal(), fight('b-whale'), say(f[18]), say(f[19]), say(f[20]), setv('phase', 'free')],   # 「頂樓那一則」兩句打完才在地圖上說（戰鬥中途的台詞引擎不播語音，10-09 作者）
         'free': [cam(), setv('wall', 'down'), fx('flash', 0.8, 900, '#e8f6ff'), card('cu'), fx('shake', 0.7, 1200), say(v[2]), say(v[3]),   # card('cu')：鎖開了的 CG 對話卡（原文 v[0]、v[1]）
                  say(v[4]), say(v[5]), setv('eye', 'up'), say(v[6]), say(v[7]), say(v[8]), say(v[9]), heal(), fight('b-prism'),   # eye：稜鏡在 v[6] 那一句才從雲層升起來
                  say(v[10]), say(v[11]), setv('wall', ''), fx('shake', 0.5, 1500), say(v[12]), setv('phase', 'end'),
