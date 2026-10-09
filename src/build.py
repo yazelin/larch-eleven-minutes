@@ -34,7 +34,7 @@ def interface(p):
     if (ROOT / 'assets/cover/title.webp').exists(): p['settings']['titleCoverImage'] = '/files/assets/cover/title.webp'
     if (ROOT / 'assets/cover/thumb.webp').exists(): p['settings']['projectThumbnail'] = '/files/assets/cover/thumb.webp'   # 市集縮圖（art/thumb.py）
     # CG 收藏（10-09 作者：直接做）：霓虹訊號把它做成監視器牆，鎖住的顯示 NO SIGNAL。結局圖要打到那個結局才解鎖
-    gallery = [('cover/title.webp', '十一分鐘', False), ('scenes/interrogation.webp', '審訊室', True), ('scenes/unchained.webp', '鎖開了', True),
+    gallery = [('cover/title.webp', '十一分鐘', False), ('scenes/interrogation.webp', '審訊室', True), ('scenes/tail.webp', '鯨尾', True), ('scenes/unchained.webp', '鎖開了', True), ('scenes/copy.webp', '複製', True),
                ('scenes/e1.webp', '送出', True), ('scenes/e2.webp', '交給 PRISM', True), ('scenes/e3.webp', '修回去', True)]
     p['settings'].update(cgGalleryEnabled=True, cgGallerySource='picked',
                          cgGalleryItems=[{'url': f'/files/assets/{f}', 'title': t, 'locked': lk} for f, t, lk in gallery if (ROOT / f'assets/{f}').exists()])
@@ -153,7 +153,7 @@ def build():
     # CG 解鎖（10-09 作者問什麼時候解鎖）：看到序章解鎖審訊室，進哪個結局解鎖那張
     # 審訊室掛在開場卡上實測不會解鎖（開始卡不跑 cgOps）→ 改成每個結局一起解鎖審訊室與那個結局
     for nid in ('e1', 'e2', 'e3'):
-        fs = ['scenes/interrogation.webp', 'scenes/unchained.webp', f'scenes/{nid}.webp']   # 鎖開了那張演在地圖上（地圖不跑 cgOps），結局時一起解鎖
+        fs = ['scenes/interrogation.webp', 'scenes/tail.webp', 'scenes/unchained.webp', 'scenes/copy.webp', f'scenes/{nid}.webp']   # 鎖開了演在地圖上、鯨尾與複製是王戰大招插畫（地圖、戰鬥卡都不跑 cgOps），結局時一起解鎖
         next(n for n in board['nodes'] if n['id'] == nid)['data']['cgOps'] = [{'id': f'cg-{nid}-{i}', 'mode': 'unlock', 'url': f'/files/assets/{f}'} for i, f in enumerate(fs) if (ROOT / f'assets/{f}').exists()]
     cards.link(board, 'c0', 'm-office'); cards.link(board, plugin.NODE, 'm-cloud')
     # 片尾之後：第二章＝內嵌公開站（照《起跑總在開始前》的做法；10-09 作者）

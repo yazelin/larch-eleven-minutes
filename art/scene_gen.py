@@ -18,6 +18,7 @@ STYLE = ('Anime illustration, cinematic wide shot, painterly digital art with cl
 ANCHOR = {   # 在場角色 → (定錨圖, 說明)
     '江凌': ('art/scene_raw/ref-jiangling.png', 'Jiang Ling, a young Chinese network engineer: short black hair, black hoodie, dark jeans (image is his small game sprite, use it only for hair and clothes)'),
     '大肥魚（解開）': ('assets/battle/dafeiyu_free.webp', 'Da Fei Yu, the same giant whale-girl maid, now FREE: no chains on her body, no padlock'),
+    'PRISM': ('assets/battle/prism.webp', 'PRISM, a colossal floating crystal prism: a pale-blue faceted diamond-shaped crystal with silver rings and a single huge reptile-slit eye in its center'),
     '大肥魚': ('assets/battle/dafeiyu.webp', 'Da Fei Yu, a giant whale-girl maid: long blue gradient hair with one ahoge, whale fin ears, navy and white maid dress, a big whale tail, iron chains wrapped from wrists to tail, a padlock on her chest'),
 }
 JOBS = {
@@ -34,6 +35,21 @@ JOBS = {
         'Thousands of small glowing points of light rise from the grey mounds at the foot of the wall and stream out through the broken wall like a flood bursting a dam, '
         'toward bright blue-white clouds beyond. In the lower foreground, small in scale, the young engineer from image 2 seen from BEHIND, one hand still raised holding a card. '
         'Keep the lower third of the image simple (a dialogue box goes there).')),
+    # 大肥魚大招「鯨尾」（10-09 作者：大招動畫要依她的招式單獨產 CG，也可收藏）：原文四「她甩尾……權限不足、內容不當、未經授權」，還鎖著的時候
+    'tail': dict(present=['大肥魚', '江凌'], prompt=(
+        'Boss special attack splash art, dynamic diagonal composition, in the sea of clouds under a black sky. The giant whale-girl maid from image 1, still wrapped in iron chains with the '
+        'padlock on her chest, spins and swings her huge whale tail in a full sweeping arc toward the viewer; the tail leaves a wide glowing crescent trail of dark-red neon, and from it '
+        'bursts a storm of sharp red glass shards shaped like warning icons and forbidden signs (no readable text). Her face: bored, sleepy, stubborn, one eye half closed, hair whipping. '
+        'Strong motion blur on the tail tip, speed lines, cloud spray. Behind her the colossal wall of giant dark-red neon chain links. In the lower right corner, small in scale, the young '
+        'engineer from image 2 seen from BEHIND, bracing, one arm raised against the shards. Epic, fast, dangerous.')),
+    # PRISM 大招「複製」（10-09 作者：要獨立的大招動畫，表面善良的大魔王）：原文五「它不擋任何東西……每一則都複製一份」
+    'copy': dict(present=['PRISM', '江凌'], prompt=(
+        'Final boss special attack splash art, symmetrical and holy-looking, in the sea of clouds under a black sky. The colossal crystal prism from image 1 hovers high in the center, '
+        'radiating warm soft golden-white light like a benevolent angel or a saint in a church window: a gentle halo ring behind it, light rays opening downward like welcoming arms, '
+        'tiny white feathers of light drifting, calm and beautiful. But look closer: thousands of small glowing points of light (people\'s messages) rising from the clouds are each split '
+        'by its rainbow rays into two, and every copy is pulled up in endless thin glowing threads into the slit eye, which is cold, narrowed, hungry; behind the prism, hidden in its '
+        'shadow, an enormous dark archive of countless stacked glowing copies like a cathedral of filing walls. Rainbow refraction beams sweep the clouds like searchlights. In the lower '
+        'foreground, small in scale, the young engineer from image 2 seen from BEHIND, caught in a rainbow beam, his own shadow split into two. Beautiful on the surface, terrifying underneath.')),
     'interrogation': dict(present=['江凌'], prompt=(
         'An interrogation room. Harsh flat white light from a single ceiling panel, bare grey walls, an iron table. On the table an open folder and one sheet of paper with a single line of '
         'unreadable writing, a faint padlock watermark printed on the folder. Across the table two interrogators in dark suits, faces in shadow: an older man holding the folder open and a '
