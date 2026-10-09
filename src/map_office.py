@@ -58,14 +58,22 @@ def events(walk):
     # 警衛（10-09 作者：躲警衛和偷卡完全沒有玩法）：原文「每四分鐘從電梯口走到茶水間，再走回來」。
     # 倒完麵以後（alibi）手上沒東西，被看到就會被叫回茶水間：警衛輪流站在茶水間門口、電梯口（變數 guard_at，背景計時切換），
     # 站著的那一個四格內看得到人，會走過來叫住。要等他走回電梯口，再從茶水間另一頭繞出去。
-    ev_.append(ev('guard', *PT['guard_a'], name='警衛', actor='npc', solid=True, direction='left', movement='horizontal', sprite=walk('guard'),
-                  conditions=[cond('phase', 'alibi', 'neq')]))
-    caught = [say(t, '') for t in new('警衛發現')] + [A('hop', hop={'who': 'player', 'times': 1, 'to': {'x': 6, 'y': 27}})]
-    for gid, at, xy, face in (('guard-tea', 'tea', PT['guard_b'], 'down'), ('guard-lift', 'lift', (PT['guard_a'][0] + 1, PT['guard_a'][1]), 'left')):
-        ev_.append(ev(gid, *xy, name='警衛', actor='npc', solid=True, direction=face, sprite=walk('guard'), movement='approach', approach=4,
-                      trigger='touch', conditions=[P('alibi'), cond('guard_at', at)], actions=fresh(caught)))
-    ev_.append(ev('guard-clock', 22, 0, trigger='parallel', conditions=[P('alibi')],
-                  actions=[setv('guard_at', 'tea'), A('wait', amount=6000), setv('guard_at', 'lift'), A('wait', amount=7000), A('loop', loop={})]))
+    # 同一個警衛真的在兩頭之間走（10-09 作者：兩個警衛輪流出現看起來像閃現）：倒完麵以後（alibi）他從電梯口走到茶水間門口、站一下、再走回去。
+    # 他站著的那一頭附近三格是「看得到」的範圍（看不見的觸發格），走進去會被叫回茶水間；他在路上走的時候不抓人。
+    post = {'lift': PT['guard_a'], 'tea': PT['guard_tea']}
+    gx, gy = post['lift']; tx, ty = post['tea']
+    patrol = [setv('guard_at', 'lift'), A('wait', amount=5000), setv('guard_at', ''),
+              move([('up', gy - ty), ('left', gx - tx)], face='down'), setv('guard_at', 'tea'), A('wait', amount=5000), setv('guard_at', ''),
+              move([('right', gx - tx), ('down', gy - ty)], face='left'), A('loop', loop={})]
+    ev_.append(ev('guard', gx, gy, name='警衛', actor='npc', solid=True, direction='left', movement='still', sprite=walk('guard'),
+                  pages=[page('guard-patrol', [P('alibi')], patrol, actor='npc', sprite=walk('guard'), solid=True, direction='left', trigger='parallel')]))
+    caught = [say(t, 'event:guard') for t in new('警衛發現')] + [A('hop', hop={'who': 'player', 'times': 1, 'to': {'x': 6, 'y': 27}})]
+    taken = {(e['x'], e['y']) for e in ev_} | {tuple(v) for v in PT.values()} | {tuple(v) for v in D.get('labels', {}).values()}   # 區域名牌也是事件
+    wl = layout.walls(D)
+    for at, (px, py) in post.items():
+        cells = [(x, y) for x in range(px - 3, px + 4) for y in range(py - 3, py + 4)
+                 if abs(x - px) + abs(y - py) <= 3 and (x, y) not in wl and (x, y) not in taken and (x, y) != (px, py)]
+        ev_ += spread(ev(f'sight-{at}', *cells[0], trigger='touch', conditions=[P('alibi'), cond('guard_at', at)], actions=fresh(caught)), cells)
     # 周主任講電話時偶爾轉過身來（變數 zhou_look）：他轉身的時候開抽屜會被看到，退到門外
     ev_.append(ev('zhou-clock', 23, 0, trigger='parallel', conditions=[P('alibi')],
                   actions=[setv('zhou_look', ''), A('wait', amount=4500), setv('zhou_look', 'turn'), A('wait', amount=2000), A('loop', loop={})]))
