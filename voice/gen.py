@@ -40,6 +40,7 @@ WHO = {   # 引號裡的話 → 誰說的（沒列的引號不配：新聞、評
     '我們在頂樓。': '群聲一', '三號橋斷了。': '群聲二', '有沒有人看到我爸。': '群聲三', '水是五點放的，沒有人通知。': '群聲四',
 }
 STARTS = {'江凌，國家網路管理中心三號值班台': '年長審訊員', '整區。上面說河城的消息': '周主任'}   # 長句用開頭認
+CROWD = {'「我們在頂樓。」「三號橋斷了。」「有沒有人看到我爸。」「水是五點放的，沒有人通知。」': 1.5}   # 段落 → 每句晚幾秒進來（疊著播）
 SPEAK = {'……對，河城那邊全部……不會有東西出去……': '對，河城那邊全部，不會有東西出去。'}   # 要唸的字（畫面上的字不動）：刪節號會被唸成拉長音
 
 
@@ -92,6 +93,12 @@ def main():
         list(ex.map(lambda kv: make(kv[1][0], kv[1][1], kv[1][2], kv[0]), jobs.items()))
     for para, files in plan:
         if len(files) == 1: name = os.path.basename(files[0])
+        elif para in CROWD:   # 好幾個人搶著說：每句晚 CROWD 秒進來、疊在一起播，再壓回 -18 LUFS（作者 10-09：河城群聲要交錯同時播）
+            name = 'm-' + hashlib.sha1(('|'.join(files) + f'|{CROWD[para]}').encode()).hexdigest()[:16] + '.mp3'; out = os.path.join(OUT, name)
+            if not os.path.exists(out):
+                inp = sum([['-i', f] for f in files], []); n = len(files); ms = int(CROWD[para] * 1000)
+                fl = ''.join(f'[{i}:a]adelay={i * ms}:all=1[a{i}];' for i in range(n)) + ''.join(f'[a{i}]' for i in range(n)) + f'amix=inputs={n}:duration=longest:normalize=0,loudnorm=I=-18:TP=-2:LRA=9[o]'
+                subprocess.run(['ffmpeg', '-v', 'error', '-y', *inp, '-filter_complex', fl, '-map', '[o]', '-ar', '44100', '-b:a', '96k', out], check=True)
         else:   # 一段裡好幾句：中間留 0.35 秒接起來
             name = 'p-' + hashlib.sha1('|'.join(files).encode()).hexdigest()[:16] + '.mp3'; out = os.path.join(OUT, name)
             if not os.path.exists(out):
