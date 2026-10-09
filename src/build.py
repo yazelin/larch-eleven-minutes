@@ -44,6 +44,25 @@ TITLE_STATUS = 'GFW · 23:49'
 TITLE_SUB = next(l for l in (ROOT / 'canon/介紹文.md').read_text(encoding='utf-8').splitlines() if l.strip() and not l.startswith('#')).strip()   # 介紹文第一句
 
 
+VOICE = json.loads((ROOT / 'voice/manifest.json').read_text(encoding='utf-8')) if (ROOT / 'voice/manifest.json').exists() else {}   # 段落 → 配音檔（voice/gen.py）
+
+
+def voiced(text):
+    f = VOICE.get(text); return f'/files/assets/voice/{f}' if f and (ROOT / f'assets/voice/{f}').exists() else ''
+
+
+def voice_actions(acts):
+    """地圖上的對話：有配音的那句前面插 sound 步驟（引擎的地圖對話沒有語音欄位）"""
+    out = []
+    for a in acts:
+        if a.get('choice'):
+            for o in a['choice']['options']: o['actions'] = voice_actions(o['actions'])
+        u = voiced(a.get('text', '')) if a['kind'] == 'dialogue' else ''
+        if u: out.append(mapkit.A('sound', audio={'url': u, 'volume': 0.9}, label='配音'))
+        out.append(a)
+    return out
+
+
 def music(k):
     """配樂（art/music.py 產的，還沒產就空著）"""
     return f'/files/assets/bgm/{k}.mp3' if (ROOT / f'assets/bgm/{k}.mp3').exists() else ''
@@ -91,6 +110,9 @@ def map_card(mid, a, mod, title, pos):
     lights = getattr(mod, 'return_lights', [])
     if lights: m['environment'] = {'weather': 'clear', 'intensity': 0, 'darkness': 0.35, 'shake': 0, 'lights': lights}   # 十九樓：燈只開一半、警衛手電筒；室內不下雨（雨畫在落地窗外，10-09 作者：內建雨太整齊）
     if mod is map_cloud: m['combat'] = 'action'
+    for e in m['events']:
+        e['actions'] = voice_actions(e.get('actions', []))
+        for pg in e.get('pages', []): pg['actions'] = voice_actions(pg['actions'])
     names = [n for _, n, _, _ in mapkit.RPG_VARS] + list(VARS)
     node = mapkit.map_node(mid, title, m, names, pos=pos, bgm=music(MAP_BGM[mid])); node['data'].pop('start')
     return node
@@ -127,6 +149,10 @@ def build():
         'type': 'boardJump', 'title': '前往第二章', 'text': '', 'jumpBoardId': SITE_BOARD, 'jumpNodeId': 'site'}})
     cards.link(board, 'credits', 'to-site')
     p['boards'].append(site_board())
+    for n in board['nodes']:   # 對話卡：每一句掛 voiceUrl
+        for l in n['data'].get('dialogueLines', []):
+            u = voiced(l['text'])
+            if u: l['voiceUrl'] = u
     layout_board(board)
     test_start(p)
     return p
