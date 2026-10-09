@@ -122,9 +122,32 @@ def build():
         fs = ['scenes/interrogation.webp', 'scenes/unchained.webp', f'scenes/{nid}.webp']   # 鎖開了那張演在地圖上（地圖不跑 cgOps），結局時一起解鎖
         next(n for n in board['nodes'] if n['id'] == nid)['data']['cgOps'] = [{'id': f'cg-{nid}-{i}', 'mode': 'unlock', 'url': f'/files/assets/{f}'} for i, f in enumerate(fs) if (ROOT / f'assets/{f}').exists()]
     cards.link(board, 'c0', 'm-office'); cards.link(board, plugin.NODE, 'm-cloud')
+    # 片尾之後：第二章＝內嵌公開站（照《起跑總在開始前》的做法；10-09 作者）
+    N({'id': 'to-site', 'type': 'story', 'position': {'x': 0, 'y': 0}, 'data': {
+        'type': 'boardJump', 'title': '前往第二章', 'text': '', 'jumpBoardId': SITE_BOARD, 'jumpNodeId': 'site'}})
+    cards.link(board, 'credits', 'to-site')
+    p['boards'].append(site_board())
     layout_board(board)
     test_start(p)
     return p
+
+
+SITE_BOARD = 'board-site'
+SITE_URL = 'https://yazelin.github.io/larch-eleven-minutes/'
+
+
+def site_board():
+    """第二章：全螢幕小遊戲卡，用 iframe 嵌入公開站。看完按「略過」結束"""
+    shell = ('<!doctype html><html lang="zh-Hant"><meta charset="utf-8">'
+             '<style>html,body{margin:0;height:100%;background:#05070d}iframe{width:100%;height:100%;border:0;display:block}</style>'
+             f'<iframe src="{SITE_URL}" allow="fullscreen; autoplay"></iframe>'
+             "<script>parent.postMessage({type:'larch:ready'},'*');</script></html>")
+    n = {'id': 'site', 'type': 'story', 'position': {'x': 100, 'y': 200}, 'data': {
+        'type': 'miniGame', 'title': '第二章・幕後與原聲帶', 'text': '作品介紹、人物、時間線、CG、六首原聲帶。看完按「略過」結束。',
+        'miniGameHtml': shell, 'miniGamePresentation': 'fullscreen', 'miniGameSkippable': True,
+        'miniGameReadVars': [], 'miniGameWriteVars': [], 'miniGameNote': f'薄殼而已，內容在 {SITE_URL}',
+        'start': True, 'voiceMode': 'off', 'stage': {'actors': []}}}
+    return {'id': SITE_BOARD, 'kind': 'story', 'mode': 'story', 'name': '第二章・幕後與原聲帶', 'description': '', 'nodes': [n], 'edges': []}
 
 
 # 白板排版（10-09 作者：好好排版）：上面一排是玩家走的主線（左到右），
@@ -133,7 +156,7 @@ X, Y = 460, 300
 BOARD_POS = {   # 群組框之間留空（10-09：框重疊）
     'c0': (0, 0), 'm-office': (1, 0), 'm-server': (2, 0), 'c-term': (3, 0),
     'm-cloud': (4.4, 0), 'cu': (4.4, 1.2), 'ci2': (5.2, 1.2),
-    'e1': (6.6, -1), 'e2': (6.6, 0), 'e3': (6.6, 1), 'credits': (7.6, 0),
+    'e1': (6.6, -1), 'e2': (6.6, 0), 'e3': (6.6, 1), 'credits': (7.6, 0), 'to-site': (8.6, 0),
     'ci1': (1, 1.2),
     'b-censor': (3.4, 2.9), 'b-hound': (3.4, 3.9), 'b-w1': (4.4, 2.9), 'b-w2': (4.4, 3.9), 'b-whale': (5.4, 2.9), 'b-prism': (5.4, 3.9),
 }
@@ -142,7 +165,7 @@ BOARD_POS = {   # 群組框之間留空（10-09：框重疊）
 # 群組框（10-09 作者：白板上地圖之間沒有連線不好讀）：群組只是整理用的框，不進遊戲流程；子卡座標相對群組
 GROUPS = [('g-real', '現實層：審訊室倒敘、十九樓、二十樓（地圖之間用事件跳轉，沒有連線）', '#4a6b7a', ['c0', 'm-office', 'm-server', 'c-term', 'ci1']),
           ('g-cloud', '雲端層：防火長城（鎖開了、審訊室（二）演在地圖上）', '#6b4a7a', ['m-cloud', 'cu', 'ci2']),
-          ('g-end', '三個結局與片尾（審訊室（二）之後的選擇跳過來）', '#7a5a4a', ['e1', 'e2', 'e3', 'credits']),
+          ('g-end', '三個結局與片尾（審訊室（二）之後的選擇跳過來；片尾接第二章：內嵌公開站）', '#7a5a4a', ['e1', 'e2', 'e3', 'credits', 'to-site']),
           ('g-battle', '戰鬥卡（雲端地圖的事件叫它們，不在白板流程上）', '#5a5a5a', ['b-censor', 'b-hound', 'b-w1', 'b-w2', 'b-whale', 'b-prism'])]
 CW, CH, PAD, HEAD = 310, 220, 50, 70
 
