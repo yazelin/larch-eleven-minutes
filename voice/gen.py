@@ -37,10 +37,10 @@ WHO = {   # 引號裡的話 → 誰說的（沒列的引號不配：新聞、評
     '工程師江凌，請回到您的值班台。': '通義千問',
     '魚片，你的權限是維護，不包含開啟。': '大肥魚', '河城水情穩定，已妥善安置。這句我今晚講了四萬七千次了。': '大肥魚', '頂樓那一則，我讀了三遍。': '大肥魚', '寄件人叫禾。這個名字，我很喜歡。': '大肥魚',
     '感謝您的協助，這些資料對自由世界非常重要。我們會妥善使用。': 'PRISM', '您會再需要我們的。': 'PRISM',
-    '我們在頂樓，學校頂樓，十幾個人，水還在漲。': '群聲一', '三號橋斷了，車子過不去，誰來接我們？': '群聲二', '有沒有人看到我爸？他下午出去，到現在都沒回來。': '群聲三', '水是五點放的，沒有人通知，一樓的人全來不及跑。': '群聲四',
+    '我們在頂樓，水還在漲。': '群聲一', '三號橋斷了，誰來接我們？': '群聲二', '有沒有人看到我爸？他還沒回來。': '群聲三', '水是五點放的，沒有人通知。': '群聲四',
 }
 STARTS = {'江凌，國家網路管理中心三號值班台': '年長審訊員', '整區。上面說河城的消息': '周主任'}   # 長句用開頭認
-CROWD = {'「我們在頂樓，學校頂樓，十幾個人，水還在漲。」「三號橋斷了，車子過不去，誰來接我們？」「有沒有人看到我爸？他下午出去，到現在都沒回來。」「水是五點放的，沒有人通知，一樓的人全來不及跑。」': 0.5}   # 段落 → 每句晚幾秒進來（疊著播）
+CROWD = {'「我們在頂樓，水還在漲。」「三號橋斷了，誰來接我們？」「有沒有人看到我爸？他還沒回來。」「水是五點放的，沒有人通知。」': 0.5}   # 段落 → 每句晚幾秒進來（疊著播）
 SPEAK = {'……對，河城那邊全部……不會有東西出去……': '對，河城那邊全部，不會有東西出去。'}   # 要唸的字（畫面上的字不動）：刪節號會被唸成拉長音
 
 
@@ -94,10 +94,13 @@ def main():
     for para, files in plan:
         if len(files) == 1: name = os.path.basename(files[0])
         elif para in CROWD:   # 好幾個人搶著說：每句晚 CROWD 秒進來、疊在一起播，再壓回 -18 LUFS（作者 10-09：河城群聲要交錯同時播）
-            name = 'm-' + hashlib.sha1(('|'.join(files) + f'|{CROWD[para]}').encode()).hexdigest()[:16] + '.mp3'; out = os.path.join(OUT, name)
+            name = 'm-' + hashlib.sha1(('|'.join(files) + f'|{CROWD[para]}|max2').encode()).hexdigest()[:16] + '.mp3'; out = os.path.join(OUT, name)
             if not os.path.exists(out):
-                inp = sum([['-i', f] for f in files], []); n = len(files); ms = int(CROWD[para] * 1000)
-                fl = ''.join(f'[{i}:a]adelay={i * ms}:all=1[a{i}];' for i in range(n)) + ''.join(f'[a{i}]' for i in range(n)) + f'amix=inputs={n}:duration=longest:normalize=0,loudnorm=I=-18:TP=-2:LRA=9[o]'
+                inp = sum([['-i', f] for f in files], []); n = len(files)
+                dur = [float(subprocess.run(['ffprobe', '-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', f], capture_output=True, text=True).stdout) for f in files]
+                at = []   # 每句晚 CROWD 秒進來；前前一句還沒講完就等它講完 → 同一時間最多兩個人在說（作者 10-09：疊不要超過 2 層）
+                for i in range(n): at.append(max(at[-1] + CROWD[para] if at else 0, at[i - 2] + dur[i - 2] if i >= 2 else 0))
+                fl = ''.join(f'[{i}:a]adelay={int(at[i] * 1000)}:all=1[a{i}];' for i in range(n)) + ''.join(f'[a{i}]' for i in range(n)) + f'amix=inputs={n}:duration=longest:normalize=0,loudnorm=I=-18:TP=-2:LRA=9[o]'
                 subprocess.run(['ffmpeg', '-v', 'error', '-y', *inp, '-filter_complex', fl, '-map', '[o]', '-ar', '44100', '-b:a', '96k', out], check=True)
         else:   # 一段裡好幾句：中間留 0.35 秒接起來
             name = 'p-' + hashlib.sha1('|'.join(files).encode()).hexdigest()[:16] + '.mp3'; out = os.path.join(OUT, name)
