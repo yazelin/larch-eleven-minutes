@@ -23,6 +23,7 @@ for n in p['nodes']:
     m = json.loads(d['pluginValues']['map']); dz = layout.load({b[0]: b[1] for b in build.MAPS}[n['id']]); wl = layout.walls(dz)
     ids = [e['id'] for e in m['events']]; cells = [(e['x'], e['y']) for e in m['events']]
     if len(ids) != len(set(ids)): errs.append('事件 id 重複')
+    if len(ids) > 256: errs.append(f'{n["id"]} 事件 {len(ids)} 個，超過引擎上限 256')
     if len(cells) != len(set(cells)): errs.append('同一格有兩個事件')
     aids = []; aids_kinds = []
     def walk(acts, depth=0):

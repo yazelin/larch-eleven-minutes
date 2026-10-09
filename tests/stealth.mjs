@@ -16,7 +16,7 @@ async function trial(phase, hero, wantRe, ms = 20000, press = false, delay = 0, 
     let k = 0;
     while (Date.now() < end) {
       if (press) await ui.page.keyboard.press('Space');
-      if (pace) { const key = (k++ % 6) < 3 ? 'ArrowRight' : 'ArrowLeft'; await ui.page.keyboard.down(key); await sleep(260); await ui.page.keyboard.up(key); }   // 在茶水間裡左右來回走，走進警衛手電筒照得到的範圍
+      if (pace) { const key = pace === 'ud' ? ((k++ % 4) < 2 ? 'ArrowDown' : 'ArrowUp') : ((k++ % 6) < 3 ? 'ArrowRight' : 'ArrowLeft'); await ui.page.keyboard.down(key); await sleep(260); await ui.page.keyboard.up(key); }   // 在茶水間裡左右來回走，走進警衛手電筒照得到的範圍
       await sleep(400); if (wantRe.test(await ui.text())) { hit = true; break; }
       if (k === 8) await ui.page.screenshot({ path: 'art/check/stealth-walk.png' });
     }
@@ -24,8 +24,10 @@ async function trial(phase, hero, wantRe, ms = 20000, press = false, delay = 0, 
   } finally { await ui.close(); s.kill(); }
 }
 try {
-  assert(await trial('alibi', [4, 27], /泡麵不是倒了嗎/, 30000, false, 0, true), '倒完麵在茶水間門口來回走，警衛走到茶水間那一頭時：被叫住');
-  assert(!(await trial('bowl', [4, 27], /泡麵不是倒了嗎/, 25000, false, 0, true)), '對照組：還拿著泡麵碗，同樣來回走，不會被叫住');
+  assert(await trial('alibi', [4, 27], /值班的不要離開座位/, 30000, false, 0, true), '倒完麵在茶水間門口來回走，警衛走到茶水間那一頭時：被叫住');
+  assert(!(await trial('bowl', [4, 27], /值班的不要離開座位/, 25000, false, 0, true)), '對照組：還拿著泡麵碗，同樣來回走，不會被叫住');
+  // 走路時也會看（10-09 作者）：站在電梯口往茶水間那段路的旁邊（不在任何站點的視線裡），他走過來時要被叫住
+  assert(await trial('alibi', [14, 20], /值班的不要離開座位/, 40000, false, 0, 'ud'), '在警衛走路的路線旁邊上下踱步：他走過來時被叫住');
   // 周主任 4.5 秒背對、2 秒轉身輪流：在不同時間點各按一次抽屜，至少有一次要被看到、至少有一次拿到卡
   const res = [];
   for (const d of [3000, 4500, 5500, 6500, 7500]) res.push([await trial('alibi', [41, 9], /轉過身來/, 4000, false, d), d]);

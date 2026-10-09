@@ -22,7 +22,7 @@ async function step(note, expect, name) {   // 走過去按；被警衛叫住或
     await page.keyboard.press('Space'); await sleep(800);
     const end = Date.now() + 25000; let t = '';
     while (Date.now() < end) { t = await text(); if (expect.test(t)) { await shot(name); return t; }
-      if (/泡麵不是倒了嗎|轉過身來/.test(t)) { caughtTimes++; console.log('  被發現，重來'); break; }
+      if (/值班的不要離開座位|轉過身來/.test(t)) { caughtTimes++; console.log('  被發現，重來'); break; }
       await ui.advance(); await sleep(450); }
     for (let i = 0; i < 8; i++) { await ui.advance(); await sleep(500); }
     if (!(await visible(note))) await sleep(1000);

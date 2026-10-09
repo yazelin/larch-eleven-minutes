@@ -57,7 +57,7 @@ def scene(k):
     return f'/files/assets/scenes/{k}.webp' if (ROOT / f'assets/scenes/{k}.webp').exists() else ''
 
 
-VARS = {'phase': ('string', ''), 'kills': ('number', 0), 'wall': ('string', ''), 'eye': ('string', ''), 'guard_at': ('string', ''), 'zhou_look': ('string', ''), 'sneaking': ('string', '')}   # 全部故事變數只在這裡定義
+VARS = {'phase': ('string', ''), 'kills': ('number', 0), 'wall': ('string', ''), 'eye': ('string', ''), 'guard_at': ('string', ''), 'zhou_look': ('string', ''), 'sneaking': ('string', ''), 'guard_dir': ('string', ''), 'leg': ('string', '0')}   # 全部故事變數只在這裡定義
 
 
 def database():

@@ -11,26 +11,48 @@ MAP_ID = 'm-office'
 P = lambda v: cond('phase', v)
 
 
-SIGHT = 6   # 警衛看得多遠（細格）。10-09 作者：原本 3 格太近，像要跟他對話才會被發現
-FACE = {'tea': (0, 1), 'lift': (-1, 0), 'stairs': (1, 0)}   # 茶水間門口面向茶水間（往下）、電梯口面向走廊（往左）、樓梯那一頭面向樓梯門（往右，10-09 作者）
+SIGHT = 6        # 警衛站定時看得多遠（細格）。10-09 作者：原本 3 格太近，像要跟他對話才會被發現
+SIGHT_WALK = 4   # 走路時往前看多遠（10-09 作者：走路時也要看得到人）
+CHUNK = 3        # 走路的視線每幾步更新一次
+DIRS = {'up': (0, -1), 'down': (0, 1), 'left': (-1, 0), 'right': (1, 0)}
+ANGLE = {'right': 0, 'down': 90, 'left': 180, 'up': 270}
 return_lights = []
 
 
-def sight(at, px, py):
-    """警衛面前的扇形：往前 SIGHT 格，越遠越寬（每兩格寬一格）"""
-    fx, fy = FACE[at]; out = []
-    for d in range(1, SIGHT + 1):
-        for w in range(-(d // 2 + 1), d // 2 + 2):
-            out.append((px + fx * d + fy * w, py + fy * d + fx * w))
+def sight(d, px, py, rng, wide=True):
+    """警衛面前的扇形：往 d 方向 rng 格，越遠越寬（站定時每兩格寬一格；走路時固定左右各一格，引擎一張地圖最多 256 個事件）"""
+    fx, fy = DIRS[d]; out = []
+    for k in range(1, rng + 1):
+        half = (k // 2 + 1) if wide else 1
+        for w in range(-half, half + 1):
+            out.append((px + fx * k + fy * w, py + fy * k + fx * w))
     return out
 
 
-def guard_lights(post):
-    """手電筒：跟著警衛的扇形光，照出看得到的範圍；只在他站著的那一頭亮"""
-    ang = {'tea': 90, 'lift': 180, 'stairs': 0}
-    return [{'id': f'flash-{at}', 'x': x, 'y': y, 'radius': SIGHT + 1, 'color': '#fff2c4', 'flicker': False, 'shape': 'spot',
-             'angle': ang[at], 'spread': 60, 'strength': 0.55, 'follow': 'guard', 'when': {'variable': 'guard_at', 'value': at}}
-            for at, (x, y) in post.items()]
+def patrol_legs(posts, legs):
+    """巡邏：每一段路切成每 CHUNK 步一小段，每小段開始時記下「在哪、面向哪」（guard_at、guard_dir），各自有一塊視線。
+    posts：{名字: ((x, y), 面向, 停幾毫秒)}；legs：[(從, 到, [(方向, 步數)…])]。回傳 (每段的動作串, {狀態: (方向, x, y, 視距)})"""
+    states, pages = {}, []
+    for li, (frm, to, route) in enumerate(legs):
+        (x, y), face, ms = posts[frm]
+        acts = [setv('guard_at', frm), setv('guard_dir', face), A('wait', amount=ms)]
+        states[frm] = (face, x, y, SIGHT); k = 0
+        for d, n in route:
+            for c0 in range(0, n, CHUNK):
+                st = f'L{li}c{k}'; k += 1; c = min(CHUNK, n - c0)
+                states[st] = (d, x, y, SIGHT_WALK)
+                acts += [setv('guard_at', st), setv('guard_dir', d), move([(d, c)])]
+                x, y = x + DIRS[d][0] * c, y + DIRS[d][1] * c
+        acts.append(setv('leg', str((li + 1) % len(legs))))
+        assert len(acts) <= 32, (li, len(acts))
+        pages.append(acts)
+    return pages, states
+
+
+def guard_lights():
+    """手電筒：跟著警衛、照向他面對的方向（guard_dir）"""
+    return [{'id': f'flash-{d}', 'x': 24, 'y': 26, 'radius': SIGHT + 1, 'color': '#fff2c4', 'flicker': False, 'shape': 'spot',
+             'angle': a, 'spread': 60, 'strength': 0.55, 'follow': 'guard', 'when': {'variable': 'guard_dir', 'value': d}} for d, a in ANGLE.items()]
 
 
 def events(walk):
@@ -80,25 +102,29 @@ def events(walk):
     # 警衛（10-09 作者：躲警衛和偷卡完全沒有玩法）：原文「每四分鐘從電梯口走到茶水間，再走回來」。
     # 倒完麵以後（alibi）手上沒東西，被看到就會被叫回茶水間：警衛輪流站在茶水間門口、電梯口（變數 guard_at，背景計時切換），
     # 站著的那一個四格內看得到人，會走過來叫住。要等他走回電梯口，再從茶水間另一頭繞出去。
-    # 同一個警衛真的在兩頭之間走（10-09 作者：兩個警衛輪流出現看起來像閃現）：倒完麵以後（alibi）他從電梯口走到茶水間門口、站一下、再走回去。
-    # 他站著的那一頭附近三格是「看得到」的範圍（看不見的觸發格），走進去會被叫回茶水間；他在路上走的時候不抓人。
-    post = {'lift': PT['guard_a'], 'tea': PT['guard_tea'], 'stairs': PT['guard_stairs']}
-    gx, gy = post['lift']; tx, ty = post['tea']; sx, sy = post['stairs']
-    patrol = [setv('guard_at', 'lift'), A('wait', amount=4000), setv('guard_at', ''),
-              move([('up', gy - ty), ('left', gx - tx)], face='down'), setv('guard_at', 'tea'), A('wait', amount=5000), setv('guard_at', ''),
-              move([('right', gx - tx), ('down', gy - ty)], face='left'), setv('guard_at', 'lift'), A('wait', amount=4000), setv('guard_at', ''),
-              move([('right', sx - gx), ('down', sy - gy)], face='right'), setv('guard_at', 'stairs'), A('wait', amount=5000), setv('guard_at', ''),
-              move([('up', sy - gy), ('left', sx - gx)], face='left'), A('loop', loop={})]
-    SNEAK = cond('sneaking', '1')   # 倒完麵到走進樓梯門之間都要躲警衛（拿到卡以後往樓梯走也是）
+    # 警衛（10-09 作者三輪回饋：兩個警衛輪流出現像閃現 → 同一個人真的走；看太近 → 扇形 6 格＋手電筒；走路時也要看）
+    # 倒完麵到走進樓梯門之間（sneaking）他在電梯口、茶水間門口、樓梯那一頭之間巡邏，走路時也一路往前看。
+    # 視線是看不見的觸發格：每一格一個事件，哪些狀態看得到這格就有幾頁（一格只能放一個事件）。
+    (gx, gy), (tx, ty), (sx, sy) = PT['guard_a'], PT['guard_tea'], PT['guard_stairs']
+    posts = {'lift': ((gx, gy), 'left', 4000), 'tea': ((tx, ty), 'down', 5000), 'lift2': ((gx, gy), 'left', 4000), 'stairs': ((sx, sy), 'right', 5000)}
+    legs = [('lift', 'tea', [('up', gy - ty), ('left', gx - tx)]), ('tea', 'lift2', [('right', gx - tx), ('down', gy - ty)]),
+            ('lift2', 'stairs', [('right', sx - gx), ('down', sy - gy)]), ('stairs', 'lift', [('up', sy - gy), ('left', sx - gx)])]
+    leg_pages, states = patrol_legs(posts, legs)
+    SNEAK = cond('sneaking', '1')
+    gpage = lambda i, acts: page(f'guard-leg{i}', [SNEAK, cond('leg', str(i)) if i else cond('leg', '1', 'neq')] + ([cond('leg', '2', 'neq'), cond('leg', '3', 'neq')] if not i else []),
+                                 acts, actor='npc', sprite=walk('guard'), solid=True, direction='left', trigger='parallel')
     ev_.append(ev('guard', gx, gy, name='警衛', actor='npc', solid=True, direction='left', movement='still', sprite=walk('guard'),
-                  pages=[page('guard-patrol', [SNEAK], patrol, actor='npc', sprite=walk('guard'), solid=True, direction='left', trigger='parallel')]))
+                  pages=[gpage(i, acts) for i, acts in enumerate(leg_pages)]))
     caught = [say(t, 'event:guard') for t in new('警衛發現')] + [A('hop', hop={'who': 'player', 'times': 1, 'to': {'x': 6, 'y': 27}})]
     taken = {(e['x'], e['y']) for e in ev_} | {tuple(v) for v in PT.values()} | {tuple(v) for v in D.get('labels', {}).values()}   # 區域名牌也是事件
-    wl = layout.walls(D)
-    for at, (px, py) in post.items():
-        cells = [c for c in sight(at, px, py) if c not in wl and c not in taken]
-        ev_ += spread(ev(f'sight-{at}', *cells[0], trigger='touch', conditions=[SNEAK, cond('guard_at', at)], actions=fresh(caught)), cells)
-    return_lights.extend(guard_lights(post))
+    wl = layout.walls(D); W, H = D['map']['w'], D['map']['h']; seen = {}
+    for st, (d, x, y, rng) in states.items():
+        for c in sight(d, x, y, rng, wide=st in posts):
+            if 0 <= c[0] < W and 0 <= c[1] < H and c not in wl and c not in taken: seen.setdefault(c, []).append(st)
+    for i, (c, sts) in enumerate(sorted(seen.items())):
+        pg = [page(f'sight{i}-{j}', [SNEAK, cond('guard_at', st)], fresh(caught), trigger='touch') for j, st in enumerate(sts[1:])]
+        ev_.append(ev(f'sight{i}', *c, trigger='touch', conditions=[SNEAK, cond('guard_at', sts[0])], actions=fresh(caught), pages=pg))
+    return_lights.extend(guard_lights())
     # 周主任講電話時偶爾轉過身來（變數 zhou_look）：他轉身的時候開抽屜會被看到，退到門外
     ev_.append(ev('zhou-clock', 23, 0, trigger='parallel', conditions=[P('alibi')],
                   actions=[setv('zhou_look', ''), A('wait', amount=4500), setv('zhou_look', 'turn'), A('wait', amount=2000), A('loop', loop={})]))
