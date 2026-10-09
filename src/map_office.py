@@ -11,6 +11,28 @@ MAP_ID = 'm-office'
 P = lambda v: cond('phase', v)
 
 
+SIGHT = 6   # 警衛看得多遠（細格）。10-09 作者：原本 3 格太近，像要跟他對話才會被發現
+FACE = {'tea': (0, 1), 'lift': (-1, 0)}   # 站茶水間門口面向茶水間（往下）、站電梯口面向走廊（往左）
+return_lights = []
+
+
+def sight(at, px, py):
+    """警衛面前的扇形：往前 SIGHT 格，越遠越寬（每兩格寬一格）"""
+    fx, fy = FACE[at]; out = []
+    for d in range(1, SIGHT + 1):
+        for w in range(-(d // 2 + 1), d // 2 + 2):
+            out.append((px + fx * d + fy * w, py + fy * d + fx * w))
+    return out
+
+
+def guard_lights(post):
+    """手電筒：跟著警衛的扇形光，照出看得到的範圍；只在他站著的那一頭亮"""
+    ang = {'tea': 90, 'lift': 180}
+    return [{'id': f'flash-{at}', 'x': x, 'y': y, 'radius': SIGHT + 1, 'color': '#fff2c4', 'flicker': False, 'shape': 'spot',
+             'angle': ang[at], 'spread': 60, 'strength': 0.55, 'follow': 'guard', 'when': {'variable': 'guard_at', 'value': at}}
+            for at, (x, y) in post.items()]
+
+
 def events(walk):
     one, ask, two = section('一　23:04'), section('審訊室（一）'), section('二　23:21')
     hx, hy = 7, 10   # 江凌坐在工位前，面向監控台（工位佔地 4–9 × 8–9，監控台在正前方那格 (7, 9)）
@@ -71,9 +93,9 @@ def events(walk):
     taken = {(e['x'], e['y']) for e in ev_} | {tuple(v) for v in PT.values()} | {tuple(v) for v in D.get('labels', {}).values()}   # 區域名牌也是事件
     wl = layout.walls(D)
     for at, (px, py) in post.items():
-        cells = [(x, y) for x in range(px - 3, px + 4) for y in range(py - 3, py + 4)
-                 if abs(x - px) + abs(y - py) <= 3 and (x, y) not in wl and (x, y) not in taken and (x, y) != (px, py)]
+        cells = [c for c in sight(at, px, py) if c not in wl and c not in taken]
         ev_ += spread(ev(f'sight-{at}', *cells[0], trigger='touch', conditions=[P('alibi'), cond('guard_at', at)], actions=fresh(caught)), cells)
+    return_lights.extend(guard_lights(post))
     # 周主任講電話時偶爾轉過身來（變數 zhou_look）：他轉身的時候開抽屜會被看到，退到門外
     ev_.append(ev('zhou-clock', 23, 0, trigger='parallel', conditions=[P('alibi')],
                   actions=[setv('zhou_look', ''), A('wait', amount=4500), setv('zhou_look', 'turn'), A('wait', amount=2000), A('loop', loop={})]))
