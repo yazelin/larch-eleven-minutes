@@ -169,11 +169,24 @@ footer.end .btns{justify-content:center;margin:0 0 26px}
 @keyframes bg-b{0%,90%,100%{opacity:0}92%{opacity:.5;clip-path:inset(30% 0 52% 0);transform:translateX(12px)}94%{opacity:.5;clip-path:inset(8% 0 80% 0);transform:translateX(-16px)}}
 @media (max-width:760px){.bg-glitch i{background-position:70% 30%}}
 @media (prefers-reduced-motion:reduce){.hero{animation:none}.bg-glitch{display:none}}
+
+/* 背景音樂鈕（照台灣人代表的做法）：預設關，第一個點擊／按鍵才開始播（瀏覽器不准有聲自動播放）；按過關閉的人不再自動開；切走分頁就停 */
+.mus{flex:0 0 34px;width:34px;height:34px;display:grid;place-content:center;padding:0;border:1px solid rgba(57,243,255,.35);background:rgba(57,243,255,.06);color:var(--muted);cursor:pointer;clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px)}
+.mus:hover{color:var(--neon);border-color:var(--neon)}
+.mus svg{width:18px;height:18px;display:block}
+.mus .i-on{display:none}
+.mus[aria-pressed="true"]{color:var(--pulse);border-color:var(--pulse);background:rgba(255,63,180,.12)}
+.mus[aria-pressed="true"] .i-off{display:none}
+.mus[aria-pressed="true"] .i-on{display:block}
 </style>
 </head>
 <body>
 <header class="top"><b>十一分鐘</b>
   <nav aria-label="頁面導覽"><a href="#story">故事</a><a href="#play">怎麼玩</a><a href="#people">人物</a><a href="#real">現實背景</a><a href="#timeline">時間線</a><a href="#cg">CG</a><a href="#ost">原聲帶</a><a href="#making">製作</a></nav>
+  <button id="mus" class="mus" type="button" aria-label="播放背景音樂" aria-pressed="false" title="背景音樂">
+    <svg class="i-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M17 9l4 6M21 9l-4 6"/></svg>
+    <svg class="i-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></svg>
+  </button>
 </header>
 
 <section class="hero" aria-label="十一分鐘">
@@ -371,6 +384,8 @@ footer.end .btns{justify-content:center;margin:0 0 26px}
     });
   }
   audio.addEventListener("play", sync); audio.addEventListener("pause", sync);
+  audio.addEventListener("play", function () { document.dispatchEvent(new Event("ost-play")); });   // 背景音樂聽到就停
+  document.addEventListener("bgm-play", function () { audio.pause(); });
   document.querySelectorAll(".cg .locked").forEach(function (f) { f.addEventListener("click", function () { f.classList.remove("locked"); }); });
   var els = document.querySelectorAll(".rise");
   if ("IntersectionObserver" in window) {
@@ -452,6 +467,37 @@ window.__yzPromo=say;
 return true}
 function boot(){var tries=0;(function t(){if(start())return;if(++tries<20)setTimeout(t,1500)})()}
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot);else boot();
+})();
+</script>
+
+<script>
+/* 背景音樂。獨立一個 script 標籤：推廣 footer 改版會整段換掉別的 script（台灣人代表 2026-08-18 因此音樂鈕死了一天）。
+   1) 只能掛在第一個使用者手勢上，不能 load 就播。2) 音檔第一次要播才抓。3) 按過關閉就不再自動開。
+   4) 原聲帶區有人按播放，背景音樂就停，兩首不會疊在一起。 */
+(function () {
+  var btn = document.getElementById("mus"); if (!btn) return;
+  var a = null, KEY = "em-music";
+  var stop = function () { if (a) a.pause(); btn.setAttribute("aria-pressed", "false"); btn.setAttribute("aria-label", "播放背景音樂"); };
+  var start = function () {
+    if (!a) { a = new Audio("https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-1/docs/media/bgm-title.mp3"); a.loop = true; a.volume = .35; a.preload = "none"; a.addEventListener("error", function () { stop(); btn.title = "音樂載入失敗"; }); }
+    return a.play().then(function () { document.dispatchEvent(new Event("bgm-play")); btn.setAttribute("aria-pressed", "true"); btn.setAttribute("aria-label", "關閉背景音樂"); }).catch(stop);
+  };
+  var pref = function () { try { return localStorage.getItem(KEY); } catch (e) { return null; } };
+  var save = function (v) { try { localStorage.setItem(KEY, v); } catch (e) {} };
+  btn.addEventListener("click", function (e) {
+    e.stopPropagation(); armed = false;
+    if (btn.getAttribute("aria-pressed") === "true") { stop(); save("0"); return; }
+    start().then(function () { save("1"); });
+  });
+  var armed = true;
+  var auto = function (e) {
+    if (!armed) return; armed = false;
+    if (pref() === "0" || (e && e.target && e.target.closest && e.target.closest(".track"))) return;   // 第一下就是按原聲帶的話，讓原聲帶播
+    start();
+  };
+  ["pointerdown", "keydown", "touchstart"].forEach(function (ev) { document.addEventListener(ev, auto, { once: true, passive: true }); });
+  document.addEventListener("visibilitychange", function () { if (document.hidden && a && !a.paused) stop(); });
+  document.addEventListener("ost-play", stop);   // 原聲帶開始播 → 背景音樂停
 })();
 </script>
 </body>
