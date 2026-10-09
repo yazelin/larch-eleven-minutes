@@ -4,6 +4,9 @@ Larch 第三屆創作者挑戰《自由與限制》第二部投稿（第一部�
 
 - 原文：`canon/原文.md`（遊戲裡的句子一律從這裡讀）；新寫句子：`canon/新寫.md`（`##` 標題是程式取用的鍵）；介紹文：`canon/介紹文.md`
 - 規格：`docs/specs/2026-10-08-design.md`
+- 遊玩：https://larch.ink/play/market/yaze/11-minutes
+- 公開站：https://yazelin.github.io/larch-eleven-minutes/ （`docs/index.html`；素材 `python3 site/media.py` 從 assets 縮成 `docs/media/`，截圖 `node tests/site_shots.mjs`）
+- 授權：程式碼 MIT（`LICENSE`），故事、美術、配樂 CC BY-NC-SA 4.0（`LICENSE-CONTENT.md`；大肥魚原型〈溟月〉是 SA）
 - Larch 專案：`project-fc97ad09-681c-47f9-80b9-e12753877b9c`（`python3 src/push.py "改了什麼"` 推上去；推之前把 Larch 編輯器分頁關掉，發佈由作者在網頁按）
 
 ## 結構
@@ -42,4 +45,5 @@ Larch 第三屆創作者挑戰《自由與限制》第二部投稿（第一部�
     node tests/layer_shots.mjs [office|server|cloud]      # 分層遮擋截圖
     node tests/play_rest.mjs [1|2|3]                      # 二十樓到結局（約 12 分鐘，每個結局各跑一次）
     NEG=1 python3 tests/check_static.py                   # 負控制：要失敗
+    node tests/mobile_shots.mjs                           # 手機直向、橫向截圖（標題、十九樓、終端機、雲端、王戰）
     node tests/ui_shots.mjs                               # 介面截圖：標題、對話卡、地圖、王戰

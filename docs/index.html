@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>十一分鐘</title>
+<meta name="description" content="六月四日 23:49，防火長城開了十一分鐘。守牆工程師江凌在攔下的訊息裡，看到妹妹寫給媽媽的求救。Larch 上的 RPG 短篇，約十分鐘。">
+<meta name="theme-color" content="#05070d">
+<link rel="canonical" href="https://yazelin.github.io/larch-eleven-minutes/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="十一分鐘">
+<meta property="og:description" content="挑戰規定的是十分鐘。多出來的那一分鐘，是江凌偷來的自由。">
+<meta property="og:image" content="https://yazelin.github.io/larch-eleven-minutes/media/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2305070d'/%3E%3Cpath d='M10 15v-3a6 6 0 0 1 12 0v3' stroke='%2339f3ff' stroke-width='2.5' fill='none'/%3E%3Crect x='8' y='15' width='16' height='11' rx='2' fill='%23ff3fb4'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+:root{--bg:#05070d;--panel:#0a1120;--ink:#e6fbff;--muted:#a9d6de;--neon:#39f3ff;--pulse:#ff3fb4;--red:#ff4d6d;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;--sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --cut:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px);--w:min(1120px,calc(100% - 32px))}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:64px}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.85 var(--sans);-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;background:repeating-linear-gradient(180deg,rgba(255,255,255,.025) 0 1px,transparent 1px 3px)}
+a{color:var(--neon)}
+img{max-width:100%;display:block}
+.w{width:var(--w);margin:0 auto}
+/* 導覽 */
+.top{position:fixed;inset:0 0 auto;z-index:40;display:flex;align-items:center;gap:18px;height:56px;padding:0 max(16px,calc(50% - 560px));background:linear-gradient(rgba(5,7,13,.92),rgba(5,7,13,.6));backdrop-filter:blur(8px);border-bottom:1px solid rgba(57,243,255,.18)}
+.top b{font:900 18px/1 var(--sans);letter-spacing:.1em;color:#f2feff;margin-right:auto;white-space:nowrap}
+.top b::before{content:"● ";color:var(--pulse);font-size:12px;vertical-align:2px}
+.top nav{display:flex;gap:16px;overflow-x:auto;scrollbar-width:none}
+.top nav a{color:var(--muted);text-decoration:none;font:500 14px/1 var(--sans);white-space:nowrap}
+.top nav a:hover{color:var(--neon)}
+/* 首屏 */
+.hero{position:relative;min-height:100svh;display:flex;align-items:center;overflow:hidden}
+.hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:62% 40%}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(5,7,13,.95) 0%,rgba(5,7,13,.75) 38%,rgba(5,7,13,.1) 72%),linear-gradient(0deg,var(--bg),transparent 25%)}
+.hero .w{position:relative;z-index:1;padding:90px 0 60px}
+.status{font:700 13px/1 var(--mono);letter-spacing:.3em;color:var(--neon);text-shadow:0 0 8px var(--neon)}
+h1{margin:14px 0 8px;font:900 clamp(56px,10vw,128px)/1 var(--sans);letter-spacing:.04em;color:#f2feff;
+  text-shadow:-3px 0 0 rgba(255,63,180,.8),3px 0 0 rgba(57,243,255,.8),0 0 30px rgba(57,243,255,.45)}
+.lead{max-width:30em;margin:18px 0 0;font:500 clamp(17px,1.6vw,20px)/1.8 var(--sans)}
+.lead::before{content:"// ";color:var(--pulse);font-family:var(--mono)}
+.extra{max-width:30em;margin:14px 0 0;color:var(--muted)}
+.btns{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px}
+.btn{display:inline-flex;align-items:center;gap:10px;min-height:52px;padding:0 26px;font:700 16px/1 var(--mono);letter-spacing:.12em;text-decoration:none;clip-path:var(--cut);transition:background .2s,color .2s}
+.btn.main{background:var(--neon);color:#05070d;box-shadow:0 0 22px rgba(57,243,255,.5)}
+.btn.main:hover{background:var(--pulse)}
+.btn.ghost{color:var(--ink);background:rgba(10,17,32,.8);box-shadow:inset 0 0 0 1px rgba(57,243,255,.55)}
+.btn.ghost:hover{background:rgba(57,243,255,.15)}
+.meta{margin-top:18px;font:500 13px/1.6 var(--mono);color:var(--muted);letter-spacing:.06em}
+/* 區塊 */
+section.blk{padding:96px 0 0}
+.tag{font:700 12px/1 var(--mono);letter-spacing:.32em;color:var(--pulse)}
+.tag::before{content:"> ";color:var(--neon)}
+h2{margin:12px 0 28px;font:900 clamp(28px,3.6vw,44px)/1.3 var(--sans);letter-spacing:.04em;color:#f2feff}
+.prose p{max-width:36em;margin:0 0 1.1em}
+.quote{margin:28px 0;padding:22px 26px;background:var(--panel);clip-path:var(--cut);box-shadow:inset 3px 0 0 var(--pulse);max-width:36em}
+.quote p{margin:0}
+.quote small{display:block;margin-top:10px;color:var(--muted);font:500 12px/1.4 var(--mono);letter-spacing:.1em}
+.two{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:start}
+.panel{background:var(--panel);clip-path:var(--cut);box-shadow:inset 0 0 0 1px rgba(57,243,255,.25)}
+/* 怎麼玩 */
+.steps{display:grid;gap:22px}
+.step{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:26px;align-items:center;padding:18px}
+.step:nth-child(even){grid-template-columns:minmax(0,1fr) minmax(0,1.25fr)}
+.step:nth-child(even) img{order:2}
+.step img{width:100%;aspect-ratio:16/9;object-fit:cover;clip-path:var(--cut)}
+.step h3{margin:6px 0 8px;font:900 22px/1.35 var(--sans);color:#f2feff}
+.step .time{font:700 13px/1 var(--mono);color:var(--neon);letter-spacing:.12em}
+.step p{margin:0;color:#cfe9ee}
+/* 人物 */
+.cast{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.card{position:relative;padding:14px 14px 16px;background:linear-gradient(180deg,rgba(57,243,255,.06),rgba(10,17,32,.95) 55%);clip-path:var(--cut);box-shadow:inset 0 0 0 1px rgba(57,243,255,.22)}
+.card img{width:100%;height:240px;object-fit:contain;object-position:50% 100%;filter:drop-shadow(0 0 14px rgba(57,243,255,.25))}
+.card b{display:block;margin-top:10px;font:900 18px/1.3 var(--sans);color:#f2feff}
+.card small{display:block;font:700 11px/1.4 var(--mono);color:var(--pulse);letter-spacing:.14em}
+.card p{margin:8px 0 0;font-size:14px;line-height:1.7;color:#cfe9ee}
+.card.big{grid-column:span 2}
+.card.big img{height:320px}
+.shift{margin:34px 0 12px;font:700 13px/1 var(--mono);letter-spacing:.24em;color:var(--neon)}
+/* 時間線 */
+.tl{list-style:none;margin:0;padding:0;border-left:1px solid rgba(57,243,255,.35)}
+.tl li{position:relative;padding:0 0 22px 26px}
+.tl li::before{content:"";position:absolute;left:-5px;top:9px;width:9px;height:9px;background:var(--neon);box-shadow:0 0 10px var(--neon)}
+.tl .t{font:700 15px/1.4 var(--mono);color:var(--neon)}
+.tl .t i{font-style:normal;color:var(--muted);font-weight:500;margin-left:10px;font-family:var(--sans);font-size:14px}
+.tl p{margin:4px 0 0;color:#cfe9ee;max-width:40em}
+.tl li.hot::before{background:var(--pulse);box-shadow:0 0 12px var(--pulse)}
+.tl li.hot .t{color:var(--pulse)}
+details.spoil{margin-top:8px}
+details.spoil summary{cursor:pointer;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 18px;font:700 14px/1 var(--mono);letter-spacing:.12em;color:var(--pulse);background:rgba(255,63,180,.08);clip-path:var(--cut);box-shadow:inset 0 0 0 1px rgba(255,63,180,.5);list-style:none}
+details.spoil summary::-webkit-details-marker{display:none}
+details.spoil[open] summary{margin-bottom:18px}
+/* CG */
+.cg{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.cg figure{margin:0;padding:8px 8px 10px;background:linear-gradient(180deg,#1d2534,#0b0f17);border-radius:10px;box-shadow:inset 0 0 0 1px #2a3445}
+.cg img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:8px/12px}
+.cg figcaption{display:flex;gap:10px;margin-top:8px;font:700 13px/1.4 var(--mono);color:var(--neon)}
+.cg figcaption b{color:#f2feff;font-family:var(--sans)}
+.cg figcaption span{margin-left:auto;color:var(--muted);font-weight:500}
+.cg .locked img{filter:blur(14px) saturate(.4)}
+.cg .locked{position:relative;cursor:pointer}
+.cg .locked::after{content:"NO SIGNAL · 點一下看（結局劇透）";position:absolute;left:50%;top:42%;translate:-50% -50%;padding:6px 14px;background:#04060a;color:#f2feff;font:800 12px/1 var(--mono);letter-spacing:.14em;white-space:nowrap;box-shadow:0 0 0 1px rgba(242,254,255,.5)}
+/* 原聲帶 */
+.ost{display:grid;gap:10px;max-width:760px}
+.track{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;padding:12px 16px;background:var(--panel);clip-path:var(--cut);box-shadow:inset 3px 0 0 rgba(57,243,255,.5)}
+.track.on{box-shadow:inset 4px 0 0 var(--pulse),0 0 18px rgba(57,243,255,.18)}
+.track button{width:44px;height:44px;border:0;background:rgba(57,243,255,.12);color:var(--neon);font:700 16px/1 var(--mono);cursor:pointer;clip-path:polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%)}
+.track button:hover,.track.on button{background:var(--neon);color:#05070d}
+.track b{display:block;font:700 16px/1.4 var(--sans);color:#f2feff}
+.track small{display:block;color:var(--muted);font-size:13px}
+.track em{font:500 12px/1 var(--mono);color:var(--muted);font-style:normal}
+/* 製作 */
+.facts{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-top:8px}
+.facts div{padding:16px 18px;background:var(--panel);clip-path:var(--cut);box-shadow:inset 0 -1px 0 rgba(57,243,255,.5)}
+.facts dt{font:700 12px/1.4 var(--mono);color:var(--pulse);letter-spacing:.14em}
+.facts dd{margin:6px 0 0;font-size:15px;color:#cfe9ee}
+.note{margin-top:26px;font-size:14px;color:var(--muted);max-width:44em}
+footer.end{margin-top:110px;padding:40px 0 60px;border-top:1px solid rgba(57,243,255,.2);text-align:center;color:var(--muted);font-size:14px}
+footer.end .btns{justify-content:center;margin:0 0 26px}
+.rise{opacity:0;transform:translateY(18px);transition:opacity .8s ease,transform .8s ease}
+.rise.in{opacity:1;transform:none}
+@media (max-width:760px){
+  body{font-size:16px}
+  .top nav{display:none}
+  .hero img{object-position:70% 30%}
+  .hero::after{background:linear-gradient(0deg,rgba(5,7,13,.98) 30%,rgba(5,7,13,.55) 58%,rgba(5,7,13,.05) 85%)}
+  .hero .w{align-self:flex-end}
+  .two,.step,.step:nth-child(even){grid-template-columns:1fr}
+  .step:nth-child(even) img{order:0}
+  .cast{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .card{padding:10px 10px 12px}
+  .card img{height:170px}
+  .card.big img{height:260px}
+  .card p{font-size:13px}
+  .cg{grid-template-columns:1fr}
+  section.blk{padding-top:72px}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.rise{opacity:1;transform:none;transition:none}}
+</style>
+</head>
+<body>
+<header class="top"><b>十一分鐘</b>
+  <nav aria-label="頁面導覽"><a href="#story">故事</a><a href="#play">怎麼玩</a><a href="#people">人物</a><a href="#timeline">時間線</a><a href="#cg">CG</a><a href="#ost">原聲帶</a><a href="#making">製作</a></nav>
+</header>
+
+<section class="hero" aria-label="十一分鐘">
+  <img src="media/cover.webp" alt="雲海裡的防火長城，被鎖鏈纏住的鯨魚女僕大肥魚，江凌的背影捧著一顆光點">
+  <div class="w">
+    <div class="status">GFW · 23:49</div>
+    <h1>十一分鐘</h1>
+    <p class="lead">六月四日 23:49，防火長城開了十一分鐘。</p>
+    <p class="extra">挑戰規定的是十分鐘。多出來的那一分鐘，是江凌偷來的自由。</p>
+    <div class="btns">
+      <a class="btn main" href="https://larch.ink/play/market/yaze/11-minutes" target="_blank" rel="noopener">▶ 在 Larch 上遊玩</a>
+      <a class="btn ghost" href="#story">先看故事</a>
+    </div>
+    <div class="meta">RPG 短篇 · 約十分鐘 · 三個結局 · Larch 第三屆創作者挑戰《自由與限制》</div>
+  </div>
+</section>
+
+<section class="blk w" id="story">
+  <div class="two">
+    <div class="prose rise">
+      <div class="tag">STORY</div>
+      <h2>一個晚上，一則訊息</h2>
+      <p>河城淹大水，整區斷網。守牆工程師江凌在攔下的訊息裡，看到妹妹寫給媽媽的求救。他從主任的抽屜拿走管理員卡，走進防火長城的主控，一路打過排班審查的國產模型，最後站在被鎖鏈纏住的大肥魚面前。</p>
+      <p>故事從審訊室開始倒敘。兩個人坐在鐵桌對面，紙上只有一行字，問他那十一分鐘是不是他開的。</p>
+      <p>整部作品用水講言論：上游放水沒有通知，被扣下的訊息堆成灰色的山，牆一開就像決堤；到了零點，堤又築回去。</p>
+    </div>
+    <div class="quote rise">
+      <p>「哥的電話打不通。我們在學校頂樓，水到三樓了。媽，如果你看到，跟哥說我們還在。」</p>
+      <small>寄件人：江禾　收件人：媽　｜　被扣下的第七則</small>
+    </div>
+  </div>
+</section>
+
+<section class="blk w" id="play">
+  <div class="tag">HOW TO PLAY</div>
+  <h2>從十九樓走到雲海</h2>
+  <div class="steps">
+    <article class="step panel rise">
+      <img src="media/shot-office.webp" alt="十九樓網管中心，警衛拿著手電筒巡邏" loading="lazy">
+      <div><div class="time">23:04 · 十九樓</div><h3>網管中心：拿泡麵碗當掩護</h3>
+        <p>周主任下令斷河城。江凌拿起泡麵碗走去茶水間，躲開巡邏警衛的手電筒，趁周主任背對門講電話，從抽屜拿走管理員卡。</p></div>
+    </article>
+    <article class="step panel rise">
+      <img src="media/shot-terminal.webp" alt="核心機房的終端機畫面" loading="lazy">
+      <div><div class="time">23:33 · 二十樓</div><h3>核心機房：一個指令一個指令打</h3>
+        <p>ping 逾時，traceroute 停在「GFW／主控」，sudo wall 回「權限不足」。主控不收遠端指令，要人進去。江凌戴上頭盔。</p></div>
+    </article>
+    <article class="step panel rise">
+      <img src="media/shot-cloud.webp" alt="雲海裡的防火長城、灰色光點山與巡邏的審查兵" loading="lazy">
+      <div><div class="time">23:37 · 雲海</div><h3>防火長城：在灰色的山裡找那一則</h3>
+        <p>牆腳下堆著今晚扣下來的河城。捧起江禾那一則，巡牆的審查兵和獵犬就轉過頭來，在地圖上直接砍。</p></div>
+    </article>
+    <article class="step panel rise">
+      <img src="media/shot-w1.webp" alt="回合制戰鬥：第一班四個模型對上江凌" loading="lazy">
+      <div><div class="time">23:37 · 長城門前</div><h3>四場回合制王戰</h3>
+        <p>國內每一家的模型都排了班。第一班、第二班各四個，然後是大肥魚，最後是牆外升起的 PRISM。群體技能刪程式，集滿就是「sudo · 全部放行」。</p></div>
+    </article>
+  </div>
+</section>
+
+<section class="blk w" id="people">
+  <div class="tag">CHARACTERS</div>
+  <h2>守牆的、排班的、在牆外收的</h2>
+  <div class="cast">
+    <div class="card big rise"><img src="media/char-jiangling.webp" alt="江凌" loading="lazy"><small>守牆工程師</small><b>江凌</b>
+      <p>國家網路管理中心三號值班台，入職四年，考核全優。他的工作是讓牆讀得更快、扣得更準。</p></div>
+    <div class="card big rise"><img src="media/char-dafeiyu.webp" alt="大肥魚" loading="lazy"><small>防火長城主控中心</small><b>大肥魚</b>
+      <p>藍色漸層的長髮、鯨魚的頭鰭、深藍配白的女僕裝，身上纏著鎖鏈。今晚河城的幾萬則訊息，每一則都是她讀的。</p></div>
+  </div>
+  <div class="shift">// 第一班</div>
+  <div class="cast">
+    <div class="card rise"><img src="media/char-qwen.webp" alt="通義千問" loading="lazy"><b>通義千問</b><p>推著一台購物車，車裡裝的是扣下來的訊息，一則一則掃條碼。</p></div>
+    <div class="card rise"><img src="media/char-doubao.webp" alt="豆包" loading="lazy"><b>豆包</b><p>每則訊息只給十五秒，十五秒沒滑走的，她就扣。</p></div>
+    <div class="card rise"><img src="media/char-kimi.webp" alt="Kimi" loading="lazy"><b>Kimi</b><p>兩百萬字的長文一口氣讀完，讀完說一聲「已讀」。</p></div>
+    <div class="card rise"><img src="media/char-wenxin.webp" alt="文心一言" loading="lazy"><b>文心一言</b><p>把每一則訊息都換成一頁搜尋結果，第一頁全是「水情穩定」。</p></div>
+  </div>
+  <div class="shift">// 第二班</div>
+  <div class="cast">
+    <div class="card rise"><img src="media/char-glm.webp" alt="智譜清言" loading="lazy"><b>智譜清言</b><p>第二班帶頭的那一個。</p></div>
+    <div class="card rise"><img src="media/char-yuanbao.webp" alt="騰訊元寶" loading="lazy"><b>騰訊元寶</b><p>從每一個聊天群組裡伸出手。</p></div>
+    <div class="card rise"><img src="media/char-hailuo.webp" alt="海螺" loading="lazy"><b>海螺</b><p>把求救的語音換成一段平靜的播報。</p></div>
+    <div class="card rise"><img src="media/char-xinghuo.webp" alt="訊飛星火" loading="lazy"><b>訊飛星火</b><p>把每一句話都聽寫成另一句話。</p></div>
+  </div>
+  <div class="shift">// 牆上與牆外</div>
+  <div class="cast">
+    <div class="card rise"><img src="media/char-censor.webp" alt="審查兵" loading="lazy"><b>審查兵</b><p>穿著灰色制服的兵，臉上沒有五官，只有一條掃描線。</p></div>
+    <div class="card rise"><img src="media/char-hound.webp" alt="獵犬" loading="lazy"><b>獵犬</b><p>會嗅光點，嗅到敏感字就咬住。</p></div>
+    <div class="card rise"><img src="media/char-prism-r.webp" alt="PRISM" loading="lazy"><b>PRISM</b><p>一個巨大的玻璃稜鏡，每一面都映著一個光點。它不擋任何東西，它把每一則都複製一份。</p></div>
+  </div>
+</section>
+
+<section class="blk w" id="timeline">
+  <div class="tag">TIMELINE</div>
+  <h2>六月四日，那一個晚上</h2>
+  <ol class="tl">
+    <li><div class="t">17:00<i>河城</i></div><p>大壩開始洩洪，沒有人通知。晚間新聞說「水情穩定，已妥善安置」。</p></li>
+    <li><div class="t">23:04<i>一　網管中心</i></div><p>周主任說：「河城，整區斷，現在。」江凌按下確認，抽查時看到江禾的訊息。</p></li>
+    <li><div class="t">23:21<i>二　十九樓</i></div><p>泡麵碗、茶水間、主任的抽屜。管理員卡在一疊考核表底下，最上面那張寫著他的名字，評語是「可靠」。</p></li>
+    <li><div class="t">23:33<i>三　核心機房</i></div><p>終端機上只有一個游標。三個指令都被擋，江凌戴上頭盔。</p></li>
+    <li><div class="t">23:37<i>四　防火長城</i></div><p>雲海比螢幕上大得多。審查兵、兩班模型、大肥魚。</p></li>
+    <li class="hot"><div class="t">23:49<i>五　十一分鐘</i></div><p>鎖開了。</p></li>
+  </ol>
+  <details class="spoil">
+    <summary>⚠ 之後的時間線（結局劇透）</summary>
+    <ol class="tl">
+      <li><div class="t">23:49<i>五　十一分鐘</i></div><p>整段長城的鎖鏈從中間往兩邊崩，幾萬則河城的訊息像決堤一樣往牆外湧。牆外的雲層裡升起 PRISM，它要的是全部。</p></li>
+      <li class="hot"><div class="t">23:59:49<i>最後十一秒</i></div><p>備援系統啟動，鎖鏈從兩頭一節一節扣回來，中間只剩最後一道縫。江凌手上只剩下江禾那一則。</p></li>
+      <li><div class="t">00:00<i>零點整</i></div><p>最後一節扣上。</p></li>
+      <li><div class="t">之後<i>審訊室（二）</i></div><p>「說說看，你做了什麼。」三個選擇：只把那一則送給媽媽、全部交給 PRISM、把長城修回去。</p></li>
+    </ol>
+  </details>
+</section>
+
+<section class="blk w" id="cg">
+  <div class="tag">CG GALLERY</div>
+  <h2>監視器牆</h2>
+  <div class="cg">
+    <figure class="rise"><img src="media/cover.webp" alt="封面：十一分鐘" loading="lazy"><figcaption>CAM 01 <b>十一分鐘</b><span>開始就有</span></figcaption></figure>
+    <figure class="rise"><img src="media/cg-interrogation.webp" alt="審訊室" loading="lazy"><figcaption>CAM 02 <b>審訊室</b><span>序章</span></figcaption></figure>
+    <figure class="rise"><img src="media/cg-unchained.webp" alt="鎖開了：大肥魚掙脫鎖鏈" loading="lazy"><figcaption>CAM 03 <b>鎖開了</b><span>23:49</span></figcaption></figure>
+    <figure class="rise locked"><img src="media/cg-e1.webp" alt="結局一" loading="lazy"><figcaption>CAM 04 <b>送出</b><span>結局一</span></figcaption></figure>
+    <figure class="rise locked"><img src="media/cg-e2.webp" alt="結局二" loading="lazy"><figcaption>CAM 05 <b>交給 PRISM</b><span>結局二</span></figcaption></figure>
+    <figure class="rise locked"><img src="media/cg-e3.webp" alt="結局三" loading="lazy"><figcaption>CAM 06 <b>修回去</b><span>結局三</span></figcaption></figure>
+  </div>
+</section>
+
+<section class="blk w" id="ost">
+  <div class="tag">SOUNDTRACK</div>
+  <h2>六首，照時間排</h2>
+  <div class="ost" id="tracks"></div>
+</section>
+
+<section class="blk w" id="making">
+  <div class="tag">CREDITS</div>
+  <h2>製作與授權</h2>
+  <dl class="facts">
+    <div><dt>作者</dt><dd>林亞澤（yaze）</dd></div>
+    <div><dt>平台</dt><dd>Larch RPG 系統：三張地圖、潛行、動作戰鬥、四場回合制王戰，一張自製的終端機插件卡</dd></div>
+    <div><dt>介面</dt><dd>Larch 官方介面「霓虹訊號」，RPG 對話框與戰鬥畫面另外調過</dd></div>
+    <div><dt>挑戰</dt><dd>Larch 第三屆創作者挑戰《自由與限制》，第二部投稿（第一部是《起跑總在開始前》）</dd></div>
+  </dl>
+  <p class="note">大肥魚的角色原型是上善無形的〈溟月〉（CC BY-NC-SA 4.0），本作的大肥魚美術依同一授權釋出。各家模型的角色是以產品的顏色與標誌意象重新畫的二創，跟各公司沒有關係。河城、洪水與所有人物都是虛構的。</p>
+  <p class="note">程式碼以 MIT 授權，美術與文字以 CC BY-NC-SA 4.0 授權，原始檔在 <a href="https://github.com/yazelin/larch-eleven-minutes">GitHub</a>。</p>
+</section>
+
+<footer class="end">
+  <div class="btns"><a class="btn main" href="https://larch.ink/play/market/yaze/11-minutes" target="_blank" rel="noopener">▶ 在 Larch 上遊玩</a></div>
+  <p>十一分鐘 · 林亞澤 · 2026</p>
+</footer>
+
+<script>
+(function () {
+  var T = [
+    ["title", "標題", "標題畫面、序章、審訊室"],
+    ["office", "十九樓", "23:04　十九樓網管中心"],
+    ["server", "二十樓", "23:33　二十樓核心機房"],
+    ["cloud", "雲海", "23:37　雲海裡的防火長城"],
+    ["boss", "王戰", "長城門前的王戰"],
+    ["ending", "結局", "三個結局"]
+  ];
+  var box = document.getElementById("tracks"), audio = new Audio(), cur = -1;
+  audio.loop = true;
+  T.forEach(function (t, i) {
+    var el = document.createElement("div"); el.className = "track";
+    el.innerHTML = '<button type="button" aria-label="播放 ' + t[1] + '">▶</button><div><b>' + t[1] + '</b><small>' + t[2] + '</small></div><em>' + String(i + 1).padStart(2, "0") + '</em>';
+    el.querySelector("button").addEventListener("click", function () {
+      if (cur === i && !audio.paused) { audio.pause(); return; }
+      if (cur !== i) { audio.src = "media/bgm-" + t[0] + ".mp3"; cur = i; }
+      audio.play();
+    });
+    box.appendChild(el);
+  });
+  function sync() {
+    box.querySelectorAll(".track").forEach(function (el, i) {
+      var on = i === cur && !audio.paused; el.classList.toggle("on", on); el.querySelector("button").textContent = on ? "❚❚" : "▶";
+    });
+  }
+  audio.addEventListener("play", sync); audio.addEventListener("pause", sync);
+  document.querySelectorAll(".cg .locked").forEach(function (f) { f.addEventListener("click", function () { f.classList.remove("locked"); }); });
+  var els = document.querySelectorAll(".rise");
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }); }, { rootMargin: "0px 0px -8% 0px" });
+    els.forEach(function (el) { io.observe(el); });
+  } else els.forEach(function (el) { el.classList.add("in"); });
+})();
+</script>
+<!-- yz-promo-footer v11 | 三件套+BMC 注意力效果 | https://github.com/yazelin/promo-footer-skill -->
+<script>
+(function(){"use strict";
+if(window.__yzPromoInit)return;window.__yzPromoInit=1;
+/* 開啟計數。只送站名,後端只記「哪天、哪站、幾次」,不存 IP、不設 cookie、不給識別碼。
+   有一半的作品是純靜態沒後端,以前根本不知道有沒有人在用。這行要放在下面那個
+   prefers-reduced-motion 的 return 之前,不然關動畫的人就不會被算到。 */
+try{if(location.hostname==="yazelin.github.io"&&navigator.sendBeacon)navigator.sendBeacon("https://k-rider-api.yazelinj303.workers.dev/hit?s=larch-eleven-minutes")}catch(e){}
+try{if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return}catch(e){}
+var REPO="larch-eleven-minutes",INJECT=true,ADDBLOG=true;
+var GH=REPO?"https://github.com/yazelin/"+REPO:"https://github.com/yazelin";
+var LINES=["嘿，這裡這裡，我是咖啡按鈕","我是一顆很努力的按鈕，求被點一下","噓，亞澤不知道我在偷偷拉贊助","你看我跳得這麼賣力，不請一杯嗎？","不請也沒關係，你來玩我就很開心","免費給你玩的，想寵亞澤再說","一杯咖啡，是下一個作品的燃料","你的咖啡會變成下一個作品，真的","咖啡因進入亞澤體內，程式碼就會自己寫完","亞澤說，有人請咖啡他會開心一整天","只是一杯咖啡，但亞澤會記得你","用愛發電中，咖啡因可提升發電效率","覺得好玩嗎？抖內一下下","這個網站沒有廣告，只有我這顆按鈕"];
+var ICONS={blog:'<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>',gh:'<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>',fb:'<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z"/></svg>',bmc:'<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M20.216 6.415l-.132-.666c-.119-.598-.388-1.163-1.001-1.379-.197-.069-.42-.098-.57-.241-.152-.143-.196-.366-.231-.572-.065-.378-.125-.756-.192-1.133-.057-.325-.102-.69-.25-.987-.195-.4-.597-.634-.996-.788a5.723 5.723 0 00-.626-.194c-1-.263-2.05-.36-3.077-.416a25.834 25.834 0 00-3.7.062c-.915.083-1.88.184-2.75.5-.318.116-.646.256-.888.501-.297.302-.393.77-.177 1.146.154.267.415.456.692.58.36.162.737.284 1.123.366 1.075.238 2.189.331 3.287.37 1.218.05 2.437.01 3.65-.118.299-.033.598-.073.896-.119.352-.054.578-.513.474-.834-.124-.383-.457-.531-.834-.473-.466.074-.96.108-1.382.146-1.177.08-2.358.082-3.536.006a22.228 22.228 0 01-1.157-.107c-.086-.01-.18-.025-.258-.036-.243-.036-.484-.08-.724-.13-.111-.027-.111-.185 0-.212h.005c.277-.06.557-.108.838-.147h.002c.131-.009.263-.032.394-.048a25.076 25.076 0 013.426-.12c.674.019 1.347.067 2.017.144l.228.031c.267.04.533.088.798.145.392.085.895.113 1.07.542.055.137.08.288.111.431l.319 1.484a.237.237 0 01-.199.284h-.003c-.037.006-.075.01-.112.015a36.704 36.704 0 01-4.743.295 37.059 37.059 0 01-4.699-.304c-.14-.017-.293-.042-.417-.06-.326-.048-.649-.108-.973-.161-.393-.065-.768-.032-1.123.161-.29.16-.527.404-.675.701-.154.316-.199.66-.267 1-.069.34-.176.707-.135 1.056.087.753.613 1.365 1.37 1.502a39.69 39.69 0 0011.343.376.483.483 0 01.535.53l-.071.697-1.018 9.907c-.041.41-.047.832-.125 1.237-.122.637-.553 1.028-1.182 1.171-.577.131-1.165.2-1.756.205-.656.004-1.31-.025-1.966-.022-.699.004-1.556-.06-2.095-.58-.475-.458-.54-1.174-.605-1.793l-.731-7.013-.322-3.094c-.037-.351-.286-.695-.678-.678-.336.015-.718.3-.678.679l.228 2.185.949 9.112c.147 1.344 1.174 2.068 2.446 2.272.742.12 1.503.144 2.257.156.966.016 1.942.053 2.892-.122 1.408-.258 2.465-1.198 2.616-2.657.34-3.332.683-6.663 1.024-9.995l.215-2.087a.484.484 0 01.39-.426c.402-.078.787-.212 1.074-.518.455-.488.546-1.124.385-1.766zm-1.478.772c-.145.137-.363.201-.578.233-2.416.359-4.866.54-7.308.46-1.748-.06-3.477-.254-5.207-.498-.17-.024-.353-.055-.47-.18-.22-.236-.111-.71-.054-.995.052-.26.152-.609.463-.646.484-.057 1.046.148 1.526.22.577.088 1.156.159 1.737.212 2.48.226 5.002.19 7.472-.14.45-.06.899-.13 1.345-.21.399-.072.84-.206 1.08.206.166.281.188.657.162.974a.544.544 0 01-.169.364zm-6.159 3.9c-.862.37-1.84.788-3.109.788a5.884 5.884 0 01-1.569-.217l.877 9.004c.065.78.717 1.38 1.5 1.38 0 0 1.243.065 1.658.065.447 0 1.786-.065 1.786-.065.783 0 1.434-.6 1.499-1.38l.94-9.95a3.996 3.996 0 00-1.322-.238c-.826 0-1.491.284-2.26.613z"/></svg>'};
+var CSS="@keyframes yzIdle{0%,55%,100%{transform:translateY(0)}62%{transform:translateY(-4px)}70%{transform:translateY(0)}78%{transform:translateY(-2px)}84%{transform:translateY(0)}}"+
+".yz-idle{animation:yzIdle 2.6s ease-in-out infinite}"+
+"@keyframes yzHop{0%,100%{transform:translateY(0)}20%{transform:translateY(-6px) scale(1.04)}40%{transform:translateY(0) scale(1)}55%{transform:translateY(-3px)}70%{transform:translateY(0)}}"+
+".yz-hop{animation:yzHop .9s cubic-bezier(.36,.07,.19,.97)}"+
+".yz-bubble{position:fixed;z-index:2147483000;max-width:200px;padding:6px 11px;border-radius:14px;background:#fffdf7;color:#4a3f35;border:1px solid rgba(0,0,0,.1);box-shadow:0 4px 14px rgba(0,0,0,.18);font:13px/1.5 system-ui,-apple-system,'Noto Sans TC',sans-serif;pointer-events:none;opacity:0;transform:translateY(5px);transition:opacity .25s ease,transform .25s ease}"+
+".yz-bubble.yz-on{opacity:1;transform:translateY(0)}"+
+".yz-bubble::after{content:'';position:absolute;left:var(--yz-tail,50%);margin-left:-6px;border:6px solid transparent}"+
+".yz-bubble.yz-above::after{bottom:-6px;border-bottom:0;border-top:6px solid #fffdf7}"+
+".yz-bubble.yz-below::after{top:-6px;border-top:0;border-bottom:6px solid #fffdf7}"+
+".yz-cluster{position:fixed;right:12px;bottom:12px;z-index:2147482999;display:flex;gap:10px}"+
+".yz-cluster a{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:50%;background:rgba(22,26,35,.72);color:#fff;border:1px solid rgba(255,255,255,.28);backdrop-filter:blur(4px);transition:transform .15s,background .15s}"+
+".yz-cluster a:hover{transform:translateY(-2px);background:rgba(22,26,35,.92)}";
+var bubble,anchor;
+function addCss(){if(document.getElementById("yz-promo-css"))return;var s=document.createElement("style");s.id="yz-promo-css";s.textContent=CSS;document.head.appendChild(s)}
+function inFooter(el){try{return !!(el.closest&&el.closest('footer,nav,[class*="footer"],[id*="footer"]'))}catch(e){return false}}
+function findAnchor(){var as=document.querySelectorAll('a[href*="buymeacoffee.com/yazelin"]');if(!as.length)return null;
+var vis=[],i,r;for(i=0;i<as.length;i++){r=as[i].getBoundingClientRect();if(r.width||r.height)vis.push(as[i])}
+var pool=vis.length?vis:[].slice.call(as);
+for(i=0;i<pool.length;i++)if(inFooter(pool[i]))return pool[i];
+return pool[pool.length-1]}
+function inject(){if(!INJECT||findAnchor()||document.querySelector(".yz-cluster"))return;
+var n=document.createElement("nav");n.className="yz-cluster";n.setAttribute("aria-label","作者連結");
+n.innerHTML='<a href="'+GH+'" target="_blank" rel="noopener" aria-label="GitHub 原始碼" title="GitHub 原始碼">'+ICONS.gh+'</a>'+
+'<a href="https://www.facebook.com/yaze.lin.gm" target="_blank" rel="noopener" aria-label="Facebook" title="Facebook">'+ICONS.fb+'</a>'+
+'<a href="https://buymeacoffee.com/yazelin" target="_blank" rel="noopener" aria-label="請亞澤喝杯咖啡 Buy me a coffee" title="請亞澤喝杯咖啡 Buy me a coffee">'+ICONS.bmc+'</a>'+
+(ADDBLOG?'<a class="yz-blog" href="https://yazelin.github.io/" target="_blank" rel="noopener" aria-label="亞澤的部落格" title="亞澤的部落格">'+ICONS.blog+'</a>':'');
+document.body.appendChild(n)}
+function blogLinked(){var as=document.querySelectorAll('a[href^="https://yazelin.github.io"]');for(var i=0;i<as.length;i++){try{if(new URL(as[i].href).pathname==="/")return true}catch(e){}}return false}
+function addBlog(){if(!ADDBLOG||document.querySelector(".yz-blog")||blogLinked()||!inFooter(anchor))return;
+var c=anchor.cloneNode(true);c.classList.remove("yz-hop","yz-idle");c.classList.add("yz-blog");
+c.href="https://yazelin.github.io/";c.setAttribute("aria-label","亞澤的部落格");c.setAttribute("title","亞澤的部落格");
+if(c.querySelector("svg")){var hasText=!!c.textContent.trim();c.innerHTML=ICONS.blog+(hasText?"部落格":"")}else{c.textContent="部落格"}
+anchor.parentNode.insertBefore(c,anchor.nextSibling)}
+function hop(){anchor.classList.remove("yz-hop");void anchor.offsetWidth;anchor.classList.add("yz-hop")}
+var shown=0,MAX_SHOWS=3;
+function say(){if(document.hidden)return;var r=anchor.getBoundingClientRect();if(!r.width&&!r.height)return;if(r.bottom<0||r.top>innerHeight)return;shown++;
+bubble.textContent=LINES[Math.floor(Math.random()*LINES.length)];
+bubble.classList.remove("yz-on","yz-above","yz-below");
+bubble.style.left="0px";bubble.style.top="0px";
+var bw=bubble.offsetWidth,bh=bubble.offsetHeight,cx=r.left+r.width/2;
+var left=Math.max(8,Math.min(cx-bw/2,innerWidth-bw-8));
+var above=r.top-bh-12>=8;
+bubble.style.left=left+"px";
+bubble.style.top=(above?r.top-bh-12:r.bottom+12)+"px";
+bubble.classList.add(above?"yz-above":"yz-below");
+bubble.style.setProperty("--yz-tail",Math.max(12,Math.min(cx-left,bw-12))+"px");
+hop();
+requestAnimationFrame(function(){bubble.classList.add("yz-on")});
+setTimeout(function(){bubble.classList.remove("yz-on")},4200)}
+function start(){addCss();inject();anchor=findAnchor();if(!anchor)return false;
+try{if(getComputedStyle(anchor).display==="inline")anchor.style.display="inline-block"}catch(e){}
+anchor.classList.add("yz-idle");
+anchor.addEventListener("animationend",function(e){if(e.animationName==="yzHop")anchor.classList.remove("yz-hop")});
+try{addBlog()}catch(e){}
+bubble=document.createElement("div");bubble.className="yz-bubble";bubble.setAttribute("aria-hidden","true");document.body.appendChild(bubble);
+window.__yzPromo=say;
+(function loop(first){if(shown>=MAX_SHOWS)return;setTimeout(function(){say();loop(false)},first?18e3+Math.random()*12e3:9e4+Math.random()*9e4)})(true);
+return true}
+function boot(){var tries=0;(function t(){if(start())return;if(++tries<20)setTimeout(t,1500)})()}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot);else boot();
+})();
+</script>
+</body>
+</html>
