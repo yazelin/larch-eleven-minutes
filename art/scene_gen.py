@@ -17,6 +17,7 @@ STYLE = ('Anime illustration, cinematic wide shot, painterly digital art with cl
          'night, cool dark palette with neon cyan #39f3ff and neon magenta #ff3fb4 accents, soft scanline-free image. No text, no letters, no readable writing, no logo, no watermark.')
 ANCHOR = {   # 在場角色 → (定錨圖, 說明)
     '江凌': ('art/scene_raw/ref-jiangling.png', 'Jiang Ling, a young Chinese network engineer: short black hair, black hoodie, dark jeans (image is his small game sprite, use it only for hair and clothes)'),
+    '大肥魚（解開）': ('assets/battle/dafeiyu_free.webp', 'Da Fei Yu, the same giant whale-girl maid, now FREE: no chains on her body, no padlock'),
     '大肥魚': ('assets/battle/dafeiyu.webp', 'Da Fei Yu, a giant whale-girl maid: long blue gradient hair with one ahoge, whale fin ears, navy and white maid dress, a big whale tail, iron chains wrapped from wrists to tail, a padlock on her chest'),
 }
 JOBS = {
@@ -25,6 +26,14 @@ JOBS = {
         'On the right: the Great Firewall in the clouds, a colossal wall of giant dark-red neon chain links lying stacked, running from the horizon. In front of it, as tall as the wall, '
         'the giant whale-girl maid from the reference, chained to the wall, sleepy and stubborn, looking down. In the foreground at the lower right, tiny in scale, the young engineer '
         'seen from BEHIND, standing on the clouds, holding up one faint flickering grey point of light in both hands. Little grey glowing dots piled in small mounds at the foot of the wall.')),
+    # 鎖開了（10-09 作者：加一張大肥魚解鎖 CG）：原文五「鎖開了…鎖鏈一圈一圈鬆開，掉進雲裡…光點一座一座亮起來，往牆外湧，像決堤」
+    'unchained': dict(present=['大肥魚（解開）', '江凌'], prompt=(
+        'The moment the lock opens, in the sea of clouds under a black sky. Center: the giant whale-girl maid from image 1, as tall as the wall, free, the last iron chains '
+        'uncoiling from her wrists and whale tail and falling down into the clouds in pieces, her padlock broken open and falling; she looks down at her own wrists, surprised, '
+        'a faint smile, her whale tail swaying. Behind her the colossal wall of giant dark-red neon chain links is breaking apart, links bursting and falling from the middle outward. '
+        'Thousands of small glowing points of light rise from the grey mounds at the foot of the wall and stream out through the broken wall like a flood bursting a dam, '
+        'toward bright blue-white clouds beyond. In the lower foreground, small in scale, the young engineer from image 2 seen from BEHIND, one hand still raised holding a card. '
+        'Keep the lower third of the image simple (a dialogue box goes there).')),
     'interrogation': dict(present=['江凌'], prompt=(
         'An interrogation room. Harsh flat white light from a single ceiling panel, bare grey walls, an iron table. On the table an open folder and one sheet of paper with a single line of '
         'unreadable writing, a faint padlock watermark printed on the folder. Across the table two interrogators in dark suits, faces in shadow: an older man holding the folder open and a '

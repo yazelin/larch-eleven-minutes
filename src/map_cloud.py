@@ -26,8 +26,8 @@ def stages():
         'w2': [say(f[9]), heal(), fight('b-w2'), setv('phase', 'whale')],
         'whale': [cam(), say(f[10]), say(f[11]), say(f[12]), say(f[13]), say(f[14]), say(f[15], 'player'), say(f[16]),
                   heal(), fight('b-whale'), say(f[20]), setv('phase', 'free')],
-        'free': [cam(), say(v[0]), setv('wall', 'down'), fx('flash', 0.8, 900, '#e8f6ff'), say(v[1]), fx('shake', 0.7, 1200), say(v[2]), say(v[3]),
-                 say(v[4]), say(v[5]), say(v[6]), say(v[7]), say(v[8]), say(v[9]), heal(), fight('b-prism'),
+        'free': [cam(), setv('wall', 'down'), fx('flash', 0.8, 900, '#e8f6ff'), card('cu'), fx('shake', 0.7, 1200), say(v[2]), say(v[3]),   # card('cu')：鎖開了的 CG 對話卡（原文 v[0]、v[1]）
+                 say(v[4]), say(v[5]), setv('eye', 'up'), say(v[6]), say(v[7]), say(v[8]), say(v[9]), heal(), fight('b-prism'),   # eye：稜鏡在 v[6] 那一句才從雲層升起來
                  say(v[10]), say(v[11]), setv('wall', ''), fx('shake', 0.5, 1500), say(v[12]), setv('phase', 'end'),
                  card('ci2'), A('choice', text='', choice={'options': [{'id': f'end-{k}', 'label': lbl, 'actions': [jump(k)]} for lbl, k in ENDINGS]})],
     }
@@ -69,7 +69,7 @@ def events(walk):
     ev_ += [big('dafeiyu-map', 30, 'whale', 23.6, 0, 8.8, 12), big('dafeiyu-free', 31, 'free', 24.0, 0, 8.1, 12, [cond('wall', 'down')]),
             # 鎖鏈扣回來（wall 回到 ''）：又被鎖上（10-09 作者：之後長城又鎖回去了）
             big('dafeiyu-relock', 33, 'free', 23.6, 0, 8.8, 12, [cond('wall', 'down', 'neq')]), big('dafeiyu-end', 34, 'end', 23.6, 0, 8.8, 12),   # 圖框下緣在第 11 列：畫在長城（第 9 列）前面，不被牆蓋掉；12 格高，頭頂高過長城（原文：比牆還高）
-            big('prism-map', 32, 'free', 16.5, 0, 5.5, 8, [cond('wall', 'down')])]   # 稜鏡退回雲層以後（鎖鏈扣回來）就不見
+            big('prism-map', 32, 'free', 16.5, 0, 5.5, 8, [cond('wall', 'down'), cond('eye', 'up')])]   # 稜鏡退回雲層以後（鎖鏈扣回來）就不見
     return PT['hero_start'], ev_
 
 

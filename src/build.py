@@ -34,7 +34,7 @@ def interface(p):
     if (ROOT / 'assets/cover/title.webp').exists(): p['settings']['titleCoverImage'] = '/files/assets/cover/title.webp'
     if (ROOT / 'assets/cover/thumb.webp').exists(): p['settings']['projectThumbnail'] = '/files/assets/cover/thumb.webp'   # 市集縮圖（art/thumb.py）
     # CG 收藏（10-09 作者：直接做）：霓虹訊號把它做成監視器牆，鎖住的顯示 NO SIGNAL。結局圖要打到那個結局才解鎖
-    gallery = [('cover/title.webp', '十一分鐘', False), ('scenes/interrogation.webp', '審訊室', True),
+    gallery = [('cover/title.webp', '十一分鐘', False), ('scenes/interrogation.webp', '審訊室', True), ('scenes/unchained.webp', '鎖開了', True),
                ('scenes/e1.webp', '送出', True), ('scenes/e2.webp', '交給 PRISM', True), ('scenes/e3.webp', '修回去', True)]
     p['settings'].update(cgGalleryEnabled=True, cgGallerySource='picked',
                          cgGalleryItems=[{'url': f'/files/assets/{f}', 'title': t, 'locked': lk} for f, t, lk in gallery if (ROOT / f'assets/{f}').exists()])
@@ -57,7 +57,7 @@ def scene(k):
     return f'/files/assets/scenes/{k}.webp' if (ROOT / f'assets/scenes/{k}.webp').exists() else ''
 
 
-VARS = {'phase': ('string', ''), 'kills': ('number', 0), 'wall': ('string', '')}   # 全部故事變數只在這裡定義
+VARS = {'phase': ('string', ''), 'kills': ('number', 0), 'wall': ('string', ''), 'eye': ('string', '')}   # 全部故事變數只在這裡定義
 
 
 def database():
@@ -107,6 +107,7 @@ def build():
     for m in MAPS: N(map_card(*m))
     N(cards.dialogue('ci1', '審訊室（一）', section('審訊室（一）'), (400, 300), bg=scene('interrogation')))
     N(plugin.card_node((1200, 0)))
+    N(cards.dialogue('cu', '鎖開了', section('五　23:49')[0:2], (4, 0), bg=scene('unchained')))   # 大肥魚解開鎖鏈的 CG，演在雲端地圖上（10-09 作者）
     N(cards.dialogue('ci2', '審訊室（二）', section('審訊室（二）'), (1600, 300), bg=scene('interrogation')))
     for i, (k, t) in enumerate(ENDINGS):
         N(cards.dialogue(k, t, [t] + section(t), (2000, i * 200), bg=scene(k), bgm=music('ending')))
@@ -116,7 +117,7 @@ def build():
     # CG 解鎖（10-09 作者問什麼時候解鎖）：看到序章解鎖審訊室，進哪個結局解鎖那張
     # 審訊室掛在開場卡上實測不會解鎖（開始卡不跑 cgOps）→ 改成每個結局一起解鎖審訊室與那個結局
     for nid in ('e1', 'e2', 'e3'):
-        fs = ['scenes/interrogation.webp', f'scenes/{nid}.webp']
+        fs = ['scenes/interrogation.webp', 'scenes/unchained.webp', f'scenes/{nid}.webp']   # 鎖開了那張演在地圖上（地圖不跑 cgOps），結局時一起解鎖
         next(n for n in board['nodes'] if n['id'] == nid)['data']['cgOps'] = [{'id': f'cg-{nid}-{i}', 'mode': 'unlock', 'url': f'/files/assets/{f}'} for i, f in enumerate(fs) if (ROOT / f'assets/{f}').exists()]
     cards.link(board, 'c0', 'm-office'); cards.link(board, plugin.NODE, 'm-cloud')
     layout_board(board)
@@ -130,9 +131,17 @@ X, Y = 460, 300
 BOARD_POS = {
     'c0': (0, 0), 'm-office': (1, 0), 'm-server': (2, 0), 'c-term': (3, 0), 'm-cloud': (4, 0),
     'e1': (5.4, -1), 'e2': (5.4, 0), 'e3': (5.4, 1), 'credits': (6.6, 0),
-    'ci1': (1, 1.2), 'ci2': (4.6, 1.2),
+    'ci1': (1, 1.2), 'ci2': (4.6, 1.2), 'cu': (3.8, 1.2),
     'b-censor': (3, 2.4), 'b-hound': (3, 3.4), 'b-w1': (4, 2.4), 'b-w2': (4, 3.4), 'b-whale': (5, 2.4), 'b-prism': (5, 3.4),
 }
+
+
+# 群組框（10-09 作者：白板上地圖之間沒有連線不好讀）：群組只是整理用的框，不進遊戲流程；子卡座標相對群組
+GROUPS = [('g-real', '現實層：審訊室倒敘、十九樓、二十樓（地圖之間用事件跳轉，沒有連線）', '#4a6b7a', ['c0', 'm-office', 'm-server', 'c-term', 'ci1']),
+          ('g-cloud', '雲端層：防火長城（鎖開了、審訊室（二）演在地圖上）', '#6b4a7a', ['m-cloud', 'cu', 'ci2']),
+          ('g-end', '三個結局與片尾（審訊室（二）之後的選擇跳過來）', '#7a5a4a', ['e1', 'e2', 'e3', 'credits']),
+          ('g-battle', '戰鬥卡（雲端地圖的事件叫它們，不在白板流程上）', '#5a5a5a', ['b-censor', 'b-hound', 'b-w1', 'b-w2', 'b-whale', 'b-prism'])]
+CW, CH, PAD, HEAD = 310, 220, 50, 70
 
 
 def layout_board(board):
@@ -141,6 +150,16 @@ def layout_board(board):
             gx, gy = BOARD_POS[n['id']]; n['position'] = {'x': round(gx * X), 'y': round(gy * Y)}
     missing = [n['id'] for n in board['nodes'] if n['id'] not in BOARD_POS]
     assert not missing, f'白板排版沒寫到：{missing}'
+    by = {n['id']: n for n in board['nodes']}; groups = []
+    for gid, title, color, kids in GROUPS:
+        xs = [by[k]['position']['x'] for k in kids]; ys = [by[k]['position']['y'] for k in kids]
+        gx, gy = min(xs) - PAD, min(ys) - PAD - HEAD
+        w, h = max(xs) - min(xs) + CW + 2 * PAD, max(ys) - min(ys) + CH + 2 * PAD + HEAD
+        groups.append({'id': gid, 'type': 'story', 'position': {'x': gx, 'y': gy}, 'width': w, 'height': h,
+                       'data': {'type': 'group', 'title': title, 'text': '', 'groupColor': color, 'groupCollapsed': False}})
+        for k in kids:
+            by[k]['parentId'] = gid; by[k]['position'] = {'x': by[k]['position']['x'] - gx, 'y': by[k]['position']['y'] - gy}
+    board['nodes'][:0] = groups   # 群組要排在子卡前面
 
 
 def test_start(p):

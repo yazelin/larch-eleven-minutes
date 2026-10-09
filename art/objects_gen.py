@@ -212,9 +212,9 @@ LINES = {
                 desc='a white interior office partition wall with a thin grey skirting at the bottom; in the middle an open doorway with no door '
                      '(the doorway is empty and see-through, showing the background), slim white door jambs on both sides of the doorway'),
     'boss': dict(objs=['主任室南牆西', '主任室門', '主任室南牆東'], gap=(38, 39), ref='主任室門',
-                 desc='a frosted pale-blue glass office partition wall with slim aluminium frames and a dark aluminium base rail; in the middle a glass door '
+                 desc='a frosted milky white glass office partition wall (neutral white-grey glass with only a very faint cool tint, mostly opaque, NOT blue) with slim dark aluminium frames and a dark aluminium base rail; in the middle a glass door '
                       'swung fully open and folded flat against the partition beside the doorway, so the doorway itself is empty and see-through (showing the background)'),
-    'south': dict(objs=['南牆茶水間', '南牆西', '電梯', '南牆中'], center=24, ref='電梯',
+    'south': dict(objs=['南牆茶水間', '南牆西', '電梯', '南牆中'], center=24, ref='電梯', clip_top=True,
                   desc='a grey office corridor wall with a dark skirting at the bottom; in the middle, set into the same wall and the same height as the wall, '
                        'two silver stainless steel elevator doors with call buttons between them and a small floor indicator above each door (no readable text)'),
     'fire': dict(objs=['樓梯門', '南牆東'], gap=(40, 41), ref='樓梯門', base='south', blend=(36, 38),
@@ -223,7 +223,7 @@ LINES = {
                       'exit sign above it (no text)', key='magenta'),
 }
 COLS = {   # 直的牆：整條一張，一格一格切（最下面那格帶著牆朝南的端面）
-    'glasscol': dict(prefix='主任室西牆', desc='a frosted pale-blue glass office partition with slim aluminium frames'),
+    'glasscol': dict(prefix='主任室西牆', desc='a frosted milky white glass office partition (neutral white-grey glass with only a very faint cool tint, NOT blue) with slim dark aluminium frames'),   # 10-09：原本太藍
     'whitecol': dict(prefix='茶水間東牆', desc='a white interior office partition wall with a thin grey skirting'),
 }
 LINES_OFFICE, COLS_OFFICE = LINES, COLS
@@ -305,6 +305,9 @@ def line_strip(a, d, k, MW):
     fig = key_out(os.path.join(RAW, f'line-{a}-{k}.png'), v.get('key', 'green'))
     al = np.asarray(fig)[..., 3] > 128; wall_px = al[:, :max(2, fig.width // 20)].any(1).sum()   # 最左一小條（只有牆）的高度
     s = rows * PX / wall_px; im = premul_resize(fig, (round(fig.width * s), round(fig.height * s)))
+    if v.get('clip_top'):   # 牆頂以上清掉（產圖時中間那段牆頂上多了一條半透明的暗帶，10-09 作者看到電梯前一塊色差）
+        A = np.asarray(im).copy(); top = int(np.argmax(A[:, :max(2, im.width // 20), 3].max(1) > 128))
+        A[:max(0, top - 2), :, 3] = 0; im = Image.fromarray(A, 'RGBA')
     if 'gap' in v:
         A = np.asarray(im)[..., 3] > 128; row = A[int(im.height - PX * 0.5)]; c = im.width // 2; l = r = c
         while l > 0 and not row[l]: l -= 1
@@ -361,10 +364,17 @@ def lines_cut(a):
 
 
 def ground_patch(a):
-    """地面底圖局部修補（不重產整張）：電梯 2026-10-09 改成嵌在牆裡，原本電梯前那塊石材地板露出一條 → 用往右 12 格（地毯花紋週期的整數倍）的地毯蓋掉"""
+    """地面底圖局部修補（不重產整張）：電梯 2026-10-09 改成嵌在牆裡，原本電梯前那塊石材地板露出一條 → 用往右 12 格（地毯花紋週期的整數倍）的地毯蓋掉。
+    每次都從原始產圖重來；補丁四邊羽化一格，不留接縫（10-09 作者：兩端有淡接縫）"""
     if a != 'office': return
-    p = os.path.join(G, 'assets/maps/office_ground.png'); im = Image.open(p).convert('RGB'); c = im.width // 48
-    im.paste(im.crop((30 * c, 27 * c, 42 * c, 30 * c)), (18 * c, 27 * c)); im.save(p); print('地面修補：電梯前地板 → 地毯')
+    W, Hh = 48, 34; p = os.path.join(G, 'assets/maps/office_ground.png')
+    im = Image.open(os.path.join(RAW, 'ground-office.png')).convert('RGB').resize((W * PX, Hh * PX), Image.LANCZOS); c = PX
+    x0, y0, w, h, dx = 16, 25, 16, 8, 14   # 補丁比原本範圍各多一格，多出來的那圈羽化；來源往右 14 格（避開電梯廳石材那一欄）
+    patch = im.crop(((x0 + dx) * c, y0 * c, (x0 + dx + w) * c, (y0 + h) * c))
+    m = np.zeros((h * c, w * c), np.float32); m[c:, c:-c] = 1   # 下緣不羽化（石材地板一路到牆腳，都要蓋掉）
+    from PIL import ImageFilter
+    mask = Image.fromarray((m * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(c * .45))
+    im.paste(patch, (x0 * c, y0 * c), mask); im.save(p); print('地面修補：電梯前地板 → 地毯（羽化）')
 
 
 def sheet(a):

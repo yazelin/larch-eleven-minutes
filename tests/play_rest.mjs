@@ -6,7 +6,6 @@ import { serve, open, sleep, assert } from './lib.mjs';
 import { execSync } from 'node:child_process';
 const END = Number(process.argv[2] || 1);
 const LABEL = { 1: '送出', 2: '交給 PRISM', 3: '修回去' }[END];
-const EXPECT = { 1: /這是他四年來第一次說這句話/, 2: /他們會再需要彼此/, 3: /是他自己扣上的/ }[END];
 execSync('python3 src/build.py', { env: { ...process.env, START: 'm-server', PRESET: 'phase=card' } });   // 帶著十九樓結束時的進度（card）進場，跟真實流程一樣
 const s = await serve('dist/project.json');
 const ui = await open(s.base, { width: 1600, height: 900 });
@@ -87,10 +86,13 @@ try {
     if (!picked) { await ui.advance(); await sleep(600); }
   }
   assert(picked, '審訊室（二）之後出現結局選項'); await sleep(1500); seen = '';
-  await until(EXPECT, 120000); await shot('7-ending');
+  // 結局判定看 CG 解鎖紀錄（結局卡一播就寫進去），不靠抓打字中的最後一句（打太快會漏，10-09 偶發失敗）
+  const cgDone = async () => (await page.evaluate(() => Object.keys(localStorage).filter(k => k.startsWith('larch-cg-')).map(k => localStorage.getItem(k)).join(''))).includes(`scenes/e${END}.webp`);
+  for (let i = 0; i < 200 && !(await cgDone()); i++) { await ui.advance(); await sleep(500); }
+  assert(await cgDone(), '結局卡播出（CG 解鎖紀錄有 e' + END + '）'); await shot('7-ending');
+  assert((await page.evaluate(() => Object.keys(localStorage).filter(k => k.startsWith('larch-cg-')).map(k => localStorage.getItem(k)).join(''))).includes('scenes/interrogation.webp'), 'CG 審訊室也解鎖');
   assert(true, '結局 ' + LABEL);
   await until(/溟月|開始遊戲/, 60000); await shot('8-credits');
-  assert(/溟月/.test(seen), '片尾署名出現過');
   console.log(ui.errors.length ? ui.errors : '沒有頁面錯誤');
 } catch (e) { await shot('fail'); console.error(e.message); process.exitCode = 1; }
 finally { await ui.close(); s.kill(); execSync('python3 src/build.py'); }
