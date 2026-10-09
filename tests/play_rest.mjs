@@ -5,7 +5,7 @@
 import { serve, open, sleep, assert } from './lib.mjs';
 import { execSync } from 'node:child_process';
 const END = Number(process.argv[2] || 1);
-const LABEL = { 1: '送出', 2: '交給 PRISM', 3: '修回去' }[END];
+const LABEL = { 1: '只把那一則送給媽媽', 2: '全部交給 PRISM', 3: '把長城修回去' }[END];   // 選項文字（10-09 改），結局名稱不變
 execSync('python3 src/build.py', { env: { ...process.env, START: 'm-server', PRESET: 'phase=card' } });   // 帶著十九樓結束時的進度（card）進場，跟真實流程一樣
 const s = await serve('dist/project.json');
 const ui = await open(s.base, { width: 1600, height: 900 });

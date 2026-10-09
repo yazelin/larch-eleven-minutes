@@ -57,13 +57,13 @@ def scene(k):
     return f'/files/assets/scenes/{k}.webp' if (ROOT / f'assets/scenes/{k}.webp').exists() else ''
 
 
-VARS = {'phase': ('string', ''), 'kills': ('number', 0), 'wall': ('string', ''), 'eye': ('string', '')}   # 全部故事變數只在這裡定義
+VARS = {'phase': ('string', ''), 'kills': ('number', 0), 'wall': ('string', ''), 'eye': ('string', ''), 'guard_at': ('string', ''), 'zhou_look': ('string', '')}   # 全部故事變數只在這裡定義
 
 
 def database():
     hero = {'id': 'jiangling', 'name': '江凌', 'title': '', 'profile': '', 'role': 'party', 'walk': mapkit.walker('/files/assets/walk/walk-jiangling.png'),
             'portrait': '/files/assets/battle/jiangling-face.webp', 'join': 'later', 'kit': 'none', 'rig': '', 'joinVariable': '', 'speed': 2,
-            'attack': 'slash', 'battleArt': '/files/assets/battle/jiangling.webp', 'battlePainted': True}   # 回合制戰鬥的立繪：引擎拿資料庫主角的 battleArt，會蓋掉戰鬥卡上的 heroArt   # 大地圖普攻：刪程式的光刃（10-09 作者：大地圖打的時候不該是拳頭；不設 attack＝拳頭）   # 細格一步半格，速度加倍
+            'attack': 'magic', 'battleArt': '/files/assets/battle/jiangling.webp', 'battlePainted': True}   # 回合制戰鬥的立繪：引擎拿資料庫主角的 battleArt，會蓋掉戰鬥卡上的 heroArt   # 大地圖普攻：magic（10-09 作者：不要拳頭，也不要顯示劍）   # 細格一步半格，速度加倍
     return {'version': 1, 'heroId': 'jiangling', 'actors': [hero]}
 
 

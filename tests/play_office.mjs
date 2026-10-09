@@ -15,17 +15,27 @@ async function until(re, ms = 90000) {   // 一直往下按，直到畫面出現
   }
   throw new Error('等不到 ' + re + '\n畫面：' + (await text()).slice(-500));
 }
-async function step(note, expect, name) {
-  await ui.clickText(note); await sleep(5000);   // 走過去
-  await page.keyboard.press('Space'); await sleep(800);
-  const t = await until(expect); await shot(name); return t;
+let caughtTimes = 0;
+async function step(note, expect, name) {   // 走過去按；被警衛叫住或被周主任看到就重來（10-09 加了潛行），最多 12 次
+  for (let k = 0; k < 12; k++) {
+    await ui.clickText(note); await sleep(5000);
+    await page.keyboard.press('Space'); await sleep(800);
+    const end = Date.now() + 25000; let t = '';
+    while (Date.now() < end) { t = await text(); if (expect.test(t)) { await shot(name); return t; }
+      if (/泡麵不是倒了嗎|轉過身來/.test(t)) { caughtTimes++; console.log('  被發現，重來'); break; }
+      await ui.advance(); await sleep(450); }
+    for (let i = 0; i < 8; i++) { await ui.advance(); await sleep(500); }
+    if (!(await visible(note))) await sleep(1000);
+  }
+  throw new Error('一直被發現：' + note);
 }
+const visible = async t => { for (const f of page.frames()) if (await f.getByText(t, { exact: false }).first().isVisible().catch(() => false)) return true; return false; };
 try {
   await ui.clickText('開始遊戲'); await sleep(1500);
   await until(/那天晚上下雨/);                   // 序章對話卡 → 地圖開場
   await shot('1-intro');
   // 任務提示依序出現；江凌開場就站在監控台前，按鍵可能直接把前幾步觸發掉，所以畫面已經是後面的步驟就跳過
-  const NOTES = ['按下確認，斷開河城', '拿起泡麵碗', '去茶水間，把麵倒掉', '繞到主任辦公室，打開抽屜', '走樓梯上二十樓'];
+  const NOTES = ['按下確認，斷開河城', '拿起泡麵碗', '去茶水間，把麵倒掉', '等警衛走回電梯口', '走樓梯上二十樓'];
   const SHOTS = ['3-cut', '4-bowl', '5-sink', '6-drawer'];
   const reNotes = i => new RegExp(NOTES.slice(i).join('|'));
   let t = await until(reNotes(0)); await shot('2-order');
@@ -38,6 +48,7 @@ try {
   await ui.clickText('走樓梯上二十樓'); await sleep(7000);
   await until(/核心機房在二十樓/, 30000); await shot('7-stairs');
   assert(true, '走到樓梯門');
+  console.log('被發現次數', caughtTimes);
   console.log(ui.errors.length ? ui.errors : '沒有頁面錯誤');
 } catch (e) { await shot('fail'); console.error(e.message); process.exitCode = 1; }
 finally { await ui.close(); s.kill(); }

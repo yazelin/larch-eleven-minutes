@@ -38,6 +38,7 @@ Larch 第三屆創作者挑戰《自由與限制》第二部投稿（第一部�
     python3 tests/check_static.py                         # 原文全用上、id 唯一、引擎上限
     node tests/play_office.mjs                            # 十九樓從序章玩到樓梯門（約 3 分鐘）
     node tests/guard_stop.mjs                             # 警衛擋人＋對照組
+    node tests/stealth.mjs                                # 十九樓潛行：警衛看到會叫回茶水間（對照組拿著碗不會）、周主任轉身時開抽屜會被看到
     node tests/layer_shots.mjs [office|server|cloud]      # 分層遮擋截圖
     node tests/play_rest.mjs [1|2|3]                      # 二十樓到結局（約 12 分鐘，每個結局各跑一次）
     NEG=1 python3 tests/check_static.py                   # 負控制：要失敗

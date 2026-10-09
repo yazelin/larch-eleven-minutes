@@ -11,7 +11,7 @@ D = layout.load('cloud')
 PT = {k: tuple(v) for k, v in D['points'].items()}
 MAP_ID = 'm-cloud'
 P = lambda v: cond('phase', v)
-ENDINGS = [('送出', 'e1'), ('交給 PRISM', 'e2'), ('修回去', 'e3')]
+ENDINGS = [('只把那一則送給媽媽', 'e1'), ('全部交給 PRISM', 'e2'), ('把長城修回去，什麼都不送', 'e3')]   # 選項文字（10-09 作者：「修回去」不好懂）；結局名稱不變
 
 
 def cam():

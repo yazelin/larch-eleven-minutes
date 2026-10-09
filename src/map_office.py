@@ -16,7 +16,7 @@ def events(walk):
     hx, hy = 7, 10   # 江凌坐在工位前，面向監控台（工位佔地 4–9 × 8–9，監控台在正前方那格 (7, 9)）
     ev_ = []
     # 開場：章節時間碼＋原文前四段，接著周主任出來
-    ev_.append(ev('intro', 20, 0, trigger='auto', once=True,
+    ev_.append(ev('intro', 20, 0, trigger='auto', once=True, conditions=[P('')],   # 只在剛開始（讀檔回來不重演、不重設進度）
                   actions=[say('一　23:04　網管中心')] + [say(t) for t in one[0:4]] + [setv('phase', 'order')]))
     # 周主任：下令那一段走出辦公室到江凌身後，講完走回去；之後背對門講電話
     zx, zy = 37, 8
@@ -31,7 +31,8 @@ def events(walk):
                               actor='npc', sprite=walk('zhou'), solid=True, direction='up', trigger='condition')]))
     # 之後：站到北邊落地窗前背對門講電話（10-09 作者：讓江凌從他背後偷走管理員卡的感覺更明顯）
     ev_.append(ev('zhou-phone', *PT['zhou_phone'], name='周主任', actor='npc', solid=True, direction='up', sprite=walk('zhou'),
-                  conditions=[cond('phase', p_, 'neq') for p_ in ('', 'order', 'cut')], actions=[say(two[3])]))
+                  conditions=[cond('phase', p_, 'neq') for p_ in ('', 'order', 'cut')], actions=[say(two[3])],
+                  pages=[page('zhou-turn', [P('alibi'), cond('zhou_look', 'turn')], [say(two[3])], actor='npc', sprite=walk('zhou'), solid=True, direction='down')]))
     # 監控台：斷河城、抽查、看到江禾的訊息、審訊室（一）；之後拿泡麵碗
     ev_.append(ev('monitor', 7, 9, name='監控台', marker={'label': '監控台', 'kind': 'quest'},
                   pages=[page('mon-cut', [P('cut')], [say(t) for t in one[9:14]] + [card('ci1'), setv('phase', 'sneak')]),
@@ -47,17 +48,32 @@ def events(walk):
     ev_ += spread(stop, [(38, 14), (39, 14)])
     # 抽屜：管理員卡
     ev_.append(ev('drawer', 41, 8, name='抽屜', marker={'label': '抽屜', 'kind': 'quest'},
-                  pages=[page('drawer-card', [P('alibi')], [say(two[3]), say(two[4]), item('admincard', '管理員卡'), setv('phase', 'card')])]))
+                  pages=[page('drawer-card', [P('alibi')], [say(two[3]), say(two[4]), item('admincard', '管理員卡'), setv('phase', 'card')]),
+                         page('drawer-seen', [P('alibi'), cond('zhou_look', 'turn')],
+                              [say(t) for t in new('周主任回頭')] + [A('hop', hop={'who': 'player', 'times': 1, 'to': {'x': 38, 'y': 15}})])]))
     # 樓梯門：拿到卡以後往二十樓核心機房
     stairs = ev('stairs', 40, 31, trigger='touch', marker={'label': '樓梯', 'kind': 'exit'},
                 pages=[page('stairs-up', [P('card'), has('admincard')], [jump('m-server', *layout.load('server')['points']['hero_start'])], trigger='touch')])
     ev_ += spread(stairs, [(40, 31), (41, 31)])
-    ev_.append(ev('guard', *PT['guard_a'], name='警衛', actor='npc', solid=True, direction='left', movement='horizontal', sprite=walk('guard')))
+    # 警衛（10-09 作者：躲警衛和偷卡完全沒有玩法）：原文「每四分鐘從電梯口走到茶水間，再走回來」。
+    # 倒完麵以後（alibi）手上沒東西，被看到就會被叫回茶水間：警衛輪流站在茶水間門口、電梯口（變數 guard_at，背景計時切換），
+    # 站著的那一個四格內看得到人，會走過來叫住。要等他走回電梯口，再從茶水間另一頭繞出去。
+    ev_.append(ev('guard', *PT['guard_a'], name='警衛', actor='npc', solid=True, direction='left', movement='horizontal', sprite=walk('guard'),
+                  conditions=[cond('phase', 'alibi', 'neq')]))
+    caught = [say(t, '') for t in new('警衛發現')] + [A('hop', hop={'who': 'player', 'times': 1, 'to': {'x': 6, 'y': 27}})]
+    for gid, at, xy, face in (('guard-tea', 'tea', PT['guard_b'], 'down'), ('guard-lift', 'lift', (PT['guard_a'][0] + 1, PT['guard_a'][1]), 'left')):
+        ev_.append(ev(gid, *xy, name='警衛', actor='npc', solid=True, direction=face, sprite=walk('guard'), movement='approach', approach=4,
+                      trigger='touch', conditions=[P('alibi'), cond('guard_at', at)], actions=fresh(caught)))
+    ev_.append(ev('guard-clock', 22, 0, trigger='parallel', conditions=[P('alibi')],
+                  actions=[setv('guard_at', 'tea'), A('wait', amount=6000), setv('guard_at', 'lift'), A('wait', amount=7000), A('loop', loop={})]))
+    # 周主任講電話時偶爾轉過身來（變數 zhou_look）：他轉身的時候開抽屜會被看到，退到門外
+    ev_.append(ev('zhou-clock', 23, 0, trigger='parallel', conditions=[P('alibi')],
+                  actions=[setv('zhou_look', ''), A('wait', amount=4500), setv('zhou_look', 'turn'), A('wait', amount=2000), A('loop', loop={})]))
     return (hx, hy), ev_
 
 
 GUIDANCE = [('按下確認，斷開河城', 'monitor', 'cut'), ('拿起泡麵碗', 'monitor', 'sneak'), ('去茶水間，把麵倒掉', 'sink', 'bowl'),
-            ('繞到主任辦公室，打開抽屜', 'drawer', 'alibi'), ('走樓梯上二十樓', 'stairs', 'card')]
+            ('等警衛走回電梯口，繞去主任辦公室，趁周主任背對門開抽屜', 'drawer', 'alibi'), ('走樓梯上二十樓', 'stairs', 'card')]
 
 
 def guidance():
