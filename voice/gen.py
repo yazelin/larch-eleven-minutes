@@ -1,20 +1,29 @@
 # -*- coding: utf-8 -*-
-"""配音（2026-10-09 作者挑定聲線，voice/cast.py 試聲）。只配引號裡有人在說的話；旁白不配。
-每一句引號一支檔（檔名＝sha1(角色|聲線|文字)），一段裡有好幾句就接成一支；響度統一 -18 LUFS（tts skill 第五段）。
-  PY=$(head -1 ~/.local/bin/edge-tts | sed 's/^#!//'); $PY voice/gen.py   → assets/voice/*.mp3 與 voice/manifest.json（段落文字 → 檔名）
+"""配音（2026-10-09 作者改用 larch-tts-bridge：Larch 的語音，聲線多、有情緒；試聲 voice/cast_larch.py）。只配引號裡有人在說的話；旁白不配。
+每一句引號一支檔（檔名＝sha1(角色|聲線|情緒|文字)），一段裡有好幾句就接成一支；響度由 bridge 統一到 -18 LUFS。
+  python3 voice/gen.py   → assets/voice/*.mp3 與 voice/manifest.json（段落文字 → 檔名）
 build.py 讀 manifest：對話卡掛 voiceUrl，地圖上的對話在前面插 sound 步驟。"""
-import asyncio, hashlib, json, os, re, subprocess, sys
-import edge_tts
+import hashlib, json, os, re, subprocess, sys, time, urllib.request
+from concurrent.futures import ThreadPoolExecutor
 H = os.path.dirname(os.path.abspath(__file__)); G = os.path.dirname(H)
 sys.path.insert(0, os.path.join(G, 'src'))
 from story import ORIG, NEW
 OUT = os.path.join(G, 'assets/voice')
-VOICE = {   # 作者 10-09 挑定（cast.py 的 A／B）
-    '江凌': ('zh-CN-YunxiNeural', '-6Hz', '-8%'), '周主任': ('zh-CN-YunyangNeural', '-14Hz', '-4%'), '警衛': ('zh-CN-YunxiNeural', '-18Hz', '+4%'),
-    '年長審訊員': ('zh-CN-YunyangNeural', '-24Hz', '-14%'), '年輕審訊員': ('zh-CN-YunxiNeural', '+0Hz', '+6%'), '江禾': ('zh-CN-XiaoyiNeural', '+0Hz', '-6%'),
-    '大肥魚': ('zh-CN-XiaoxiaoNeural', '-6Hz', '+14%'), '通義千問': ('zh-CN-XiaoxiaoNeural', '+10Hz', '+0%'), 'PRISM': ('zh-CN-YunyangNeural', '+0Hz', '-10%'),
-    # 河城的訊息（群聲，四個不同的人）
-    '群聲一': ('zh-CN-XiaoyiNeural', '+6Hz', '+4%'), '群聲二': ('zh-CN-YunxiaNeural', '-10Hz', '+6%'), '群聲三': ('zh-CN-XiaoxiaoNeural', '-8Hz', '+0%'), '群聲四': ('zh-CN-YunjianNeural', '-6Hz', '+0%'),
+VOICE = {   # 角色: (Larch 聲線, 預設情緒)。作者 10-09 去吃飯前交代「全部配完再審」，聲線先照試聲 A 版（警衛照上一輪挑 B），回來可以換
+    '江凌': ('Chinese (Mandarin)_Gentle_Youth', 'calm'), '周主任': ('Chinese (Mandarin)_Reliable_Executive', 'neutral'),
+    '警衛': ('Chinese (Mandarin)_Stubborn_Friend', 'neutral'), '年長審訊員': ('Chinese (Mandarin)_Gentleman', 'calm'),
+    '年輕審訊員': ('Chinese (Mandarin)_Unrestrained_Young_Man', 'neutral'), '江禾': ('Chinese (Mandarin)_Crisp_Girl', 'fearful'),
+    '大肥魚': ('Chinese (Mandarin)_Laid_BackGirl', 'neutral'), '通義千問': ('Chinese (Mandarin)_HK_Flight_Attendant', 'neutral'),
+    'PRISM': ('Chinese (Mandarin)_News_Anchor', 'calm'),
+    '群聲一': ('Chinese (Mandarin)_Warm_Girl', 'fearful'), '群聲二': ('Chinese (Mandarin)_Pure-hearted_Boy', 'fearful'),
+    '群聲三': ('Chinese (Mandarin)_Kind-hearted_Antie', 'sad'), '群聲四': ('Larch_Mandarin_Dad', 'angry'),
+}
+EMO = {   # 個別台詞的情緒（沒列的用角色預設）
+    '所以你知道妹妹在河城。你還是執行了命令。': 'angry', '只有一則？': 'surprised', '你覺得你做對了嗎？': 'neutral',
+    '整區？': 'surprised', '通訊也斷？': 'surprised', '河城有人在頂樓。': 'sad', '其他的，我沒有權限。': 'calm',
+    '他們救了人。也用了人。': 'sad', '可能。': 'sad', '我把它送給我媽。只有那一則。': 'calm',
+    '可能是水太大了吧。': 'calm', '寄件人叫禾。這個名字，我很喜歡。': 'happy', '頂樓那一則，我讀了三遍。': 'sad',
+    '河城，整區斷，現在。': 'neutral', '您會再需要我們的。': 'calm', '江工，這麼晚了？': 'surprised',
 }
 WHO = {   # 引號裡的話 → 誰說的（沒列的引號不配：新聞、評語、標題、終端機字）
     '我從頭講。': '江凌', '整區？': '江凌', '通訊也斷？': '江凌', '我執行命令的時候不知道。': '江凌', '我想把那一則送出去。只有那一則。': '江凌',
@@ -38,18 +47,29 @@ def who(q):
     return WHO.get(q) or next((w for k, w in STARTS.items() if q.startswith(k)), None)
 
 
+URL = 'http://192.168.11.11:8072/tts'; KEY = open(os.path.expanduser('~/.config/larch-tts/key')).read().strip()
+
+
 def clip(speaker, text):
-    v, p, r = VOICE[speaker]; key = hashlib.sha1(f'{speaker}|{v}{p}{r}|{text}'.encode()).hexdigest()[:16]
-    return key, v, p, r
+    v, emo = VOICE[speaker]; emo = EMO.get(text, emo)
+    return hashlib.sha1(f'{speaker}|{v}|{emo}|{text}'.encode()).hexdigest()[:16], v, emo
 
 
-async def make(text, v, p, r, path):
-    raw = path + '.raw.mp3'; await edge_tts.Communicate(SPEAK.get(text, text), v, pitch=p, rate=r).save(raw)
-    subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', raw, '-af', 'loudnorm=I=-18:TP=-2:LRA=9', '-ar', '44100', '-b:a', '96k', path], check=True); os.remove(raw)
+def make(text, v, emo, path):
+    """bridge 已經做好替身、去頭尾靜音、-18 LUFS；這裡只轉成 96k"""
+    body = json.dumps({'text': SPEAK.get(text, text), 'voice': v, 'format': 'mp3', 'emotion': emo}).encode()
+    for t in range(4):
+        try:
+            data = urllib.request.urlopen(urllib.request.Request(URL, method='POST', data=body, headers={'Content-Type': 'application/json', 'X-API-Key': KEY}), timeout=300).read()
+            raw = path + '.raw.mp3'; open(raw, 'wb').write(data)
+            subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', raw, '-ar', '44100', '-b:a', '96k', path], check=True); os.remove(raw); return
+        except Exception as e:
+            print('  重試', t + 1, text[:12], e, flush=True); time.sleep(20 * (t + 1))
+    raise SystemExit('一直失敗：' + text)
 
 
-async def main():
-    os.makedirs(OUT, exist_ok=True); manifest = {}; made = 0
+def main():
+    os.makedirs(OUT, exist_ok=True); manifest = {}; jobs = {}; plan = []
     for src in (ORIG, NEW):
         for paras in src.values():
             for para in paras:
@@ -57,19 +77,26 @@ async def main():
                 if not parts: continue
                 files = []
                 for sp, q in parts:
-                    key, v, p, r = clip(sp, q); f = os.path.join(OUT, f'q-{key}.mp3')
-                    if not os.path.exists(f): await make(q, v, p, r, f); made += 1
-                    files.append(f)
-                if len(files) == 1: name = os.path.basename(files[0])
-                else:   # 一段裡好幾句：中間留 0.35 秒接起來
-                    name = 'p-' + hashlib.sha1('|'.join(files).encode()).hexdigest()[:16] + '.mp3'; out = os.path.join(OUT, name)
-                    if not os.path.exists(out):
-                        inp = sum([['-i', f] for f in files], []); n = len(files)
-                        fl = ''.join(f'[{i}:a]apad=pad_dur=0.35[a{i}];' for i in range(n)) + ''.join(f'[a{i}]' for i in range(n)) + f'concat=n={n}:v=0:a=1[o]'
-                        subprocess.run(['ffmpeg', '-v', 'error', '-y', *inp, '-filter_complex', fl, '-map', '[o]', '-b:a', '96k', out], check=True)
-                manifest[para] = name
+                    key, v, emo = clip(sp, q); f = os.path.join(OUT, f'q-{key}.mp3'); files.append(f)
+                    if not os.path.exists(f): jobs[f] = (q, v, emo)
+                plan.append((para, files))
+    with ThreadPoolExecutor(3) as ex:   # 3 條並行（作者 10-09：Larch 用量已提高、可以平行；bridge 那邊還是一次一句，排隊而已）
+        list(ex.map(lambda kv: make(kv[1][0], kv[1][1], kv[1][2], kv[0]), jobs.items()))
+    for para, files in plan:
+        if len(files) == 1: name = os.path.basename(files[0])
+        else:   # 一段裡好幾句：中間留 0.35 秒接起來
+            name = 'p-' + hashlib.sha1('|'.join(files).encode()).hexdigest()[:16] + '.mp3'; out = os.path.join(OUT, name)
+            if not os.path.exists(out):
+                inp = sum([['-i', f] for f in files], []); n = len(files)
+                fl = ''.join(f'[{i}:a]apad=pad_dur=0.35[a{i}];' for i in range(n)) + ''.join(f'[a{i}]' for i in range(n)) + f'concat=n={n}:v=0:a=1[o]'
+                subprocess.run(['ffmpeg', '-v', 'error', '-y', *inp, '-filter_complex', fl, '-map', '[o]', '-b:a', '96k', out], check=True)
+        manifest[para] = name
+    used = set(manifest.values()) | {os.path.basename(f) for _, fs in plan for f in fs}
+    for f in os.listdir(OUT):   # 舊聲線的檔清掉
+        if f not in used: os.remove(os.path.join(OUT, f))
     json.dump(manifest, open(os.path.join(H, 'manifest.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
-    used = {os.path.basename(f) for f in manifest.values()}
-    print('段落', len(manifest), '新生', made, '支；檔案', len(os.listdir(OUT)))
+    print('段落', len(manifest), '新生', len(jobs), '支；檔案', len(os.listdir(OUT)))
 
-asyncio.run(main())
+
+if __name__ == '__main__':
+    main()

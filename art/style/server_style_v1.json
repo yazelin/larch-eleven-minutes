@@ -1,0 +1,8 @@
+{
+ "job": "img_6a22e3fb1590a3dec08774e2",
+ "prompt": "A complete top-down pixel-art game map. Follow EXACTLY the layout of image 1: each flat colour block is one thing, the darker block is its footprint on the floor and the lighter block above it is the part rising up (seen from the south at about 50 degrees, so tall things show their south-facing front). Match the art style of image 2 exactly (the same game, 16-bit pixel art, crisp pixels, the same camera angle and lighting). This map: cold server room at night, rows of black server racks with blinking green lights, cyan and magenta neon accents. Floor: cold server room, grey anti-static raised floor tiles, some perforated vent tiles glowing faint blue, cyan accents. Things on the map: 北牆西: 灰色水泥牆，管線; 空調西: 精密空調機，白色，出風口吹著冷氣; 北牆中: 灰色水泥牆，牆上走線槽，一排紅色警示燈; 空調東: 精密空調機; 北牆東: 灰色水泥牆; 機櫃一西: 一整排黑色機櫃，前門網孔，綠燈一排一排閃; 機櫃一東: 同上; 機櫃二西: 同上; 機櫃二東: 同上，最東一櫃貼著「GFW 主控」的標籤（不放字，用紅色標牌表示）; 終端機: 一張鐵桌，一台黑色螢幕只有一個綠色游標，旁邊放著一頂 VR 頭盔; 南牆西: 灰色水泥牆; 鐵門: 厚重的灰色鐵門，門邊刷卡機亮紅燈; 南牆東: 灰色水泥牆. No people, no text, no letters, no UI.",
+ "refs": [
+  "/home/ct/larch-eleven-minutes/art/check/compose-server.png",
+  "/home/ct/larch-eleven-minutes/art/style/office_style_v1.png"
+ ]
+}

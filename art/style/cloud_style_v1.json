@@ -1,0 +1,8 @@
+{
+ "job": "img_00d1e457cd43bc274627fa09",
+ "prompt": "A complete top-down pixel-art game map. Follow EXACTLY the layout of image 1: each flat colour block is one thing, the darker block is its footprint on the floor and the lighter block above it is the part rising up (seen from the south at about 50 degrees, so tall things show their south-facing front). Match the art style of image 2 exactly (the same game, 16-bit pixel art, crisp pixels, the same camera angle and lighting). This map: a sea of grey-blue clouds under a black sky inside a digital world, a colossal wall of dark-red neon chain links, cyan grid lines, magenta accents. Floor: a soft sea of grey-blue clouds seen from above with faint cyan grid lines floating in it; the strip at the top is brighter blue-white sky clouds beyond the wall. Things on the map: 長城一: 巨大的鎖鏈，一節一節橫躺疊成牆，暗紅霓虹，每一節一棟樓高; 長城二: 同上; 長城三: 同上; 長城門: 牆中段的一扇門，鐵灰色，門上一個鎖頭浮水印; 長城四: 同上; 長城五: 同上; 長城六: 同上; 光點山一: 灰色光點堆成的小山，每一顆是一則訊息; 光點山二: 同上，大一點; 光點山三: 同上，最大；半腰有一顆光很弱、還在閃（江禾那一則）; 雲柱西: 雲凝成的柱子，裡面流著資料光; 雲柱東: 同上. No people, no text, no letters, no UI.",
+ "refs": [
+  "/home/ct/larch-eleven-minutes/art/check/compose-cloud.png",
+  "/home/ct/larch-eleven-minutes/art/style/office_style_v1.png"
+ ]
+}

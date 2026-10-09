@@ -36,6 +36,8 @@ Larch 第三屆創作者挑戰《自由與限制》第二部投稿（第一部�
 
 ## 指令
 
+    python3 voice/gen.py                                  # 角色配音（larch-tts-bridge，見 docs/配音表.md）
+    python3 voice/review.py                               # 完整劇本＋配音審稿頁 voice/review.html
     python3 src/build.py                                  # 產出 dist/project.json
     python3 ~/larch-preview/serve.py dist/project.json    # 本機播放
     python3 tests/check_static.py                         # 原文全用上、id 唯一、引擎上限
