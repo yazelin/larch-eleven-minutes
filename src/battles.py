@@ -55,8 +55,8 @@ def nodes():
         cards.battle('b-w2', '第二班', [   # 帶頭（有 special）的要排第一：10-09 實測排在第四個的帶頭從來不出手，大招也不放；站位由 pos 決定，跟排序無關
             E('xinghuo', '訊飛星火', 40, 9, 1, sp('double', '聽寫'), {'kind': 'enrage', 'name': '火力全開', 'below': 40, 'power': 1.5},
               image=img('xinghuo'), lead={'name': '星火燎原', 'every': 3, 'power': 1}, cut=img('cut-xinghuo'), scale=0.75, pos=(46, 80)),
-            E('glm', '智譜清言', 46, 8, 2, sp('guard', '清言'), sp('drain', '吸走上下文', every=4), image=img('glm'), scale=0.6, pos=(10, 66)),
-            E('yuanbao', '騰訊元寶', 42, 8, 2, sp('double', '群組伸手'), sp('drain', '收紅包', every=4), image=img('yuanbao'), scale=0.75, pos=(22, 80)),
+            E('glm', '智譜清言', 46, 8, 2, sp('guard', '清言'), sp('drain', '深度思考', every=4), image=img('glm'), scale=0.6, pos=(10, 66)),
+            E('yuanbao', '騰訊元寶', 42, 8, 2, sp('double', '撤回'), sp('drain', '收紅包', every=4), image=img('yuanbao'), scale=0.75, pos=(22, 80)),
             E('hailuo', '海螺', 38, 7, 2, {'kind': 'heal', 'name': '平靜播報', 'below': 50, 'amount': 20, 'times': 1}, sp('guard', '海螺殼'),
               image=img('hailuo'), scale=0.6, pos=(34, 66))],
             (800, 900), skills=SKILLS, attack=18, mp=40, bg=BG, bgm=music('boss')),
