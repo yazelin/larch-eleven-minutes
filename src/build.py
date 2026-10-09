@@ -89,7 +89,7 @@ def map_card(mid, a, mod, title, pos):
     m = mapkit.map_dict(title, d['map']['w'], d['map']['h'], f'/files/assets/maps/{a}_{"ground" if real else "blocks"}.png', layout.walls(d),
                         [hero] + evs + layout.events(d, urls, getattr(mod, 'wall_conditions', lambda n: [])), mod.guidance())
     lights = getattr(mod, 'return_lights', [])
-    if lights: m['environment'] = {'weather': 'rain', 'intensity': 0.25, 'darkness': 0.35, 'shake': 0, 'lights': lights}   # 十九樓：雨夜、燈只開一半，警衛手電筒
+    if lights: m['environment'] = {'weather': 'clear', 'intensity': 0, 'darkness': 0.35, 'shake': 0, 'lights': lights}   # 十九樓：燈只開一半、警衛手電筒；室內不下雨（雨畫在落地窗外，10-09 作者：內建雨太整齊）
     if mod is map_cloud: m['combat'] = 'action'
     names = [n for _, n, _, _ in mapkit.RPG_VARS] + list(VARS)
     node = mapkit.map_node(mid, title, m, names, pos=pos, bgm=music(MAP_BGM[mid])); node['data'].pop('start')
