@@ -5,7 +5,7 @@ import { serve, open, sleep, assert } from './lib.mjs';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 async function trial(phase, hero, wantRe, ms = 20000, press = false, delay = 0, pace = false) {
-  execSync('python3 src/build.py', { env: { ...process.env, START: 'm-office', PRESET: 'phase=' + phase } });
+  execSync('python3 src/build.py', { env: { ...process.env, START: 'm-office', PRESET: 'phase=' + phase + (phase === 'alibi' ? ',sneaking=1' : '') } });
   const p = JSON.parse(readFileSync('dist/project.json', 'utf8'));
   const node = p.boards[0].nodes.find(n => n.id === 'm-office'); const m = JSON.parse(node.data.pluginValues.map);
   const h = m.events.find(e => e.id === 'hero'); [h.x, h.y] = hero; h.direction = 'up';
