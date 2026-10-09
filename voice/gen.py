@@ -14,7 +14,7 @@ VOICE = {   # 角色: (Larch 聲線, 預設情緒)。作者 10-09 去吃飯前�
     '警衛': ('Chinese (Mandarin)_Stubborn_Friend', 'neutral'), '年長審訊員': ('Chinese (Mandarin)_Gentleman', 'calm'),
     '年輕審訊員': ('Chinese (Mandarin)_Unrestrained_Young_Man', 'neutral'), '江禾': ('Chinese (Mandarin)_Crisp_Girl', 'fearful'),
     '大肥魚': ('Chinese (Mandarin)_Laid_BackGirl', 'neutral'), '通義千問': ('Chinese (Mandarin)_HK_Flight_Attendant', 'neutral'),
-    'PRISM': ('Chinese (Mandarin)_News_Anchor', 'calm'),
+    'PRISM': ('edge:zh-TW-HsiaoChenNeural', '-'),   # 稜鏡用 edge-tts 小臻（作者 10-09）
     '群聲一': ('Chinese (Mandarin)_Warm_Girl', 'fearful'), '群聲二': ('Chinese (Mandarin)_Pure-hearted_Boy', 'fearful'),
     '群聲三': ('Larch_Mandarin_Child', 'fearful'), '群聲四': ('Larch_Mandarin_Dad', 'angry'),
 }
@@ -23,7 +23,7 @@ EMO = {   # 個別台詞的情緒（沒列的用角色預設）
     '整區？': 'surprised', '通訊也斷？': 'surprised', '河城有人在頂樓。': 'sad', '其他的，我沒有權限。': 'calm',
     '他們救了人。也用了人。': 'sad', '可能。': 'sad', '我把它送給我媽。只有那一則。': 'calm',
     '可能是水太大了吧。': 'calm', '寄件人叫禾。這個名字，我很喜歡。': 'happy', '頂樓那一則，我讀了三遍。': 'sad',
-    '河城，整區切斷，現在。': 'neutral', '您會再需要我們的。': 'calm', '江工，這麼晚了？': 'surprised',
+    '河城，整區切斷，現在。': 'neutral', '江工，這麼晚了？': 'surprised',
 }
 WHO = {   # 引號裡的話 → 誰說的（沒列的引號不配：新聞、評語、標題、終端機字）
     '我從頭講。': '江凌', '整區？': '江凌', '通訊也斷？': '江凌', '我執行命令的時候不知道。': '江凌', '我想把那一則送出去。只有那一則。': '江凌',
@@ -52,11 +52,17 @@ URL = 'http://192.168.11.11:8072/tts'; KEY = open(os.path.expanduser('~/.config/
 
 def clip(speaker, text):
     v, emo = VOICE[speaker]; emo = EMO.get(text, emo)
+    if v.startswith('edge:'): emo = '-'   # edge-tts 沒有情緒參數
     return hashlib.sha1(f'{speaker}|{v}|{emo}|{text}'.encode()).hexdigest()[:16], v, emo
 
 
 def make(text, v, emo, path):
-    """bridge 已經做好替身、去頭尾靜音、-18 LUFS；這裡只轉成 96k"""
+    """bridge 已經做好替身、去頭尾靜音、-18 LUFS；這裡只轉成 96k。edge-tts 的句子自己去頭尾靜音、壓到 -18 LUFS"""
+    if v.startswith('edge:'):
+        raw = path + '.raw.mp3'
+        subprocess.run(['edge-tts', '--voice', v[5:], '--text', SPEAK.get(text, text), '--write-media', raw], check=True, capture_output=True)
+        trim = 'silenceremove=start_periods=1:start_threshold=-50dB,areverse,silenceremove=start_periods=1:start_threshold=-50dB,areverse'
+        subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', raw, '-af', trim + ',loudnorm=I=-18:TP=-2:LRA=9', '-ar', '44100', '-b:a', '96k', path], check=True); os.remove(raw); return
     body = json.dumps({'text': SPEAK.get(text, text), 'voice': v, 'format': 'mp3', 'emotion': emo}).encode()
     for t in range(4):
         try:

@@ -23,7 +23,7 @@ def para_html(p):
     if f not in GAME: tags.append('遊戲裡不會播：王戰中途的台詞，引擎不吃語音')
     for q in re.findall(r'「([^「」]+)」', p):
         w = gen.who(q)
-        if w: _, v, emo = gen.clip(w, q); tags.append(f'{w}｜{v.replace("Chinese (Mandarin)_", "")}｜{emo}')
+        if w: _, v, emo = gen.clip(w, q); tags.append(f'{w}｜{v.replace("Chinese (Mandarin)_", "").replace("edge:zh-TW-HsiaoChenNeural", "edge-tts 小臻")}｜{emo}')
     return (f'<div class="v"><p>{t}</p><div class="ctl"><audio controls preload="none" src="../assets/voice/{f}"></audio>'
             f'<small>{html.escape("　／　".join(tags))}</small></div></div>')
 
@@ -35,7 +35,7 @@ for pre, where in ORDER:
 out.append('<h2>新寫的句子<span>原文沒有、遊戲需要的</span></h2>')
 for k, where in NEWW:
     out.append(f'<h3>{k}<span>{where}</span></h3>' + ''.join(para_html(p) for p in NEW[k]))
-cast = ''.join(f'<li><b>{w}</b>　{v.replace("Chinese (Mandarin)_", "")}　預設 {e}</li>' for w, (v, e) in gen.VOICE.items())
+cast = ''.join(f'<li><b>{w}</b>　{v.replace("Chinese (Mandarin)_", "").replace("edge:zh-TW-HsiaoChenNeural", "edge-tts 小臻")}　預設 {e}</li>' for w, (v, e) in gen.VOICE.items())
 page = f'''<!doctype html><html lang="zh-Hant"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>十一分鐘　完整劇本與配音</title>
 <style>body{{margin:0;background:#05070d;color:#e6fbff;font:17px/1.9 "Noto Sans TC",system-ui,sans-serif}}main{{max-width:860px;margin:0 auto;padding:24px 16px 80px}}
 h1{{font-size:32px;margin:10px 0}}h2{{margin:44px 0 12px;padding-bottom:6px;border-bottom:1px solid #1d3b4a;color:#39f3ff}}h2 span,h3 span{{margin-left:12px;font-size:13px;color:#a9d6de;font-weight:400}}
