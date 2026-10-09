@@ -39,7 +39,7 @@ def music(k):
 
 def nodes():
     f = section('四　23:37')
-    say = lambda t: {'speaker': '', 'text': t}
+    say = lambda t, who='', pic='': {'speaker': who, 'text': t, **({'image': pic} if pic else {})}   # image：引擎當說話者頭像放在對話框旁（說話的是敵人放左邊）
     return [
         cards.battle('b-censor', '審查兵', [E('censor', '審查兵', 24, 5, image=img('censor'))], (800, 600)),
         cards.battle('b-hound', '獵犬', [E('hound', '獵犬', 18, 6, image=img('hound'))], (800, 700)),

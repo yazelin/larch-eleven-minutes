@@ -49,4 +49,5 @@ Larch 第三屆創作者挑戰《自由與限制》第二部投稿（第一部�
     NEG=1 python3 tests/check_static.py                   # 負控制：要失敗
     node tests/mobile_shots.mjs                           # 手機直向、橫向截圖（標題、十九樓、終端機、雲端、王戰）
     node tests/rig_shots.mjs [b-w1|b-w2|b-whale|b-prism]  # 王戰連拍：出手動作與大招插畫
+    node tests/talk_shots.mjs b-whale 頂樓那一則          # 戰鬥中途台詞截圖（門檻暫改 99%）
     node tests/ui_shots.mjs                               # 介面截圖：標題、對話卡、地圖、王戰

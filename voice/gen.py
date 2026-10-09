@@ -16,7 +16,7 @@ VOICE = {   # 角色: (Larch 聲線, 預設情緒)。作者 10-09 去吃飯前�
     '大肥魚': ('Chinese (Mandarin)_Laid_BackGirl', 'neutral'), '通義千問': ('Chinese (Mandarin)_HK_Flight_Attendant', 'neutral'),
     'PRISM': ('Chinese (Mandarin)_News_Anchor', 'calm'),
     '群聲一': ('Chinese (Mandarin)_Warm_Girl', 'fearful'), '群聲二': ('Chinese (Mandarin)_Pure-hearted_Boy', 'fearful'),
-    '群聲三': ('Chinese (Mandarin)_Kind-hearted_Antie', 'sad'), '群聲四': ('Larch_Mandarin_Dad', 'angry'),
+    '群聲三': ('Larch_Mandarin_Child', 'fearful'), '群聲四': ('Larch_Mandarin_Dad', 'angry'),
 }
 EMO = {   # 個別台詞的情緒（沒列的用角色預設）
     '所以你知道妹妹在河城。你還是執行了命令。': 'angry', '只有一則？': 'surprised', '你覺得你做對了嗎？': 'neutral',
