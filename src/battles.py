@@ -67,7 +67,8 @@ def nodes():
             E('dafeiyu', '大肥魚', 280, 9, 4, sp('drain', '權限不足', every=5), sp('guard', '內容不當', every=7), sp('double', '未經授權', every=4),
               image=img('dafeiyu'), lead={'name': '鯨尾', 'every': 3, 'power': 1.5}, cut=img('cut-tail'), scale=1.25, pos=(30, 96))],
             (800, 1000), skills=SKILLS, attack=20, mp=40, bg=BG, bgm=music('boss'),
-            triggers=[{'id': 'w-start', 'when': 'start', 'lines': [say(f[17])]}]),
+            triggers=[{'id': 'w-start', 'when': 'start', 'lines': [say(f[17])]},
+                      {'id': 'w-hint', 'when': 'turn', 'turn': 3, 'lines': [say(t) for t in new('大肥魚大招提示')]}]),   # 第一次「鯨尾」前提示要防禦（10-10 作者）
         cards.battle('b-prism', 'PRISM', [
             E('prism', 'PRISM', 160, 10, 4, {'kind': 'enrage', 'name': '為了安全', 'below': 50, 'power': 1.5}, sp('drain', '為了真相', every=4), sp('double', '為了你好', every=5),
               image=img('prism'), lead={'name': '複製', 'every': 3, 'power': 2.5}, cut=img('cut-copy'), scale=1.0, pos=(30, 90))],
