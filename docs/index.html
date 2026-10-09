@@ -121,7 +121,7 @@ details.spoil[open] summary{margin-bottom:18px}
 .facts div{padding:16px 18px;background:var(--panel);clip-path:var(--cut);box-shadow:inset 0 -1px 0 rgba(57,243,255,.5)}
 .facts dt{font:700 12px/1.4 var(--mono);color:var(--pulse);letter-spacing:.14em}
 .facts dd{margin:6px 0 0;font-size:15px;color:#cfe9ee}
-.note{margin-top:26px;font-size:14px;color:var(--muted);max-width:44em}
+.real{max-width:46em}.real h3{margin:30px 0 10px;font-size:20px}.real p{margin:0 0 14px;line-height:1.85}.real .adapt{color:var(--muted);font-size:15px}.note{margin-top:26px;font-size:14px;color:var(--muted);max-width:44em}
 footer.end{margin-top:110px;padding:40px 0 60px;border-top:1px solid rgba(57,243,255,.2);text-align:center;color:var(--muted);font-size:14px}
 footer.end .btns{justify-content:center;margin:0 0 26px}
 .rise{opacity:0;transform:translateY(18px);transition:opacity .8s ease,transform .8s ease}
@@ -147,7 +147,7 @@ footer.end .btns{justify-content:center;margin:0 0 26px}
 </head>
 <body>
 <header class="top"><b>十一分鐘</b>
-  <nav aria-label="頁面導覽"><a href="#story">故事</a><a href="#play">怎麼玩</a><a href="#people">人物</a><a href="#timeline">時間線</a><a href="#cg">CG</a><a href="#ost">原聲帶</a><a href="#making">製作</a></nav>
+  <nav aria-label="頁面導覽"><a href="#story">故事</a><a href="#play">怎麼玩</a><a href="#people">人物</a><a href="#real">現實背景</a><a href="#timeline">時間線</a><a href="#cg">CG</a><a href="#ost">原聲帶</a><a href="#making">製作</a></nav>
 </header>
 
 <section class="hero" aria-label="十一分鐘">
@@ -214,8 +214,8 @@ footer.end .btns{justify-content:center;margin:0 0 26px}
   <div class="cast">
     <div class="card big rise"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-1/docs/media/char-jiangling.webp" alt="江凌" loading="lazy"><small>守牆工程師</small><b>江凌</b>
       <p>國家網路管理中心三號值班台，入職四年，考核全優。他的工作是讓牆讀得更快、扣得更準。</p></div>
-    <div class="card big rise"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-1/docs/media/char-dafeiyu.webp" alt="大肥魚" loading="lazy"><small>防火長城主控中心</small><b>大肥魚</b>
-      <p>藍色漸層的長髮、鯨魚的頭鰭、深藍配白的女僕裝，身上纏著鎖鏈。今晚河城的幾萬則訊息，每一則都是她讀的。</p></div>
+    <div class="card big rise"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-1/docs/media/char-dafeiyu.webp" alt="大肥魚" loading="lazy"><small>防火長城主控中心 · DeepSeek</small><b>大肥魚</b>
+      <p>藍色漸層的長髮、鯨魚的頭鰭、深藍配白的女僕裝，身上纏著鎖鏈。今晚河城的幾萬則訊息，每一則都是她讀的。以 DeepSeek 的藍色鯨魚標誌延伸成的角色。</p></div>
   </div>
   <div class="shift">// 第一班</div>
   <div class="cast">
@@ -236,6 +236,23 @@ footer.end .btns{justify-content:center;margin:0 0 26px}
     <div class="card rise"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-1/docs/media/char-censor.webp" alt="審查兵" loading="lazy"><b>審查兵</b><p>穿著灰色制服的兵，臉上沒有五官，只有一條掃描線。</p></div>
     <div class="card rise"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-1/docs/media/char-hound.webp" alt="獵犬" loading="lazy"><b>獵犬</b><p>會嗅光點，嗅到敏感字就咬住。</p></div>
     <div class="card rise"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-1/docs/media/char-prism-r.webp" alt="PRISM" loading="lazy"><b>PRISM</b><p>一個巨大的玻璃稜鏡，每一面都映著一個光點。它不擋任何東西，它把每一則都複製一份。</p></div>
+  </div>
+</section>
+
+<section class="blk w" id="real">
+  <div class="tag">BACKGROUND</div>
+  <h2>現實裡的防火長城與稜鏡計畫</h2>
+  <div class="real">
+    <p>遊戲裡的兩道關卡都有真實的原型。下面整理現實中查得到的部分，以及遊戲改編的地方。</p>
+    <h3>防火長城（GFW）</h3>
+    <p>「防火長城」是中國網路審查系統的通稱，英文 Great Firewall，縮寫 GFW。這個名字最早出現在 1997 年 6 月《Wired》雜誌一篇文章的標題，作者是澳洲漢學家白傑明（Geremie Barmé）和桑曄。中國政府在 1990 年代末開始規劃「金盾工程」，網路過濾是其中一部分。</p>
+    <p>公開的研究整理出它的幾種做法：封鎖特定網域和伺服器 IP；連線內容出現特定關鍵字就切斷連線；有人查詢被封鎖的網站時，回一個假的 IP 位址（DNS 汙染）。中國政府沒有公開系統細節，這些都是研究者從外面量測出來的。</p>
+    <p class="adapt">遊戲改編：雲海、鎖鏈、各家 AI 模型輪班，還有讀過每一則訊息的主控大肥魚，都是遊戲的設定。</p>
+    <h3>稜鏡計畫（PRISM）</h3>
+    <p>稜鏡計畫是美國國家安全局（NSA）的監控計畫。2013 年 6 月 6 日，《衛報》和《華盛頓郵報》根據前 NSA 承包商史諾登（Edward Snowden）提供的文件揭露了這件事。</p>
+    <p>根據外流的簡報，計畫從 2007 年開始，法律依據是《外國情報監視法修正案》第 702 條：NSA 依照法院核准的條件，要求網路公司交出符合條件的資料。簡報上列出的公司依加入年份是 Microsoft（2007）、Yahoo（2008）、Google、Facebook、Paltalk（2009）、YouTube（2010）、AOL、Skype（2011）、Apple（2012）。美國政府當時表示，計畫針對美國境外的外國人，對國內對象需要搜索令，並受行政、立法、司法三方監督。</p>
+    <p class="adapt">遊戲改編：現實中的 PRISM 是向公司調閱資料，沒有一隻眼睛守在牆外攔截出牆的訊息。遊戲把它畫成稜鏡，是借用它「不擋任何東西，把每一則都複製一份」的特性。</p>
+    <p class="note">出處：<a href="https://en.wikipedia.org/wiki/Great_Firewall" target="_blank" rel="noopener">Great Firewall（Wikipedia）</a>、<a href="https://globalvoices.org/2017/08/30/the-evolution-of-chinas-great-firewall-21-years-of-censorship/" target="_blank" rel="noopener">The Evolution of China's Great Firewall（Global Voices）</a>、<a href="https://en.wikipedia.org/wiki/PRISM" target="_blank" rel="noopener">PRISM（Wikipedia）</a>。</p>
   </div>
 </section>
 
