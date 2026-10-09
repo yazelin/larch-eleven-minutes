@@ -143,6 +143,19 @@ footer.end .btns{justify-content:center;margin:0 0 26px}
   section.blk{padding-top:72px}
 }
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.rise{opacity:1;transform:none;transition:none}}
+
+/* 照遊戲標題（霓虹訊號）的雜訊：掃描線＋往下掃的亮帶、標題每 3.6 秒訊號干擾一次 */
+.hero .scan{position:absolute;inset:0;z-index:1;pointer-events:none;background:repeating-linear-gradient(180deg,rgba(255,255,255,.045) 0 1px,transparent 1px 3px);mix-blend-mode:overlay}
+.hero .scan::after{content:"";position:absolute;left:0;right:0;height:22vh;background:linear-gradient(180deg,transparent,color-mix(in srgb,var(--neon) 10%,transparent),transparent);animation:sweep 7s linear infinite}
+@keyframes sweep{from{top:-25vh}to{top:105vh}}
+.hero .w{z-index:2}
+.hero h1{position:relative}
+.hero h1::before,.hero h1::after{content:attr(data-text);position:absolute;inset:0;pointer-events:none;opacity:0;text-shadow:none}
+.hero h1::before{color:var(--pulse);animation:glitch-a 3.6s steps(1) infinite}
+.hero h1::after{color:var(--neon);animation:glitch-b 3.6s steps(1) infinite}
+@keyframes glitch-a{0%,86%,100%{opacity:0}87%{opacity:.85;clip-path:inset(10% 0 62% 0);transform:translate(-4px,0)}90%{opacity:.85;clip-path:inset(58% 0 12% 0);transform:translate(5px,0)}93%{opacity:.85;clip-path:inset(32% 0 40% 0);transform:translate(-3px,0)}}
+@keyframes glitch-b{0%,86%,100%{opacity:0}88%{opacity:.8;clip-path:inset(66% 0 6% 0);transform:translate(4px,0)}91%{opacity:.8;clip-path:inset(18% 0 54% 0);transform:translate(-5px,0)}}
+@media (prefers-reduced-motion:reduce){.hero .scan::after,.hero h1::before,.hero h1::after{animation:none;display:none}}
 </style>
 </head>
 <body>
@@ -152,9 +165,10 @@ footer.end .btns{justify-content:center;margin:0 0 26px}
 
 <section class="hero" aria-label="十一分鐘">
   <img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-1/docs/media/cover.webp" alt="雲海裡的防火長城，被鎖鏈纏住的鯨魚女僕大肥魚，江凌的背影捧著一顆光點">
+  <div class="scan" aria-hidden="true"></div>
   <div class="w">
     <div class="status">GFW · 23:49</div>
-    <h1>十一分鐘</h1>
+    <h1 data-text="十一分鐘">十一分鐘</h1>
     <p class="lead">六月四日 23:49，防火長城開了十一分鐘。</p>
     <p class="extra">挑戰規定的是十分鐘。多出來的那一分鐘，是江凌偷來的自由。</p>
     <div class="btns">
