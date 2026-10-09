@@ -1,7 +1,7 @@
 """戰鬥卡：雲端長城的審查兵、獵犬（動作戰鬥，地圖上砍），三場王戰與稜鏡（回合制）。
 招式名稱從原文取：第一班、第二班的產品梗（規格 §10），大肥魚「權限不足、內容不當、未經授權」，稜鏡「為了安全、為了真相、為了你好」。"""
 import cards
-from story import section
+from story import section, new
 
 SKILLS = [{'id': 'del', 'name': '刪除程式', 'cost': 6, 'power': 14, 'target': 'all', 'effect': 'spark'},
           {'id': 'unpick', 'name': '拆開規則', 'cost': 4, 'power': 26, 'target': 'enemy', 'effect': 'ice'}]
@@ -71,5 +71,6 @@ def nodes():
         cards.battle('b-prism', 'PRISM', [
             E('prism', 'PRISM', 160, 10, 4, {'kind': 'enrage', 'name': '為了安全', 'below': 50, 'power': 1.5}, sp('drain', '為了真相', every=4), sp('double', '為了你好', every=5),
               image=img('prism'), lead={'name': '複製', 'every': 3, 'power': 2.5}, cut=img('cut-copy'), scale=1.0, pos=(30, 90))],
-            (800, 1100), skills=SKILLS, attack=20, mp=40, bg=BG, bgm=music('boss')),
+            (800, 1100), skills=SKILLS, attack=20, mp=40, bg=BG, bgm=music('boss'),
+            triggers=[{'id': 'p-hint', 'when': 'turn', 'turn': 3, 'lines': [say(t) for t in new('PRISM 大招提示')]}]),   # 第一次「複製」那一回合開頭提示要防禦（10-10 作者）
     ]
