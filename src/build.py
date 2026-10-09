@@ -51,12 +51,27 @@ def voiced(text):
     f = VOICE.get(text); return f'/files/assets/voice/{f}' if f and (ROOT / f'assets/voice/{f}').exists() else ''
 
 
-def voice_actions(acts):
-    """地圖上的對話：有配音的那句前面插 sound 步驟（引擎的地圖對話沒有語音欄位）"""
+SPLIT = {}   # 演在地圖上的對話卡 → 逐句拆開的卡 id（地圖播對話卡不放 voiceUrl，10-09 作者：審訊室年輕的開口沒播）
+
+
+def split_card(cid, title, lines, bg):
+    """一句一張卡（第一張沿用原 id），地圖上逐句播、每句前面插配音"""
+    ids = [cid] + [f'{cid}-{i}' for i in range(1, len(lines))]; SPLIT[cid] = ids
+    return [cards.dialogue(i, title if k == 0 else f'{title}（{k + 1}）', [l], (0, 0), bg=bg) for k, (i, l) in enumerate(zip(ids, lines))]
+
+
+def voice_actions(acts, cardtext=None):
+    """地圖上的對話：有配音的那句前面插 sound 步驟（引擎的地圖對話沒有語音欄位）；拆過的對話卡展開成逐句"""
     out = []
     for a in acts:
         if a.get('choice'):
-            for o in a['choice']['options']: o['actions'] = voice_actions(o['actions'])
+            for o in a['choice']['options']: o['actions'] = voice_actions(o['actions'], cardtext)
+        if a['kind'] == 'dialogue' and a.get('cardId') in SPLIT:
+            for i in SPLIT[a['cardId']]:
+                u = voiced(cardtext[i]) if cardtext else ''
+                if u: out.append(mapkit.A('sound', audio={'url': u, 'volume': 0.9}, label='配音'))
+                out.append(dict(a, id=mapkit.A('x')['id'], cardId=i))
+            continue
         u = voiced(a.get('text', '')) if a['kind'] == 'dialogue' else ''
         if u: out.append(mapkit.A('sound', audio={'url': u, 'volume': 0.9}, label='配音'))
         out.append(a)
@@ -110,9 +125,6 @@ def map_card(mid, a, mod, title, pos):
     lights = getattr(mod, 'return_lights', [])
     if lights: m['environment'] = {'weather': 'clear', 'intensity': 0, 'darkness': 0.35, 'shake': 0, 'lights': lights}   # 十九樓：燈只開一半、警衛手電筒；室內不下雨（雨畫在落地窗外，10-09 作者：內建雨太整齊）
     if mod is map_cloud: m['combat'] = 'action'
-    for e in m['events']:
-        e['actions'] = voice_actions(e.get('actions', []))
-        for pg in e.get('pages', []): pg['actions'] = voice_actions(pg['actions'])
     names = [n for _, n, _, _ in mapkit.RPG_VARS] + list(VARS)
     node = mapkit.map_node(mid, title, m, names, pos=pos, bgm=music(MAP_BGM[mid])); node['data'].pop('start')
     return node
@@ -129,10 +141,10 @@ def build():
     N = board['nodes'].append
     N(cards.dialogue('c0', '序　審訊室', section('序　審訊室'), (0, 0), bg=scene('interrogation'), start=True, bgm=music('title')))
     for m in MAPS: N(map_card(*m))
-    N(cards.dialogue('ci1', '審訊室（一）', section('審訊室（一）'), (400, 300), bg=scene('interrogation')))
+    for nd in split_card('ci1', '審訊室（一）', section('審訊室（一）'), scene('interrogation')): N(nd)
     N(plugin.card_node((1200, 0)))
     N(cards.dialogue('cu', '鎖開了', section('五　23:49')[0:2], (4, 0), bg=scene('unchained')))   # 大肥魚解開鎖鏈的 CG，演在雲端地圖上（10-09 作者）
-    N(cards.dialogue('ci2', '審訊室（二）', section('審訊室（二）'), (1600, 300), bg=scene('interrogation')))
+    for nd in split_card('ci2', '審訊室（二）', section('審訊室（二）'), scene('interrogation')): N(nd)
     for i, (k, t) in enumerate(ENDINGS):
         N(cards.dialogue(k, t, [t] + section(t), (2000, i * 200), bg=scene(k), bgm=music('ending')))
         cards.link(board, k, 'credits')
@@ -149,6 +161,14 @@ def build():
         'type': 'boardJump', 'title': '前往第二章', 'text': '', 'jumpBoardId': SITE_BOARD, 'jumpNodeId': 'site'}})
     cards.link(board, 'credits', 'to-site')
     p['boards'].append(site_board())
+    cardtext = {n['id']: n['data']['dialogueLines'][0]['text'] for n in board['nodes'] if n['data'].get('dialogueLines')}
+    for n in board['nodes']:   # 地圖：配音 sound 步驟、拆開的對話卡（要等全部卡片都建好）
+        if n['data'].get('pluginCardId') != 'map': continue
+        m = json.loads(n['data']['pluginValues']['map'])
+        for e in m['events']:
+            e['actions'] = voice_actions(e.get('actions', []), cardtext)
+            for pg in e.get('pages', []): pg['actions'] = voice_actions(pg['actions'], cardtext)
+        n['data']['pluginValues']['map'] = json.dumps(m, ensure_ascii=False)
     for n in board['nodes']:   # 對話卡：每一句掛 voiceUrl
         for l in n['data'].get('dialogueLines', []):
             u = voiced(l['text'])
@@ -184,12 +204,12 @@ BOARD_POS = {   # 群組框之間留空（10-09：框重疊）
     'm-cloud': (4.4, 0), 'cu': (4.4, 1.2), 'ci2': (5.2, 1.2),
     'e1': (6.6, -1), 'e2': (6.6, 0), 'e3': (6.6, 1), 'credits': (7.6, 0), 'to-site': (8.6, 0),
     'ci1': (1, 1.2),
-    'b-censor': (3.4, 2.9), 'b-hound': (3.4, 3.9), 'b-w1': (4.4, 2.9), 'b-w2': (4.4, 3.9), 'b-whale': (5.4, 2.9), 'b-prism': (5.4, 3.9),
+    'b-censor': (3.4, 5.6), 'b-hound': (3.4, 6.6), 'b-w1': (4.4, 5.6), 'b-w2': (4.4, 6.6), 'b-whale': (5.4, 5.6), 'b-prism': (5.4, 6.6),
 }
 
 
 # 群組框（10-09 作者：白板上地圖之間沒有連線不好讀）：群組只是整理用的框，不進遊戲流程；子卡座標相對群組
-GROUPS = [('g-real', '現實層：審訊室倒敘、十九樓、二十樓（地圖之間用事件跳轉，沒有連線）', '#4a6b7a', ['c0', 'm-office', 'm-server', 'c-term', 'ci1']),
+GROUPS = [('g-real', '現實層：審訊室倒敘、十九樓、二十樓（地圖之間用事件跳轉，沒有連線；審訊室一句一張卡，地圖上逐句播配音）', '#4a6b7a', ['c0', 'm-office', 'm-server', 'c-term', 'ci1']),
           ('g-cloud', '雲端層：防火長城（鎖開了、審訊室（二）演在地圖上）', '#6b4a7a', ['m-cloud', 'cu', 'ci2']),
           ('g-end', '三個結局與片尾（審訊室（二）之後的選擇跳過來；片尾接第二章：內嵌公開站）', '#7a5a4a', ['e1', 'e2', 'e3', 'credits', 'to-site']),
           ('g-battle', '戰鬥卡（雲端地圖的事件叫它們，不在白板流程上）', '#5a5a5a', ['b-censor', 'b-hound', 'b-w1', 'b-w2', 'b-whale', 'b-prism'])]
@@ -197,6 +217,9 @@ CW, CH, PAD, HEAD = 310, 220, 50, 70
 
 
 def layout_board(board):
+    for cid, ids in SPLIT.items():   # 拆開的對話卡排在原卡底下一直列
+        bx, by = BOARD_POS[cid]
+        for k, i in enumerate(ids[1:], 1): BOARD_POS[i] = (bx, by + k * 0.8)
     for n in board['nodes']:
         if n['id'] in BOARD_POS:
             gx, gy = BOARD_POS[n['id']]; n['position'] = {'x': round(gx * X), 'y': round(gy * Y)}
@@ -204,6 +227,7 @@ def layout_board(board):
     assert not missing, f'白板排版沒寫到：{missing}'
     by = {n['id']: n for n in board['nodes']}; groups = []
     for gid, title, color, kids in GROUPS:
+        kids = kids + [i for k in kids for i in SPLIT.get(k, [])[1:]]   # 拆開的卡跟原卡同一個群組
         xs = [by[k]['position']['x'] for k in kids]; ys = [by[k]['position']['y'] for k in kids]
         gx, gy = min(xs) - PAD, min(ys) - PAD - HEAD
         w, h = max(xs) - min(xs) + CW + 2 * PAD, max(ys) - min(ys) + CH + 2 * PAD + HEAD
