@@ -13,7 +13,7 @@ VOICE = {   # 角色: (Larch 聲線, 預設情緒)。作者 10-09 去吃飯前�
     '江凌': ('Chinese (Mandarin)_Gentle_Youth', 'calm'), '周主任': ('Chinese (Mandarin)_Reliable_Executive', 'neutral'),
     '警衛': ('Chinese (Mandarin)_Stubborn_Friend', 'neutral'), '年長審訊員': ('Chinese (Mandarin)_Gentleman', 'calm'),
     '年輕審訊員': ('Chinese (Mandarin)_Unrestrained_Young_Man', 'neutral'), '江禾': ('Chinese (Mandarin)_Crisp_Girl', 'fearful'),
-    '大肥魚': ('Chinese (Mandarin)_Laid_BackGirl', 'neutral'), '通義千問': ('Chinese (Mandarin)_HK_Flight_Attendant', 'neutral'),
+    '大肥魚': ('Chinese (Mandarin)_Laid_BackGirl', 'neutral'), '通義千問': ('Chinese (Mandarin)_IntellectualGirl', 'neutral'),
     'PRISM': ('edge:zh-TW-HsiaoChenNeural', '-'),   # 稜鏡用 edge-tts 小臻（作者 10-09）
     '群聲一': ('Chinese (Mandarin)_Warm_Girl', 'fearful'), '群聲二': ('Chinese (Mandarin)_Pure-hearted_Boy', 'fearful'),
     '群聲三': ('Larch_Mandarin_Child', 'fearful'), '群聲四': ('Larch_Mandarin_Dad', 'angry'),
