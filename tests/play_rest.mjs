@@ -79,6 +79,10 @@ try {
       if (!won) console.log('  打輸', name, '重打');
     }
     assert(won, '打贏 ' + name);
+    if (name === '大肥魚') {   // 插卡：打贏以後要自己走到她面前（10-09 作者：沒玩到把卡插進胸前的鎖）
+      await note('把管理員卡插進她胸口的鎖'); await ui.clickText('把管理員卡插進她胸口的鎖'); await sleep(6000);
+      await until(/胸口的鎖頭露出來了/, 30000); assert(true, '走到大肥魚面前插卡');
+    }
   }
   const t0 = Date.now(); let picked = false;
   while (!picked && Date.now() - t0 < 120000) {   // 對話按掉，直到結局選項按鈕出現
