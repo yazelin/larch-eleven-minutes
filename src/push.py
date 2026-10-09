@@ -138,6 +138,9 @@ def main(summary):
             got = next(x for x in b0['nodes'] if x['id'] == n['id'])
             check(len(json.loads(got['data']['pluginValues']['map'])['events']) == len(json.loads(n['data']['pluginValues']['map'])['events']), n['id'] + ' 事件數')
     check('eleven-minutes' in back['settings']['plugins'], '插件設定不見了')
+    for n in w0['nodes']:   # CG 解鎖也要比（10-09 發佈時編輯器分頁把它蓋回舊版，卡數照樣對得上）
+        got = next(x for x in b0['nodes'] if x['id'] == n['id'])
+        check(len(got['data'].get('cgOps') or []) == len(n['data'].get('cgOps') or []), n['id'] + ' 的 CG 解鎖設定')
     check(back['settings'].get('customInterfaces', {}).get('title', {}).get('params', {}).get('status') == build.TITLE_STATUS, '標題狀態列沒寫進去')
     check(len(back['variables']) == len(built['variables']), '變數數量不符')
     print('推送完成，讀回比對通過：', len(b0['nodes']), '張卡、', len(b0['edges']), '條線')
