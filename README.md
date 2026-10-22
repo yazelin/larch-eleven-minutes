@@ -5,7 +5,9 @@ Larch 第三屆創作者挑戰《自由與限制》第二部投稿（第一部�
 - 原文：`canon/原文.md`（遊戲裡的句子一律從這裡讀）；新寫句子：`canon/新寫.md`（`##` 標題是程式取用的鍵）；介紹文：`canon/介紹文.md`
 - 規格：`docs/specs/2026-10-08-design.md`
 - 遊玩：https://larch.ink/play/market/yaze/11-minutes
-- 公開站：https://yazelin.github.io/larch-eleven-minutes/ （`docs/index.html`；素材 `python3 site/media.py` 從 assets 縮成 `docs/media/`，截圖 `node tests/site_shots.mjs`；頁面裡的圖與音樂走 jsDelivr 孤兒 tag `site-media-1`，換素材要打下一個 tag 再改網址）
+- 公開站：https://yazelin.github.io/larch-eleven-minutes/ （`docs/index.html`；素材 `python3 site/media.py` 從 assets 縮成 `docs/media/`，截圖 `node tests/site_shots.mjs`；頁面裡的圖與音樂走 jsDelivr 孤兒 tag `site-media-3`，換素材要打下一個 tag 再改網址）
+  - 原聲帶頁 `docs/music/index.html`（版面照《起跑總在開始前》的 music/）
+  - 完整劇情頁 `docs/story/index.html`：`python3 site/story.py` 從 `canon/原文.md` 產生，跟遊戲同一份文字，原文改了要重跑；版型 `site/story_template.html`，結局詳解 `site/story_endings.html`
 - 授權：程式碼 MIT（`LICENSE`），故事、美術、配樂 CC BY-NC-SA 4.0（`LICENSE-CONTENT.md`；大肥魚原型〈溟月〉是 SA）
 - Larch 專案：`project-fc97ad09-681c-47f9-80b9-e12753877b9c`（`python3 src/push.py "改了什麼"` 推上去；推之前把 Larch 編輯器分頁關掉，發佈由作者在網頁按）
 

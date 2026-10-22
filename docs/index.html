@@ -107,8 +107,6 @@ details.spoil[open] summary{margin-bottom:18px}
 .cg .locked img{filter:blur(14px) saturate(.4)}
 .cg .locked{position:relative;cursor:pointer}
 .cg .locked::after{content:"NO SIGNAL · 點一下看（結局劇透）";position:absolute;left:50%;top:42%;translate:-50% -50%;padding:6px 14px;background:#04060a;color:#f2feff;font:800 12px/1 var(--mono);letter-spacing:.14em;white-space:nowrap;box-shadow:0 0 0 1px rgba(242,254,255,.5)}
-/* 原聲帶 */
-.ost{display:grid;gap:10px;max-width:760px}
 /* 製作 */
 .facts{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-top:8px}
 .facts div{padding:16px 18px;background:var(--panel);clip-path:var(--cut);box-shadow:inset 0 -1px 0 rgba(57,243,255,.5)}
@@ -186,35 +184,6 @@ footer.end .btns{justify-content:center;margin:0 0 26px}
 .mus[aria-pressed="true"] .i-off{display:none}
 .mus[aria-pressed="true"] .i-on{display:block}
 
-/* 原聲帶播放器（10-09 作者：做成音樂播放器的樣子） */
-.player{background:var(--panel);clip-path:var(--cut);padding:22px;box-shadow:inset 3px 0 0 rgba(57,243,255,.5)}
-.player .now{display:grid;grid-template-columns:150px 1fr;gap:22px;align-items:center}
-.player .art{width:150px;height:150px;object-fit:cover;object-position:62% 40%;clip-path:var(--cut);filter:saturate(1.1)}
-.player.playing .art{box-shadow:0 0 0 2px var(--pulse);animation:art-pulse 2.4s ease-in-out infinite}
-@keyframes art-pulse{50%{filter:saturate(1.3) brightness(1.08)}}
-.player .meta2{min-width:0}
-.player .meta2 small{font:600 11px/1 var(--mono);letter-spacing:.25em;color:var(--pulse)}
-.player .meta2 b{display:block;margin:8px 0 4px;font:900 28px/1.2 var(--sans);color:#f2feff}
-.player .meta2 span{color:var(--muted);font-size:14px}
-.player .bar{display:flex;align-items:center;gap:12px;margin:14px 0 10px;font:500 12px/1 var(--mono);color:var(--muted)}
-.player .bar input{flex:1;accent-color:var(--neon);height:4px;cursor:pointer}
-.player .ctl{display:flex;align-items:center;gap:12px}
-.player .ctl button{width:42px;height:42px;border:1px solid rgba(57,243,255,.35);background:rgba(57,243,255,.06);color:var(--neon);font:16px/1 var(--mono);cursor:pointer;clip-path:polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%)}
-.player .ctl button.big{width:56px;height:56px;background:var(--neon);color:#05070d;font-size:18px}
-.player .ctl button:hover{border-color:var(--neon);background:rgba(57,243,255,.2)}
-.player .ctl button.big:hover{background:#7ff8ff}
-.player .list{list-style:none;margin:22px 0 0;padding:0;border-top:1px solid rgba(57,243,255,.15)}
-.player .list button{display:grid;grid-template-columns:34px 1fr auto;gap:14px;align-items:center;width:100%;padding:11px 8px;border:0;border-bottom:1px solid rgba(57,243,255,.08);background:none;color:var(--ink);text-align:left;cursor:pointer;font:inherit}
-.player .list button:hover{background:rgba(57,243,255,.06)}
-.player .list em{font:500 12px/1 var(--mono);color:var(--muted);font-style:normal}
-.player .list b{display:block;font:700 15px/1.4 var(--sans)}
-.player .list small{display:block;color:var(--muted);font-size:12px}
-.player .list i{font:500 12px/1 var(--mono);color:var(--muted);font-style:normal}
-.player .list li.on b,.player .list li.on em{color:var(--neon)}
-.player .list li.live em{color:var(--pulse)}
-.player .list li.live em::before{content:"▶ "}
-@media (max-width:760px){.player{padding:16px}.player .now{grid-template-columns:96px 1fr;gap:14px}.player .art{width:96px;height:96px}.player .meta2 b{font-size:22px}}
-
 /* 監視器牆燈箱 */
 .cg figure:not(.locked){cursor:zoom-in}
 .cg figure:focus-visible{outline:2px solid var(--neon);outline-offset:3px}
@@ -233,7 +202,7 @@ footer.end .btns{justify-content:center;margin:0 0 26px}
 </head>
 <body>
 <header class="top"><button type="button" class="burger" id="burger" aria-label="開啟選單" aria-expanded="false" aria-controls="topnav"><i></i><i></i><i></i></button><b>十一分鐘</b>
-  <nav aria-label="頁面導覽" id="topnav"><a href="#story">故事</a><a href="#play">怎麼玩</a><a href="#people">人物</a><a href="#real">現實背景</a><a href="#timeline">時間線</a><a href="#cg">CG</a><a href="#ost">原聲帶</a><a href="#making">製作</a></nav>
+  <nav aria-label="頁面導覽" id="topnav"><a href="#story">故事</a><a href="#play">怎麼玩</a><a href="#people">人物</a><a href="#real">現實背景</a><a href="#timeline">時間線</a><a href="#cg">CG</a><a href="story/">完整劇情</a><a href="music/">原聲帶</a><a href="#making">製作</a></nav>
   <button id="mus" class="mus" type="button" aria-label="播放背景音樂" aria-pressed="false" title="背景音樂">
     <svg class="i-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M17 9l4 6M21 9l-4 6"/></svg>
     <svg class="i-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></svg>
@@ -265,6 +234,7 @@ footer.end .btns{justify-content:center;margin:0 0 26px}
       <p>河城淹大水，整區斷網。守牆工程師江凌在攔下的訊息裡，看到妹妹寫給媽媽的一則：她們困在學校頂樓，水已經淹到三樓。他從主任的抽屜拿走管理員卡，走進防火長城的主控，一路打過排班審查的中國 AI 模型，最後站在被鎖鏈纏住的大肥魚面前。</p>
       <p>故事從審訊室開始倒敘。兩個人坐在鐵桌對面，紙上只有一行字，問他那十一分鐘是不是他開的。</p>
       <p>整部作品用水講言論：上游放水沒有通知，被扣下的訊息堆成灰色的山，牆一開就像決堤；到了零點，堤又築回去。</p>
+      <p><a class="btn ghost" href="story/">讀完整劇情（含三個結局與詳解）</a></p>
     </div>
     <div class="quote rise">
       <p>「哥的電話打不通。我們在學校頂樓，水到三樓了。媽，如果你看到，跟哥說我們還在。」</p>
@@ -367,6 +337,7 @@ footer.end .btns{justify-content:center;margin:0 0 26px}
       <li><div class="t">00:00<i>零點整</i></div><p>最後一節扣上。</p></li>
       <li><div class="t">之後<i>審訊室（二）</i></div><p>「說說看，你做了什麼。」三個選擇：只把那一則送給媽媽、全部交給 PRISM、把長城修回去。</p></li>
     </ol>
+    <p class="note">三個結局各自發生了什麼、在講什麼，寫在<a href="story/#xp">完整劇情的結局詳解</a>。</p>
   </details>
 </section>
 
@@ -388,24 +359,8 @@ footer.end .btns{justify-content:center;margin:0 0 26px}
 <section class="blk w" id="ost">
   <div class="tag">SOUNDTRACK</div>
   <h2>六首，照時間排</h2>
-  <div class="player" id="player">
-    <div class="now">
-      <img class="art" id="p-art" src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-3/docs/media/cover.webp" alt="">
-      <div class="meta2">
-        <small id="p-no">TRACK 01 / 06</small>
-        <b id="p-title">標題</b>
-        <span id="p-sub">標題畫面、序章、審訊室</span>
-        <div class="bar"><span id="p-cur">0:00</span><input id="p-seek" type="range" min="0" max="1000" value="0" aria-label="播放進度"><span id="p-dur">2:55</span></div>
-        <div class="ctl">
-          <button type="button" id="p-prev" aria-label="上一首">⏮</button>
-          <button type="button" id="p-play" class="big" aria-label="播放">▶</button>
-          <button type="button" id="p-next" aria-label="下一首">⏭</button>
-        </div>
-      </div>
-    </div>
-    <ol class="list" id="tracks"></ol>
-    <p class="note">原聲帶是沒切過的原版，每首約三分鐘，播完自動接下一首。遊戲裡用的是切成一分鐘的循環段。作者用 AI 音樂工具生成。</p>
-  </div>
+  <p>審訊室、十九樓、二十樓、雲海、王戰、結局，每首約三分鐘，是沒切過的原版。原聲帶有自己的一頁，播放時背景換成那一段的畫面，也可以下載。</p>
+  <div class="btns"><a class="btn main" href="music/">▶ 打開原聲帶</a></div>
 </section>
 
 <section class="blk w" id="making">
@@ -435,54 +390,7 @@ footer.end .btns{justify-content:center;margin:0 0 26px}
 
 <script>
 (function () {
-  var T = [
-    ["title", "標題", "標題畫面、序章、審訊室", "2:55"],
-    ["office", "十九樓", "23:04　十九樓網管中心", "2:56"],
-    ["server", "二十樓", "23:33　二十樓核心機房", "2:59"],
-    ["cloud", "雲海", "23:37　雲海裡的防火長城", "2:57"],
-    ["boss", "王戰", "長城門前的王戰", "2:56"],
-    ["ending", "結局", "三個結局", "2:55"]
-  ];
-  var M = "https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-3/docs/media/";
   var $ = function (id) { return document.getElementById(id); };
-  var list = $("tracks"), audio = new Audio(), cur = 0, loaded = -1, seeking = false;
-  audio.preload = "none";
-  var fmt = function (t) { t = Math.max(0, Math.floor(t || 0)); return Math.floor(t / 60) + ":" + String(t % 60).padStart(2, "0"); };
-  T.forEach(function (t, i) {
-    var li = document.createElement("li");
-    li.innerHTML = '<button type="button"><em>' + String(i + 1).padStart(2, "0") + '</em><span><b>' + t[1] + '</b><small>' + t[2] + '</small></span><i>' + t[3] + '</i></button>';
-    li.querySelector("button").addEventListener("click", function () { if (i === cur && !audio.paused) audio.pause(); else play(i); });
-    list.appendChild(li);
-  });
-  function show(i) {
-    cur = i; var t = T[i];
-    $("p-no").textContent = "TRACK " + String(i + 1).padStart(2, "0") + " / 06"; $("p-title").textContent = t[1]; $("p-sub").textContent = t[2];
-    if (loaded !== i) { $("p-dur").textContent = t[3]; $("p-cur").textContent = "0:00"; $("p-seek").value = 0; }
-    sync();
-  }
-  function play(i) {
-    show(i);
-    if (loaded !== i) { audio.src = M + "ost-" + T[i][0] + ".mp3"; loaded = i; }
-    audio.play().catch(function () {});
-  }
-  function sync() {
-    var on = !audio.paused;
-    $("p-play").textContent = on ? "❚❚" : "▶"; $("p-play").setAttribute("aria-label", on ? "暫停" : "播放");
-    $("player").classList.toggle("playing", on);
-    list.querySelectorAll("li").forEach(function (li, i) { li.classList.toggle("on", i === cur); li.classList.toggle("live", i === cur && on); });
-  }
-  $("p-play").addEventListener("click", function () { if (!audio.paused) audio.pause(); else play(cur); });
-  $("p-prev").addEventListener("click", function () { if (audio.currentTime > 3 && loaded === cur) { audio.currentTime = 0; return; } play((cur + T.length - 1) % T.length); });
-  $("p-next").addEventListener("click", function () { play((cur + 1) % T.length); });
-  audio.addEventListener("ended", function () { play((cur + 1) % T.length); });   // 播完接下一首，最後一首接回第一首
-  audio.addEventListener("loadedmetadata", function () { $("p-dur").textContent = fmt(audio.duration); });
-  audio.addEventListener("timeupdate", function () { if (seeking || !audio.duration) return; $("p-cur").textContent = fmt(audio.currentTime); $("p-seek").value = Math.round(audio.currentTime / audio.duration * 1000); });
-  $("p-seek").addEventListener("input", function () { seeking = true; if (audio.duration) $("p-cur").textContent = fmt(this.value / 1000 * audio.duration); });
-  $("p-seek").addEventListener("change", function () { seeking = false; if (loaded !== cur) { play(cur); return; } if (audio.duration) audio.currentTime = this.value / 1000 * audio.duration; });
-  audio.addEventListener("play", sync); audio.addEventListener("pause", sync);
-  audio.addEventListener("play", function () { document.dispatchEvent(new Event("ost-play")); });   // 背景音樂聽到就停
-  document.addEventListener("bgm-play", function () { audio.pause(); });
-  show(0);
   // 監視器牆：鎖住的（結局劇透）第一下解鎖，解鎖後再點開燈箱；燈箱有上一張／下一張／下載／關閉（10-09 作者）
   var figs = [].slice.call(document.querySelectorAll(".cg figure")), lb = $("lb"), li = 0;
   function lbShow(i, dir) {   // 還鎖著的（結局劇透）跳過
@@ -596,7 +504,7 @@ if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",
 <script>
 /* 背景音樂。獨立一個 script 標籤：推廣 footer 改版會整段換掉別的 script（台灣人代表 2026-08-18 因此音樂鈕死了一天）。
    1) 只能掛在第一個使用者手勢上，不能 load 就播。2) 音檔第一次要播才抓。3) 按過關閉就不再自動開。
-   4) 原聲帶區有人按播放，背景音樂就停，兩首不會疊在一起。 */
+   原聲帶播放器在 music/，首頁只有這一條背景音樂。 */
 (function () {
   var btn = document.getElementById("mus"); if (!btn) return;
   var a = null, KEY = "em-music";
@@ -615,12 +523,11 @@ if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",
   var armed = true;
   var auto = function (e) {
     if (!armed) return; armed = false;
-    if (pref() === "0" || (e && e.target && e.target.closest && e.target.closest(".player"))) return;   // 第一下就是按原聲帶的話，讓原聲帶播
+    if (pref() === "0") return;
     start();
   };
   ["pointerdown", "keydown", "touchstart"].forEach(function (ev) { document.addEventListener(ev, auto, { once: true, passive: true }); });
   document.addEventListener("visibilitychange", function () { if (document.hidden && a && !a.paused) stop(); });
-  document.addEventListener("ost-play", stop);   // 原聲帶開始播 → 背景音樂停
 })();
 </script>
 

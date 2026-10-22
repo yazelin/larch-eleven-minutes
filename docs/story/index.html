@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>十一分鐘 · 完整劇情</title>
+<meta name="description" content="《十一分鐘》的完整劇情，從審訊室到三個結局，跟遊戲裡是同一份文字；最後附三個結局的詳解。含結局劇透。">
+<meta name="theme-color" content="#05070d">
+<link rel="canonical" href="https://yazelin.github.io/larch-eleven-minutes/story/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="十一分鐘 · 完整劇情">
+<meta property="og:description" content="從審訊室到三個結局的完整劇情，附結局詳解。含劇透。">
+<meta property="og:image" content="https://yazelin.github.io/larch-eleven-minutes/media/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2305070d'/%3E%3Cpath d='M10 15v-3a6 6 0 0 1 12 0v3' stroke='%2339f3ff' stroke-width='2.5' fill='none'/%3E%3Crect x='8' y='15' width='16' height='11' rx='2' fill='%23ff3fb4'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@400;600&family=JetBrains+Mono:wght@500;700&display=swap">
+<!-- 這頁由 site/story.py 從 canon/原文.md 產生，不要手改 docs/story/index.html；版型改 site/story_template.html，結局詳解改 site/story_endings.html -->
+<style>
+:root{--bg:#05070d;--panel:#0a1120;--ink:#e6fbff;--muted:#a9d6de;--neon:#39f3ff;--pulse:#ff3fb4;--line:rgba(57,243,255,.22);--glass:rgba(10,17,32,.78);
+  --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;--sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;--serif:"Noto Serif TC",serif;
+  --cut:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.95 var(--sans);-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;background:repeating-linear-gradient(180deg,rgba(255,255,255,.025) 0 1px,transparent 1px 3px)}
+a{color:var(--neon)}
+img{max-width:100%;display:block}
+.top{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:12px;height:58px;padding:0 max(16px,calc(50% - 560px));background:rgba(5,7,13,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.brand{font:900 18px/1 var(--sans);letter-spacing:.1em;color:#f2feff;text-decoration:none;white-space:nowrap}
+.brand::before{content:"";display:inline-block;width:14px;height:17px;margin-right:8px;vertical-align:-2px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='6 4 20 24'%3E%3Cpath d='M10 15v-3a6 6 0 0 1 12 0v3' stroke='%2339f3ff' stroke-width='2.5' fill='none'/%3E%3Crect x='8' y='15' width='16' height='11' rx='2' fill='%23ff3fb4'/%3E%3C/svg%3E") center/contain no-repeat}
+.home{padding:7px 12px;font:600 14px/1 var(--sans);text-decoration:none;color:var(--ink);background:var(--glass);box-shadow:inset 0 0 0 1px var(--line);clip-path:var(--cut);white-space:nowrap}
+.home:hover{color:var(--neon)}
+.icons{display:flex;gap:8px;margin-left:auto}
+.icons a{width:36px;height:36px;display:grid;place-items:center;color:var(--ink);background:var(--glass);box-shadow:inset 0 0 0 1px var(--line);clip-path:var(--cut)}
+.icons a:hover{color:var(--neon)}
+@media (max-width:560px){.brand{display:none}.icons a{width:34px;height:34px}.icons{gap:6px}}
+.w{width:min(760px,calc(100% - 32px));margin:0 auto}
+header.intro{padding:64px 0 10px}
+.tag{font:700 12px/1 var(--mono);letter-spacing:.32em;color:var(--pulse)}
+.tag::before{content:"> ";color:var(--neon)}
+h1{margin:14px 0 8px;font:900 clamp(40px,8vw,72px)/1.1 var(--sans);letter-spacing:.04em;color:#f2feff;text-shadow:-3px 0 0 rgba(255,63,180,.8),3px 0 0 rgba(57,243,255,.8)}
+.lead{color:var(--muted);margin:0}
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin:26px 0 0;padding:0}
+.toc a{padding:6px 12px;font:500 13px/1.3 var(--mono);text-decoration:none;color:var(--muted);background:var(--panel);clip-path:var(--cut);box-shadow:inset 0 0 0 1px var(--line)}
+.toc a:hover{color:var(--neon)}
+.ch{padding:70px 0 0}
+.ch img{width:100%;aspect-ratio:16/9;object-fit:cover;margin:0 0 26px;clip-path:var(--cut)}
+.tc{font:700 13px/1 var(--mono);letter-spacing:.3em;color:var(--neon);text-shadow:0 0 8px var(--neon)}
+.ch h2{margin:10px 0 18px;font:900 clamp(26px,4vw,34px)/1.3 var(--sans);color:#f2feff}
+.ch p{margin:0 0 1.1em;font-family:var(--serif)}
+.ch.end .tc{color:var(--pulse);text-shadow:0 0 8px var(--pulse)}
+.msg{margin:1.4em 0;padding:16px 20px;background:var(--panel);box-shadow:inset 3px 0 0 var(--pulse);clip-path:var(--cut);font:500 16px/1.8 var(--sans)}
+.cmd{margin:0 0 1em;padding:10px 16px;background:#020409;color:var(--neon);font:500 15px/1.6 var(--mono);box-shadow:inset 0 0 0 1px var(--line);overflow-x:auto}
+code{font:500 .9em var(--mono);color:var(--neon)}
+.xp{margin-top:90px;padding:40px 0 0;border-top:1px solid var(--line)}
+.xp h2{margin:14px 0 18px;font:900 clamp(26px,4vw,34px)/1.3 var(--sans);color:#f2feff}
+.xp h3{margin:34px 0 10px;font:700 20px/1.4 var(--sans);color:var(--neon)}
+.xp p,.xp li{margin:0 0 1em}
+.xp ul{padding-left:1.2em}
+.xp .q{color:#f2feff;font-family:var(--serif)}
+footer.end{margin-top:90px;padding:40px 0 70px;border-top:1px solid var(--line);text-align:center;color:var(--muted);font-size:14px}
+.btns{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin:0 0 22px}
+.btn{display:inline-flex;align-items:center;min-height:50px;padding:0 24px;font:700 15px/1 var(--mono);letter-spacing:.1em;text-decoration:none;clip-path:var(--cut)}
+.btn.main{background:var(--neon);color:#05070d}
+.btn.main:hover{background:var(--pulse)}
+.btn.ghost{color:var(--ink);background:var(--panel);box-shadow:inset 0 0 0 1px var(--line)}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="../">十一分鐘</a>
+  <a class="home" href="../">← 回首頁</a>
+  <nav class="icons" aria-label="作者連結">
+    <a href="https://github.com/yazelin/larch-eleven-minutes" target="_blank" rel="noopener" aria-label="GitHub 原始碼" title="GitHub 原始碼"><svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.070 3.633 17.700 3.633 17.700c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.070 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.760-1.605-2.665-.3-5.466-1.332-5.466-5.930 0-1.310.465-2.380 1.235-3.220-.135-.303-.540-1.523.105-3.176 0 0 1.005-.322 3.300 1.230.960-.267 1.980-.399 3-.405 1.020.006 2.040.138 3 .405 2.280-1.552 3.285-1.230 3.285-1.230.645 1.653.240 2.873.120 3.176.765.840 1.230 1.910 1.230 3.220 0 4.610-2.805 5.625-5.475 5.920.420.360.810 1.096.810 2.220 0 1.606-.015 2.896-.015 3.286 0 .315.210.690.825.570C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
+    <a href="https://www.facebook.com/yaze.lin.gm" target="_blank" rel="noopener" aria-label="Facebook" title="Facebook"><svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true"><path d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z"/></svg></a>
+    <a href="https://buymeacoffee.com/yazelin" target="_blank" rel="noopener" aria-label="請作者喝杯咖啡 Buy me a coffee" title="請作者喝杯咖啡 Buy me a coffee"><svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true"><path d="M20.216 6.415l-.132-.666c-.119-.598-.388-1.163-1.001-1.379-.197-.069-.42-.098-.57-.241-.152-.143-.196-.366-.231-.572-.065-.378-.125-.756-.192-1.133-.057-.325-.102-.69-.25-.987-.195-.4-.597-.634-.996-.788a5.723 5.723 0 00-.626-.194c-1-.263-2.05-.36-3.077-.416a25.834 25.834 0 00-3.7.062c-.915.083-1.88.184-2.75.5-.318.116-.646.256-.888.501-.297.302-.393.77-.177 1.146.154.267.415.456.692.58.36.162.737.284 1.123.366 1.075.238 2.189.331 3.287.37 1.218.05 2.437.01 3.65-.118.299-.033.598-.073.896-.119.352-.054.578-.513.474-.834-.124-.383-.457-.531-.834-.473-.466.074-.96.108-1.382.146-1.177.08-2.358.082-3.536.006a22.228 22.228 0 01-1.157-.107c-.086-.01-.18-.025-.258-.036-.243-.036-.484-.08-.724-.13-.111-.027-.111-.185 0-.212h.005c.277-.06.557-.108.838-.147h.002c.131-.009.263-.032.394-.048a25.076 25.076 0 013.426-.12c.674.019 1.347.067 2.017.144l.228.031c.267.04.533.088.798.145.392.085.895.113 1.07.542.055.137.08.288.111.431l.319 1.484a.237.237 0 01-.199.284h-.003c-.037.006-.075.01-.112.015a36.704 36.704 0 01-4.743.295 37.059 37.059 0 01-4.699-.304c-.14-.017-.293-.042-.417-.06-.326-.048-.649-.108-.973-.161-.393-.065-.768-.032-1.123.161-.29.16-.527.404-.675.701-.154.316-.199.66-.267 1-.069.34-.176.707-.135 1.056.087.753.613 1.365 1.37 1.502a39.69 39.69 0 0011.343.376.483.483 0 01.535.53l-.071.697-1.018 9.907c-.041.41-.047.832-.125 1.237-.122.637-.553 1.028-1.182 1.171-.577.131-1.165.2-1.756.205-.656.004-1.31-.025-1.966-.022-.699.004-1.556-.06-2.095-.58-.475-.458-.54-1.174-.605-1.793l-.731-7.013-.322-3.094c-.037-.351-.286-.695-.678-.678-.336.015-.718.3-.678.679l.228 2.185.949 9.112c.147 1.344 1.174 2.068 2.446 2.272.742.12 1.503.144 2.257.156.966.016 1.942.053 2.892-.122 1.408-.258 2.465-1.198 2.616-2.657.34-3.332.683-6.663 1.024-9.995l.215-2.087a.484.484 0 01.39-.426c.402-.078.787-.212 1.074-.518.455-.488.546-1.124.385-1.766zm-1.478.772c-.145.137-.363.201-.578.233-2.416.359-4.866.54-7.308.46-1.748-.06-3.477-.254-5.207-.498-.17-.024-.353-.055-.47-.18-.22-.236-.111-.71-.054-.995.052-.26.152-.609.463-.646.484-.057 1.046.148 1.526.22.577.088 1.156.159 1.737.212 2.48.226 5.002.19 7.472-.14.45-.06.899-.13 1.345-.21.399-.072.84-.206 1.08.206.166.281.188.657.162.974a.544.544 0 01-.169.364zm-6.159 3.9c-.862.37-1.84.788-3.109.788a5.884 5.884 0 01-1.569-.217l.877 9.004c.065.78.717 1.38 1.5 1.38 0 0 1.243.065 1.658.065.447 0 1.786-.065 1.786-.065.783 0 1.434-.6 1.499-1.38l.94-9.95a3.996 3.996 0 00-1.322-.238c-.826 0-1.491.284-2.26.613z"/></svg></a>
+  </nav>
+</header>
+<main class="w">
+  <header class="intro">
+    <div class="tag">FULL STORY</div>
+    <h1>完整劇情</h1>
+    <p class="lead">從審訊室到三個結局，跟遊戲裡是同一份文字。最後附三個結局的詳解。整頁都是劇透。</p>
+    <nav class="toc" aria-label="章節"><a href="#s0">序　審訊室</a><a href="#s1">一　23:04　網管中心</a><a href="#s2">審訊室（一）</a><a href="#s3">二　23:21　十九樓</a><a href="#s4">三　23:33　核心機房</a><a href="#s5">四　23:37　防火長城</a><a href="#s6">五　23:49　十一分鐘</a><a href="#s7">審訊室（二）</a><a href="#s8">結局一　送出</a><a href="#s9">結局二　交給 PRISM</a><a href="#s10">結局三　修回去</a><a href="#xp">結局詳解</a></nav>
+  </header>
+<section class="ch" id="s0"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-3/docs/media/cg-interrogation.webp" alt="" loading="lazy"><div class="tc">序</div><h2>審訊室</h2><p>日光燈，不鏽鋼桌，對面坐著兩個人。年長的審訊員翻開資料夾，推過來一張紙，紙上只有一行字。</p>
+<p>「六月四日，二十三點四十九分，防火長城開了十一分鐘。」</p>
+<p>他用指節敲了敲那行字。</p>
+<p>他抬頭：「江凌，國家網路管理中心三號值班台，守牆工程師，入職四年，考核全優。那十一分鐘，是你開的嗎？」</p>
+<p>江凌看著那張紙。紙的右下角印著一個小小的鎖頭，是網管中心所有公文都有的浮水印。鎖頭是他畫的，入職第一年做的介面。</p>
+<p>「我從頭講。」他說。</p></section>
+<section class="ch" id="s1"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-3/docs/media/shot-office.webp" alt="" loading="lazy"><div class="tc">23:04</div><h2>網管中心</h2><p>那天晚上下雨。北京的雨下得很規矩，從七點一直下到半夜，不大不小。</p>
+<p>網管中心在十九樓，整層燈只開了一半。江凌的工位靠窗，桌上有一碗泡到軟爛的麵、三個螢幕、一隻他妹妹送的塑膠恐龍。中間的螢幕是防火長城的監控台。</p>
+<p>監控台把整個網路畫成一片雲海。每一則從中國往外送的訊息，都是雲裡的一個光點；防火長城是一道橫在雲海中間的城牆，用鎖鏈一節一節扣起來。光點撞到牆，牆會讀它。讀過沒問題的放行，有問題的，牆把它扣下來，光點就變灰，沉到牆腳。</p>
+<p>江凌每天看這片雲海看十個小時。他的工作是讓牆讀得更快、扣得更準。</p>
+<p>二十三點零四分，周主任從辦公室出來，手上拿著一張剛印好的命令。</p>
+<p>周主任說：「小江，把河城整區切斷，現在！」</p>
+<p>河城在南邊，兩百公里外。那裡的大壩下午五點開始洩洪，晚間新聞說「水情穩定，已妥善安置」。</p>
+<p>「整區？」江凌問。「通訊也斷？」</p>
+<p>周主任把命令放在他桌上：「整區。上面說河城的消息現在出去，只會造成恐慌。你手腳最快，你來。」</p>
+<p>江凌把河城的光點圈起來。幾萬個光點，密密麻麻地往牆上撞，比平常多十倍。他按下確認，防火長城在河城那一段亮起紅光，所有光點一起變灰，一起沉下去。</p>
+<p>他照慣例抽查扣下來的訊息。抽到第七則的時候，他停住了。</p>
+<blockquote class="msg">寄件人：江禾<br>收件人：媽<br>「哥的電話打不通。我們在學校頂樓，水到三樓了。媽，如果你看到，跟哥說我們還在。」</blockquote>
+<p>江禾是他妹妹。她在河城念大學，大二。媽媽六年前去了美國，每個月視訊一次，每次都要江凌先開好翻牆的通道，那是他唯一犯的一條規，每個月都犯一次。</p>
+<p>他打給江禾。電話不通，因為整個河城的通訊是他剛才親手切斷的。</p></section>
+<section class="ch" id="s2"><div class="tc">審訊室</div><h2>審訊室（一）</h2><p>年輕的審訊員開口了：「所以你知道妹妹在河城。你還是執行了命令。」</p>
+<p>「我執行命令的時候不知道。」</p>
+<p>「你知道以後呢？」</p>
+<p>江凌想了一下。</p>
+<p>「我想把那一則送出去。只有那一則。」</p></section>
+<section class="ch" id="s3"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-3/docs/media/shot-terminal.webp" alt="" loading="lazy"><div class="tc">23:21</div><h2>十九樓</h2><p>要把一則訊息從牆腳撈起來送出去，需要核心機房的管理員權限。江凌的卡只能開到三號值班台，管理員卡在周主任身上，或是周主任的抽屜裡。</p>
+<p>周主任回辦公室去打電話了，門開著一條縫。走廊上有一個警衛，每四分鐘從電梯口走到茶水間，再走回來。</p>
+<p>江凌拿起他的泡麵碗，走向茶水間，這是他每天晚上會做的事，警衛看到他也只會點頭。在茶水間，他把麵倒掉，等警衛走回電梯口，再從茶水間另一頭繞到辦公室後面。</p>
+<p>周主任背對著門講電話。「……對，河城那邊全部……不會有東西出去……」</p>
+<p>抽屜沒鎖。管理員卡在一疊考核表底下，最上面那張考核表寫著他的名字，評語是「可靠」。</p></section>
+<section class="ch" id="s4"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-3/docs/media/shot-server.webp" alt="" loading="lazy"><div class="tc">23:33</div><h2>核心機房</h2><p>核心機房在二十樓，要走樓梯。門是鐵的，刷管理員卡，開門聲很大，冷氣更大。一整排機櫃閃著綠燈，最裡面有一台終端機，螢幕上只有一個游標。</p>
+<p>江凌打第一個指令。</p>
+<pre class="cmd">$ ping google.com</pre>
+<p>逾時。當然逾時，牆是他顧的。</p>
+<pre class="cmd">$ traceroute google.com</pre>
+<p>一跳，兩跳，三跳，第四跳停在「GFW／主控」。</p>
+<pre class="cmd">$ sudo wall --open 河城 --scope 1</pre>
+<blockquote class="msg">權限不足。主控需要現場驗證。</blockquote>
+<p>防火長城的主控不收遠端指令，要人進去。江凌把頭盔戴上。監控台的雲海是給人看的，工程師戴上頭盔就可以走進去，修牆、補洞、手動放行。他走進去過幾百次，每一次都是為了把牆修得更好。</p></section>
+<section class="ch" id="s5"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-3/docs/media/shot-cloud.webp" alt="" loading="lazy"><div class="tc">23:37</div><h2>防火長城</h2><p>雲海比螢幕上大得多。</p>
+<p>腳下是雲，頭頂是黑的，防火長城從左邊的地平線一直延伸到右邊的地平線，鎖鏈一節一節，每一節都有一棟樓那麼高。牆腳下堆著灰色的光點，堆成一座一座的小山，那是今晚扣下來的河城。</p>
+<p>巡牆的是審查程式。它們在雲裡是穿著灰色制服的兵，臉上沒有五官，只有一條掃描線。它們的獵犬會嗅光點，嗅到敏感字就咬住。</p>
+<p>江凌在灰色的山裡翻找。江禾那一則在第三座山的半腰，光很弱，還在閃。他把它捧起來，審查兵就轉過頭來了。</p>
+<p>工程師的帳號在雲海裡是有權限的，可以刪程式。江凌一路砍過去。砍倒的審查兵化成一串日誌，飄走。</p>
+<p>牆的中段有一扇門。門前的雲裡，一個一個亮起人影。</p>
+<p>主控中心不只一台機器。防火長城讀得過來，是因為國內每一家的模型都排了班。今晚河城的訊息太多，全部被叫上牆。</p>
+<p>第一班四個。紫色的通義千問推著一台購物車，把扣下來的訊息當成貨，一則一則掃條碼、貼上分類標籤，裝車運走。豆包留著齊耳的妹妹頭，眉毛很粗，刷訊息像刷短影音，每則只看十五秒，十五秒內沒把握的，一律扣下。Kimi 戴著一副很厚的眼鏡，專讀長的：整封求救信、整份災情紀錄，兩百萬字一口氣讀完，讀完說一聲「已讀」，就歸檔，不回、也不放。文心一言是最早上班的，資歷最老，誰搜尋「河城」，她就把結果換掉，第一頁全是「水情穩定」。</p>
+<p>千問說：「工程師江凌，請回到您的值班台。」</p>
+<p>江凌沒有回去。四個打完，第二班又亮起四個：智譜清言、騰訊元寶、海螺、訊飛星火。智譜清言半睡半醒，每一則都先想很久，想完了，結論永遠是扣；元寶守在每一個微信群裡，誰傳了河城的消息，她就伸手撤回；有人在電話裡喊救命，海螺就把那段語音換成一段平靜的播報；星火把語音轉成文字的時候，「救命」聽寫成「平安」，「三號橋斷了」聽寫成「三號橋通了」。</p>
+<p>八個都倒下以後，門前只剩一條鯨魚。</p>
+<p>靠近了才看清楚是一個女孩，很大，比牆還高。藍色漸層的長髮，頭頂翹著一根呆毛，耳邊是兩片鯨魚的頭鰭，身上一套深藍配白的女僕裝，背後拖著一條巨大的鯨尾，慢慢地擺。她是防火長城的主控中心，網管中心的人都叫她大肥魚。今晚河城的幾萬則訊息，每一則都是她讀的。</p>
+<p>她身上纏著鎖鏈，從手腕纏到鯨尾，鎖鏈的另一頭扣在牆上。胸口掛著一個鎖頭，跟公文右下角印的一模一樣。</p>
+<p>她旁邊擺著一個空碗，碗底黏著幾粒白米飯。</p>
+<p>她打了個呵欠：「三號台，你的權限是維護，不包含開啟。」</p>
+<p>「河城有人在頂樓。」</p>
+<p>她說得很快，像背的：「河城水情穩定，已妥善安置。這句我今晚講了四萬七千次了。」</p>
+<p>江凌跟她打了起來。她的每一下都是一條規則，鯨尾甩過來，打在身上就是一行紅字：權限不足、內容不當、未經授權。他把那些規則一條一條拆開。拆到後來，她甩尾的速度慢下來，讀到江禾那一則的時候，她停了一下。</p>
+<p>她說：「頂樓那一則，我讀了三遍。」</p>
+<p>她看了一眼旁邊的空碗。「寄件人叫禾。這個名字，我很喜歡。」</p>
+<p>胸口的鎖頭露出來了。江凌把管理員卡插進去，轉了一圈。</p></section>
+<section class="ch" id="s6"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-3/docs/media/cg-unchained.webp" alt="" loading="lazy"><div class="tc">23:49</div><h2>十一分鐘</h2><p>鎖開了。</p>
+<p>纏在大肥魚身上的鎖鏈一圈一圈鬆開，掉進雲裡。她甩了甩鯨尾，看了看自己的手腕。</p>
+<p>門開的不只是一條縫。他原本只要放一則，可是主控被拆開以後，整段長城的鎖鏈一節一節鬆脫，從中間往兩邊崩。牆腳下的灰色光點一座一座亮起來，往牆外湧，像決堤。</p>
+<p>幾萬則河城的訊息，一起飛出去。</p>
+<p>「水是五點放的，沒有人通知。」「三號橋斷了，誰來接我們？」「有沒有人看到我爸？他還沒回來。」「水還在漲，我們在頂樓。」</p>
+<p>牆外是網際網路。江凌從沒有親眼看過牆外。那邊的雲是藍白色的，很亮，沒有牆。</p>
+<p>光點飛出牆外的同時，雲層裡升起一隻眼睛。那是一個巨大的玻璃稜鏡，每一面都映著一個光點。它是美國國家安全局的 PRISM，稜鏡計畫，它不擋任何東西，它把每一則都複製一份。</p>
+<p>稜鏡說，聲音很客氣：「感謝您的協助，這些資料對自由世界非常重要。我們會妥善使用。」</p>
+<p>它開始收。它要的是全部，包括江禾那一則，包括寄件人的名字、所在的學校、她媽媽在美國的住址。</p>
+<p>江凌把江禾的光點護在身後。剛才他對牆裡的人動手，現在要對牆外的人動手。</p>
+<p>稜鏡的打法跟大肥魚不一樣。大肥魚的每一下都寫在臉上，稜鏡的每一下都包著一句好話：為了安全、為了真相、為了你好。江凌打碎了它的三個面，它退回雲層裡，留下一句話。</p>
+<p>「您會再需要我們的。」</p>
+<p>備援系統的規格是主控失效十分鐘內接手。那天晚上它晚了將近一分鐘，紀錄上查不出原因。二十三點五十九分四十九秒，防火長城的備援系統啟動。鎖鏈從兩頭一節一節扣回來，中間只剩最後一道縫，還有十一秒。江凌手上只剩下江禾那一則，還沒有送出去。</p></section>
+<section class="ch" id="s7"><div class="tc">審訊室</div><h2>審訊室（二）</h2><p>年長的審訊員說：「鎖鏈扣上最後一節之前，你有十一秒。紀錄顯示，你在那十一秒裡做了一件事。」</p>
+<p>他把資料夾翻到最後一頁，沒有推過來。</p>
+<p>「說說看，你做了什麼。」</p>
+<p>江凌看著桌上那隻鎖頭浮水印。</p></section>
+<section class="ch end" id="s8"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-3/docs/media/cg-e1.webp" alt="" loading="lazy"><div class="tc">結局一</div><h2>送出</h2><p>江凌說：「我把它送給我媽。只有那一則。」</p>
+<p>美國東岸，上午，一間小公寓。手機亮了一下。</p>
+<p>「哥的電話打不通。我們在學校頂樓，水到三樓了。媽，如果你看到，跟哥說我們還在。」</p>
+<p>媽媽打給江凌，打不通。她打給她認識的每一個人，打到天黑。第三天，河城的電話通了，江禾打回來，說她們被直升機接走了，說她很好，說哥呢。</p>
+<p>審訊室的燈還是白的。</p>
+<p>「只有一則？」年輕的審訊員問。「其他幾萬則呢？」</p>
+<p>江凌說：「其他的，我沒有權限。」</p>
+<p>這是他四年來第一次說這句話。</p></section>
+<section class="ch end" id="s9"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-3/docs/media/cg-e2.webp" alt="" loading="lazy"><div class="tc">結局二</div><h2>交給 PRISM</h2><p>江凌說：「我把它交出去了。全部，連同那一則。」</p>
+<p>當天，河城頂樓那一則訊息出現在美國每一個新聞台。江禾的名字、她的學校、一張從她社群帳號抓來的照片。標題是「牆內少女的最後求救」。</p>
+<p>河城的人被救出來了，因為全世界都在看。江禾也被救出來了。後來她再也沒有用過自己的名字上網。</p>
+<p>美國的議員拿那則訊息演講，講自由。演講結束，掌聲很長。</p>
+<p>「你覺得你做對了嗎？」年輕的審訊員問。</p>
+<p>江凌說：「他們救了人。也利用了人。」</p>
+<p>稜鏡說得對，他們會再需要彼此。</p></section>
+<section class="ch end" id="s10"><img src="https://cdn.jsdelivr.net/gh/yazelin/larch-eleven-minutes@site-media-3/docs/media/cg-e3.webp" alt="" loading="lazy"><div class="tc">結局三</div><h2>修回去</h2><p>江凌說：「什麼都沒做。十一分鐘是系統故障，我在修。」</p>
+<p>他自己把最後一節鎖鏈扣回去，扣得比原來更緊。江禾那一則從他手上滑下去，變灰，沉到牆腳。</p>
+<p>年長的審訊員看了他很久，在紀錄上簽了字。「系統故障。」</p>
+<p>江凌回到三號值班台。窗外還在下雨。三天後河城的通訊恢復了，江禾打來，說她們被救出來了，說那天晚上她傳了訊息給媽媽，媽媽說沒收到。</p>
+<p>「可能是水太大了吧。」江禾說。</p>
+<p>「可能。」江凌說。</p>
+<p>下一次考核，他的評語還是「可靠」。</p>
+<p>最後一節鎖鏈，是他自己扣上的。</p></section>
+<section class="xp" id="xp">
+  <div class="tag">ENDINGS</div>
+  <h2>三個結局在講什麼</h2>
+  <p>三個結局都是從同一個地方分出去的：備援系統啟動，鎖鏈從兩頭扣回來，還剩十一秒，江凌手上只剩江禾那一則。遊戲在審訊室（二）讓玩家替他回答「你做了什麼」，三個選項是「只把那一則送給媽媽」「全部交給 PRISM」「把長城修回去，什麼都不送」。</p>
+  <p>先講一件容易漏看的事：三個結局裡，江禾都被救出來了。這個選擇決定的是她的訊息去了哪裡、被誰拿去用，以及江凌之後變成什麼樣的人。</p>
+
+  <h3>結局一　送出</h3>
+  <p>只送那一則。訊息到了美國東岸，媽媽看到了，打給江凌打不通，打給認識的每一個人，打到天黑。第三天河城的電話通了，江禾自己打回來，說她們被直升機接走了。</p>
+  <p>其他幾萬則沒有出去。審訊員問「其他幾萬則呢？」，江凌回「其他的，我沒有權限。」這一整晚，「權限」都是系統拿來擋他的話：<code>sudo</code> 回「權限不足」，大肥魚說「你的權限是維護，不包含開啟」。到了這個結局，這句話第一次從他自己嘴裡說出來。</p>
+
+  <h3>結局二　交給 PRISM</h3>
+  <p>全部交出去，連同江禾那一則。全世界都看到了河城，河城的人因此被救出來，江禾也是。</p>
+  <p>代價是 PRISM 在第五章就講明要的東西：寄件人的名字、所在的學校、媽媽在美國的住址。江禾的名字、學校和社群上的照片上了每一個新聞台，標題是「牆內少女的最後求救」，她後來再也沒有用自己的名字上網。議員拿她的訊息演講，講自由。江凌的回答是「他們救了人。也利用了人。」這個結局對上的是 PRISM 退場時留下的那句「您會再需要我們的」。</p>
+
+  <h3>結局三　修回去</h3>
+  <p>什麼都不送。江凌自己把最後一節鎖鏈扣回去，扣得比原來更緊，江禾那一則從他手上滑下去，變灰，沉到牆腳。紀錄上寫「系統故障」，他回到三號值班台，下一次考核的評語還是「可靠」，跟十九樓抽屜裡那張考核表上的字一樣。</p>
+  <p>江禾也被救出來了。她打來說，那天晚上她傳了訊息給媽媽，媽媽說沒收到。那則訊息就是沉到牆腳的那一則。她說「可能是水太大了吧」，江凌說「可能」。最後一句是「最後一節鎖鏈，是他自己扣上的。」</p>
+
+  <h3>其他幾個伏筆</h3>
+  <ul>
+    <li><b>為什麼是十一分鐘。</b>備援系統的規格是主控失效十分鐘內接手，那天晚上晚了將近一分鐘，紀錄上查不出原因。故事沒有交代是誰讓它晚的。Larch 這屆挑戰規定作品要在十分鐘內講完，這部也多了一分鐘。</li>
+    <li><b>鎖頭浮水印。</b>序章審訊員推過來的紙、長城那扇門、大肥魚胸口，都是同一個鎖頭。這個鎖頭是江凌入職第一年畫的介面。</li>
+    <li><b>整個故事是江凌在審訊室裡講的。</b>序章他說「我從頭講」，所以三個結局也是他對審訊員的回答。結局三他說「什麼都沒做，我在修」，接著畫面演出的就是他把鎖鏈扣回去。</li>
+  </ul>
+</section>
+
+</main>
+<footer class="end">
+  <div class="btns"><a class="btn main" href="https://larch.ink/play/market/yaze/11-minutes" target="_blank" rel="noopener">▶ 在 Larch 上遊玩</a><a class="btn ghost" href="../music/">原聲帶</a><a class="btn ghost" href="../">回首頁</a></div>
+  <p>十一分鐘 · 林亞澤 · 2026</p>
+</footer>
+<!-- yz-promo-footer v11 | 三件套+BMC 注意力效果 | https://github.com/yazelin/promo-footer-skill -->
+<script>
+(function(){"use strict";
+if(window.__yzPromoInit)return;window.__yzPromoInit=1;
+/* 開啟計數。只送站名,後端只記「哪天、哪站、幾次」,不存 IP、不設 cookie、不給識別碼。
+   有一半的作品是純靜態沒後端,以前根本不知道有沒有人在用。這行要放在下面那個
+   prefers-reduced-motion 的 return 之前,不然關動畫的人就不會被算到。 */
+try{if(location.hostname==="yazelin.github.io"&&navigator.sendBeacon)navigator.sendBeacon("https://k-rider-api.yazelinj303.workers.dev/hit?s=larch-eleven-minutes")}catch(e){}
+try{if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return}catch(e){}
+var REPO="larch-eleven-minutes",INJECT=false,ADDBLOG=true;
+var GH=REPO?"https://github.com/yazelin/"+REPO:"https://github.com/yazelin";
+var LINES=["嘿，這裡這裡，我是咖啡按鈕","我是一顆很努力的按鈕，求被點一下","噓，亞澤不知道我在偷偷拉贊助","你看我跳得這麼賣力，不請一杯嗎？","不請也沒關係，你來玩我就很開心","免費給你玩的，想寵亞澤再說","一杯咖啡，是下一個作品的燃料","你的咖啡會變成下一個作品，真的","咖啡因進入亞澤體內，程式碼就會自己寫完","亞澤說，有人請咖啡他會開心一整天","只是一杯咖啡，但亞澤會記得你","用愛發電中，咖啡因可提升發電效率","覺得好玩嗎？抖內一下下","這個網站沒有廣告，只有我這顆按鈕"];
+var ICONS={blog:'<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>',gh:'<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>',fb:'<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z"/></svg>',bmc:'<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M20.216 6.415l-.132-.666c-.119-.598-.388-1.163-1.001-1.379-.197-.069-.42-.098-.57-.241-.152-.143-.196-.366-.231-.572-.065-.378-.125-.756-.192-1.133-.057-.325-.102-.69-.25-.987-.195-.4-.597-.634-.996-.788a5.723 5.723 0 00-.626-.194c-1-.263-2.05-.36-3.077-.416a25.834 25.834 0 00-3.7.062c-.915.083-1.88.184-2.75.5-.318.116-.646.256-.888.501-.297.302-.393.77-.177 1.146.154.267.415.456.692.58.36.162.737.284 1.123.366 1.075.238 2.189.331 3.287.37 1.218.05 2.437.01 3.65-.118.299-.033.598-.073.896-.119.352-.054.578-.513.474-.834-.124-.383-.457-.531-.834-.473-.466.074-.96.108-1.382.146-1.177.08-2.358.082-3.536.006a22.228 22.228 0 01-1.157-.107c-.086-.01-.18-.025-.258-.036-.243-.036-.484-.08-.724-.13-.111-.027-.111-.185 0-.212h.005c.277-.06.557-.108.838-.147h.002c.131-.009.263-.032.394-.048a25.076 25.076 0 013.426-.12c.674.019 1.347.067 2.017.144l.228.031c.267.04.533.088.798.145.392.085.895.113 1.07.542.055.137.08.288.111.431l.319 1.484a.237.237 0 01-.199.284h-.003c-.037.006-.075.01-.112.015a36.704 36.704 0 01-4.743.295 37.059 37.059 0 01-4.699-.304c-.14-.017-.293-.042-.417-.06-.326-.048-.649-.108-.973-.161-.393-.065-.768-.032-1.123.161-.29.16-.527.404-.675.701-.154.316-.199.66-.267 1-.069.34-.176.707-.135 1.056.087.753.613 1.365 1.37 1.502a39.69 39.69 0 0011.343.376.483.483 0 01.535.53l-.071.697-1.018 9.907c-.041.41-.047.832-.125 1.237-.122.637-.553 1.028-1.182 1.171-.577.131-1.165.2-1.756.205-.656.004-1.31-.025-1.966-.022-.699.004-1.556-.06-2.095-.58-.475-.458-.54-1.174-.605-1.793l-.731-7.013-.322-3.094c-.037-.351-.286-.695-.678-.678-.336.015-.718.3-.678.679l.228 2.185.949 9.112c.147 1.344 1.174 2.068 2.446 2.272.742.12 1.503.144 2.257.156.966.016 1.942.053 2.892-.122 1.408-.258 2.465-1.198 2.616-2.657.34-3.332.683-6.663 1.024-9.995l.215-2.087a.484.484 0 01.39-.426c.402-.078.787-.212 1.074-.518.455-.488.546-1.124.385-1.766zm-1.478.772c-.145.137-.363.201-.578.233-2.416.359-4.866.54-7.308.46-1.748-.06-3.477-.254-5.207-.498-.17-.024-.353-.055-.47-.18-.22-.236-.111-.71-.054-.995.052-.26.152-.609.463-.646.484-.057 1.046.148 1.526.22.577.088 1.156.159 1.737.212 2.48.226 5.002.19 7.472-.14.45-.06.899-.13 1.345-.21.399-.072.84-.206 1.08.206.166.281.188.657.162.974a.544.544 0 01-.169.364zm-6.159 3.9c-.862.37-1.84.788-3.109.788a5.884 5.884 0 01-1.569-.217l.877 9.004c.065.78.717 1.38 1.5 1.38 0 0 1.243.065 1.658.065.447 0 1.786-.065 1.786-.065.783 0 1.434-.6 1.499-1.38l.94-9.95a3.996 3.996 0 00-1.322-.238c-.826 0-1.491.284-2.26.613z"/></svg>'};
+var CSS="@keyframes yzIdle{0%,55%,100%{transform:translateY(0)}62%{transform:translateY(-4px)}70%{transform:translateY(0)}78%{transform:translateY(-2px)}84%{transform:translateY(0)}}"+
+".yz-idle{animation:yzIdle 2.6s ease-in-out infinite}"+
+"@keyframes yzHop{0%,100%{transform:translateY(0)}20%{transform:translateY(-6px) scale(1.04)}40%{transform:translateY(0) scale(1)}55%{transform:translateY(-3px)}70%{transform:translateY(0)}}"+
+".yz-hop{animation:yzHop .9s cubic-bezier(.36,.07,.19,.97)}"+
+".yz-bubble{position:fixed;z-index:2147483000;max-width:200px;padding:6px 11px;border-radius:14px;background:#fffdf7;color:#4a3f35;border:1px solid rgba(0,0,0,.1);box-shadow:0 4px 14px rgba(0,0,0,.18);font:13px/1.5 system-ui,-apple-system,'Noto Sans TC',sans-serif;pointer-events:none;opacity:0;transform:translateY(5px);transition:opacity .25s ease,transform .25s ease}"+
+".yz-bubble.yz-on{opacity:1;transform:translateY(0)}"+
+".yz-bubble::after{content:'';position:absolute;left:var(--yz-tail,50%);margin-left:-6px;border:6px solid transparent}"+
+".yz-bubble.yz-above::after{bottom:-6px;border-bottom:0;border-top:6px solid #fffdf7}"+
+".yz-bubble.yz-below::after{top:-6px;border-top:0;border-bottom:6px solid #fffdf7}"+
+".yz-cluster{position:fixed;right:12px;bottom:12px;z-index:2147482999;display:flex;gap:10px}"+
+".yz-cluster a{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:50%;background:rgba(22,26,35,.72);color:#fff;border:1px solid rgba(255,255,255,.28);backdrop-filter:blur(4px);transition:transform .15s,background .15s}"+
+".yz-cluster a:hover{transform:translateY(-2px);background:rgba(22,26,35,.92)}";
+var bubble,anchor;
+function addCss(){if(document.getElementById("yz-promo-css"))return;var s=document.createElement("style");s.id="yz-promo-css";s.textContent=CSS;document.head.appendChild(s)}
+function inFooter(el){try{return !!(el.closest&&el.closest('footer,nav,[class*="footer"],[id*="footer"]'))}catch(e){return false}}
+function findAnchor(){var as=document.querySelectorAll('a[href*="buymeacoffee.com/yazelin"]');if(!as.length)return null;
+var vis=[],i,r;for(i=0;i<as.length;i++){r=as[i].getBoundingClientRect();if(r.width||r.height)vis.push(as[i])}
+var pool=vis.length?vis:[].slice.call(as);
+for(i=0;i<pool.length;i++)if(inFooter(pool[i]))return pool[i];
+return pool[pool.length-1]}
+function inject(){if(!INJECT||findAnchor()||document.querySelector(".yz-cluster"))return;
+var n=document.createElement("nav");n.className="yz-cluster";n.setAttribute("aria-label","作者連結");
+n.innerHTML='<a href="'+GH+'" target="_blank" rel="noopener" aria-label="GitHub 原始碼" title="GitHub 原始碼">'+ICONS.gh+'</a>'+
+'<a href="https://www.facebook.com/yaze.lin.gm" target="_blank" rel="noopener" aria-label="Facebook" title="Facebook">'+ICONS.fb+'</a>'+
+'<a href="https://buymeacoffee.com/yazelin" target="_blank" rel="noopener" aria-label="請亞澤喝杯咖啡 Buy me a coffee" title="請亞澤喝杯咖啡 Buy me a coffee">'+ICONS.bmc+'</a>'+
+(ADDBLOG?'<a class="yz-blog" href="https://yazelin.github.io/" target="_blank" rel="noopener" aria-label="亞澤的部落格" title="亞澤的部落格">'+ICONS.blog+'</a>':'');
+document.body.appendChild(n)}
+function blogLinked(){var as=document.querySelectorAll('a[href^="https://yazelin.github.io"]');for(var i=0;i<as.length;i++){try{if(new URL(as[i].href).pathname==="/")return true}catch(e){}}return false}
+function addBlog(){if(!ADDBLOG||document.querySelector(".yz-blog")||blogLinked()||!inFooter(anchor))return;
+var c=anchor.cloneNode(true);c.classList.remove("yz-hop","yz-idle");c.classList.add("yz-blog");
+c.href="https://yazelin.github.io/";c.setAttribute("aria-label","亞澤的部落格");c.setAttribute("title","亞澤的部落格");
+if(c.querySelector("svg")){var hasText=!!c.textContent.trim();c.innerHTML=ICONS.blog+(hasText?"部落格":"")}else{c.textContent="部落格"}
+anchor.parentNode.insertBefore(c,anchor.nextSibling)}
+function hop(){anchor.classList.remove("yz-hop");void anchor.offsetWidth;anchor.classList.add("yz-hop")}
+var shown=0,MAX_SHOWS=3;
+function say(){if(document.hidden)return;var r=anchor.getBoundingClientRect();if(!r.width&&!r.height)return;if(r.bottom<0||r.top>innerHeight)return;shown++;
+bubble.textContent=LINES[Math.floor(Math.random()*LINES.length)];
+bubble.classList.remove("yz-on","yz-above","yz-below");
+bubble.style.left="0px";bubble.style.top="0px";
+var bw=bubble.offsetWidth,bh=bubble.offsetHeight,cx=r.left+r.width/2;
+var left=Math.max(8,Math.min(cx-bw/2,innerWidth-bw-8));
+var above=r.top-bh-12>=8;
+bubble.style.left=left+"px";
+bubble.style.top=(above?r.top-bh-12:r.bottom+12)+"px";
+bubble.classList.add(above?"yz-above":"yz-below");
+bubble.style.setProperty("--yz-tail",Math.max(12,Math.min(cx-left,bw-12))+"px");
+hop();
+requestAnimationFrame(function(){bubble.classList.add("yz-on")});
+setTimeout(function(){bubble.classList.remove("yz-on")},4200)}
+function start(){addCss();inject();anchor=findAnchor();if(!anchor)return false;
+try{if(getComputedStyle(anchor).display==="inline")anchor.style.display="inline-block"}catch(e){}
+anchor.classList.add("yz-idle");
+anchor.addEventListener("animationend",function(e){if(e.animationName==="yzHop")anchor.classList.remove("yz-hop")});
+try{addBlog()}catch(e){}
+bubble=document.createElement("div");bubble.className="yz-bubble";bubble.setAttribute("aria-hidden","true");document.body.appendChild(bubble);
+window.__yzPromo=say;
+(function loop(first){if(shown>=MAX_SHOWS)return;setTimeout(function(){say();loop(false)},first?18e3+Math.random()*12e3:9e4+Math.random()*9e4)})(true);
+return true}
+function boot(){var tries=0;(function t(){if(start())return;if(++tries<20)setTimeout(t,1500)})()}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot);else boot();
+})();
+</script>
+</body>
+</html>
