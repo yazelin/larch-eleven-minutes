@@ -199,7 +199,8 @@ def site_board():
         'miniGameHtml': shell, 'miniGamePresentation': 'fullscreen', 'miniGameSkippable': True,
         'miniGameReadVars': [], 'miniGameWriteVars': [], 'miniGameNote': f'薄殼而已，內容在 {SITE_URL}',
         'start': True, 'voiceMode': 'off', 'stage': {'actors': []}}}
-    return {'id': SITE_BOARD, 'kind': 'story', 'mode': 'story', 'name': '第二章・幕後與原聲帶', 'description': '', 'nodes': [n], 'edges': []}
+    return {'id': SITE_BOARD, 'kind': 'story', 'mode': 'story', 'name': '第二章・幕後與原聲帶', 'description': '', 'nodes': [n], 'edges': [],
+            'thumbnail': scene('unchained')}   # 白板縮圖（10-29：第二章原本沒縮圖）
 
 
 # 白板排版（10-09 作者：好好排版）：上面一排是玩家走的主線（左到右），
