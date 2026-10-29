@@ -141,6 +141,7 @@ ENDINGS = [('e1', '結局一　送出'), ('e2', '結局二　交給 PRISM'), ('e
 def build():
     p = skeleton(); board = p['boards'][0]; interface(p)
     p['nodes'], p['edges'] = board['nodes'], board['edges']
+    board['thumbnail'] = scene('interrogation')   # 白板縮圖：沿用市集上第一章原本那張
     p['settings']['plugins']['larch-rpg-system']['settings']['database'] = json.dumps(database(), ensure_ascii=False)
     p['settings']['plugins']['larch-rpg-system']['settings']['gear'] = json.dumps(GEAR, ensure_ascii=False)
     p['settings']['plugins'][plugin.PLUGIN_ID] = plugin.settings_entry()
